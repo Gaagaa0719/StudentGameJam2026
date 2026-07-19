@@ -2,10 +2,20 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum GamePhase
+{
+    ItemSelection,
+    Minigame,
+    Prepare,
+    Battle
+}
+
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
     public static GameManager GetInstance() { return instance; }
+
+    public GamePhase currentPhase;
 
     private GlassManager glassManager;
 

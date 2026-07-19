@@ -15,16 +15,20 @@ public class ItemOptions : MonoBehaviour
 
     private List<int> selectedChildlenIndex = new List<int>();
 
+    private GameManager gameManager;
+
     private CanvasGroup group;
 
     private void Start()
     {
+        gameManager = GameManager.GetInstance();
         group = GetComponent<CanvasGroup>();
     }
 
     public void StartItemSelection()
     {
         Init();
+        gameManager.currentPhase = GamePhase.ItemSelection;
     }
 
     private void Init()
