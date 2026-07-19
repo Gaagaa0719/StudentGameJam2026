@@ -1,5 +1,3 @@
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,22 +10,24 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     Transform defaultParent;
     CanvasGroup group;
     GameManager gameManager;
-
-    [SerializeField]
-    private ItemMenu menu;
+    ItemMenu menu;
+    Transform dragOverlay;
 
     private void Start()
     {
+        menu = ItemMenu.instance;
         mainCamera = Camera.main;
         gameManager = GameManager.GetInstance();
         group = GetComponent<CanvasGroup>();
-        defaultPos = transform.position;
-        defaultParent = transform.parent;
+        dragOverlay = GameObject.Find("DragOverlay").transform;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         group.blocksRaycasts = false;
+        defaultPos = transform.position;
+        defaultParent = transform.parent;
+        transform.SetParent(dragOverlay, true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -37,8 +37,6 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // ドロップ終了時：当たり判定を元に戻す
-        group.blocksRaycasts = true;
         switch (gameManager.currentPhase)
         {
             case GamePhase.Prepare:
@@ -46,13 +44,15 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
                 break;
 
             case GamePhase.ItemSelection:
-                DropTo3D();
+                DropTo2D(eventData);
                 break;
 
             default:
                 ResetPos();
                 break;
         }
+
+        group.blocksRaycasts = true;
     }
 
     private void DropTo3D()
@@ -73,27 +73,8 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         else
         {
             Debug.Log("何も検出されませんでした。");
-            ResetPos();
+            menu.Add(gameObject);
         }
-    }
-    private void DropTo2D(PointerEventData eventData)
-    {
-
-    }
-
-    private bool DropToItemMenu(GameObject hitObject)
-    {
-        if (!hitObject.CompareTag("ItemMenu")) return false;
-
-        menu.Add(gameObject);
-        return true;
-    }
-
-    private bool DropToTrash (GameObject hitObject)
-    {
-        if (!hitObject.CompareTag("Trash")) return false;
-        Destroy(gameObject);
-        return true;
     }
 
     private bool DropToEnemy (GameObject hitObject)
@@ -123,9 +104,59 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         return true;
     }
 
+    private void DropTo2D(PointerEventData eventData)
+    {
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        if (results.Count == 0)
+        {
+            Debug.Log("ドロップした位置にUIはありませんでした。");
+            ResetPos();
+            return;
+        }
+        GameObject droppedOn = results[0].gameObject;
+
+        if (DropToItemMenu(droppedOn)) return;
+        if (DropToTrash(droppedOn)) return;
+        if (DropToItemOption(droppedOn)) return;
+
+        ResetPos();
+    }
+
+    private bool DropToItemOption(GameObject hitObject)
+    {
+        if (!menu.Contains(gameObject)) return false;
+        if (hitObject.transform.childCount > 2) return false;
+        if (!hitObject.CompareTag("ItemOption")) return false;
+
+        menu.Remove(gameObject);
+        gameObject.transform.SetParent(hitObject.transform, false);
+        gameObject.transform.localPosition = Vector3.zero;
+        transform.localScale = Vector3.one;
+        return true;
+    }
+
+    private bool DropToItemMenu(GameObject hitObject)
+    {
+        if (menu.Contains(gameObject)) return false;
+        if (!hitObject.CompareTag("ItemMenu")) return false;
+
+        menu.Add(gameObject);
+        return true;
+    }
+
+    private bool DropToTrash(GameObject hitObject)
+    {
+        if (!hitObject.CompareTag("Trash")) return false;
+        Destroy(gameObject);
+        return true;
+    }
+
     private void ResetPos()
     {
-        transform.parent = defaultParent;
-        transform.position = defaultPos; ;
+        transform.SetParent(defaultParent, false);
+        transform.position = defaultPos;
+        transform.localScale = Vector3.one;
     }
 }

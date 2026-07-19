@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemMenu : MonoBehaviour {
+    public static ItemMenu instance;
+
     [Header("アイテム表示位置用のアンカー達\n上から順番に詰めて表示される。")]
     public List<GameObject> displayAnchors = new List<GameObject>();
 
@@ -9,6 +11,16 @@ public class ItemMenu : MonoBehaviour {
 
     [Header("アイテムのドラッグ移動させたくないときに疎外するためのプロテクター")]
     public GameObject protector;
+
+    private void Start()
+    {
+        instance = this;
+    }
+
+    public bool Contains(GameObject item)
+    {
+        return items.Contains(item);
+    }
 
     // アイテム追加処理
     public void Add(GameObject item)
@@ -22,6 +34,7 @@ public class ItemMenu : MonoBehaviour {
         // 親子設定
         item.transform.SetParent(displayAnchor.transform, false);
         item.transform.localPosition = Vector3.zero;
+        item.transform.localScale = Vector3.one;
     }
 
     // アイテム削除処理

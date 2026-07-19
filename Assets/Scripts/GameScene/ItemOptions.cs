@@ -28,6 +28,7 @@ public class ItemOptions : MonoBehaviour
     public void StartItemSelection()
     {
         Init();
+        if(gameManager == null) gameManager = GameManager.GetInstance();
         gameManager.currentPhase = GamePhase.ItemSelection;
     }
 

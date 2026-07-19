@@ -8,6 +8,9 @@ TagManager:
   - Shelf
   - Glass
   - PlayerGlass
+  - Trash
+  - ItemMenu
+  - ItemOption
   layers:
   - Default
   - TransparentFX
