@@ -10,20 +10,22 @@ public class ClickNote : MonoBehaviour
     private GameObject note;
 
     // 一度クリックしたか
-    private bool gameEnded = false;
+    private JustHitManager manager;
+
+    private void Awake()
+    {
+        manager = JustHitManager.instance;
+    }
 
     private void Update()
     {
-        // 一度クリックしたら何もしない
-        if (gameEnded)
-        {
-            return;
-        }
+        Debug.Log(manager);
+        if (!manager.isPlaying) return;
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             // クリック受付終了
-            gameEnded = true;
+            manager.isPlaying = false;
 
             note = GameObject.Find("NoteMover");
 
@@ -37,15 +39,13 @@ public class ClickNote : MonoBehaviour
             RectTransform noteRect =
                 note.GetComponent<RectTransform>();
 
-            if (HitArea.Instance != null &&
-                HitArea.Instance.IsNoteInside(noteRect))
+            if (HitArea.Instance != null && HitArea.Instance.IsNoteInside(noteRect))
             {
                 Debug.Log("成功");
 
-                if (audioSource != null &&
-                    successSE != null)
+                if (audioSource != null && successSE != null)
                 {
-                    audioSource.PlayOneShot(successSE);
+                    audioSource.Play();
 
                     Destroy(note);
 

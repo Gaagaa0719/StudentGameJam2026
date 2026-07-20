@@ -51,16 +51,9 @@ public class HitArea : MonoBehaviour
         RandomizePosition();
     }
 
-    private void Update()
-    {
-        // ゲーム中に酔い度が変わった場合も幅を更新
-        UpdateRange();
-    }
-
-    private void OnValidate()
+    public void Init()
     {
         hitAreaRect = GetComponent<RectTransform>();
-
         UpdateRange();
     }
 

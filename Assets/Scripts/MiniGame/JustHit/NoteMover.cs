@@ -8,11 +8,15 @@ public class NoteMover : MonoBehaviour
     private RectTransform noteRect;
     private RectTransform moveAreaRect;
 
+    private JustHitManager manager;
+    private Vector3 defaultPos;
+
     // 1 = 右、-1 = 左
     private float direction = 1f;
 
-    private void Awake()
+    private void Start()
     {
+        manager = JustHitManager.instance;
         noteRect = GetComponent<RectTransform>();
 
         // NoteMoverの親を移動範囲として使用
@@ -21,6 +25,7 @@ public class NoteMover : MonoBehaviour
 
     private void Update()
     {
+        if (!manager.GetIsPlaying()) return;
         MoveNote();
         CheckWall();
     }
@@ -52,8 +57,7 @@ public class NoteMover : MonoBehaviour
             float difference =
                 noteWorldRect.xMax - moveAreaWorldRect.xMax;
 
-            noteRect.position -=
-                new Vector3(difference, 0f, 0f);
+            noteRect.position -= new Vector3(difference, 0f, 0f);
 
             Debug.Log("右の黒い壁で跳ね返りました");
         }

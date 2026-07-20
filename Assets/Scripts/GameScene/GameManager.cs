@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     private GlassManager glassManager;
 
+    private MiniGameManager miniGameManager;
+
     [SerializeField]
     private ItemOptions options;
 
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        miniGameManager = MiniGameManager.instance;
         glassManager = GlassManager.instance;
         StartCoroutine(StartGameLoop());
     }
@@ -66,6 +69,26 @@ public class GameManager : MonoBehaviour
             // 戦闘フェーズ開始。
             currentPhase = GamePhase.Battle;
             yield return StartCoroutine(nameof(Battle));
+
+            // ミニゲームフェーズ開始
+            currentPhase = GamePhase.Minigame;
+            IMiniGameManager miniGame = miniGameManager.GetRandomOne();
+
+            miniGame.gameObject.SetActive(true);
+            yield return StartCoroutine(miniGame.StartGame());
+
+            if(miniGame.GetIsSuccessed())
+            {
+                // ミニゲーム成功時の処理
+                player.AddDegreePoint(-5);
+            }
+            else
+            {
+                // ミニゲーム失敗時の処理
+                player.AddDegreePoint(20);
+            }
+
+            miniGame.gameObject.SetActive(false);
         }
     }
 
@@ -90,9 +113,5 @@ public class GameManager : MonoBehaviour
 
         enemy.AddDegreePoint(playerGlass.CalcDegreePoint());
         yield return new WaitForSeconds(1.0f);
-
-        if (enemy.GetDegreePoint() >= enemy.maxDegreePoint) {
-            SceneManager.LoadScene("win");
-        }
     }
 }
