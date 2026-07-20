@@ -1680,7 +1680,7 @@ MonoBehaviour:
   hoverSE: {fileID: 8300000, guid: 4ebf8de2be81c034abab018d86c1b531, type: 3}
   clickSE: {fileID: 8300000, guid: 019bbc8535ef0a9469fb9e174539c4a6, type: 3}
   transitionManager: {fileID: 445890814}
-  nextSceneName: SampleScene
+  nextSceneName: Game
   settingPanel: {fileID: 0}
 --- !u!82 &561209529
 AudioSource:
