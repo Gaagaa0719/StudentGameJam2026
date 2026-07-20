@@ -14,8 +14,12 @@ public class RandomLaneNoteManager : MonoBehaviour
     [Header("右側の灰色の成功判定")]
     public RectTransform rightHitArea;
 
+    [Header("成功時の効果音")]
+    public AudioSource audioSource;
+    public AudioClip successSE;
+
     [Header("ノーツ設定")]
-    public int totalNoteCount = 5;
+    public int totalNoteCount = 6;
     public float spawnInterval = 1f;
     public float fallSpeed = 200f;
 
@@ -27,9 +31,19 @@ public class RandomLaneNoteManager : MonoBehaviour
     private List<RectTransform> activeNotes =
         new List<RectTransform>();
 
+    private int clickCount = 0;
+    private int spawnedNoteCount = 0;
+
+    // ノーツがない状態でミスクリックした回数
+    private int pendingMissCount = 0;
+
+    private bool gameFinished = false;
+
     void Start()
     {
         Debug.Log("ノーツゲーム開始");
+
+        totalNoteCount = 6;
 
         if (noteTemplate == null)
         {
@@ -74,11 +88,19 @@ public class RandomLaneNoteManager : MonoBehaviour
             return;
         }
 
+        // 元のノーツは見本なので非表示
+        noteTemplate.gameObject.SetActive(false);
+
         StartCoroutine(SpawnNotes());
     }
 
     void Update()
     {
+        if (gameFinished)
+        {
+            return;
+        }
+
         MoveNotes();
         CheckMouseClick();
     }
@@ -87,12 +109,21 @@ public class RandomLaneNoteManager : MonoBehaviour
     {
         for (int i = 0; i < totalNoteCount; i++)
         {
+            if (gameFinished)
+            {
+                yield break;
+            }
+
             CreateNote(i + 1);
 
             yield return new WaitForSeconds(
                 spawnInterval
             );
         }
+
+        Debug.Log(
+            "6個すべてのノーツを生成しました"
+        );
     }
 
     void CreateNote(int noteNumber)
@@ -105,9 +136,6 @@ public class RandomLaneNoteManager : MonoBehaviour
 
         newNote.gameObject.SetActive(true);
 
-        newNote.name =
-            "FallingNote_" + noteNumber;
-
         bool isLeftLane =
             Random.Range(0, 2) == 0;
 
@@ -116,12 +144,20 @@ public class RandomLaneNoteManager : MonoBehaviour
         if (isLeftLane)
         {
             selectedHitArea = leftHitArea;
-            newNote.name += "_Left";
+
+            newNote.name =
+                "FallingNote_" +
+                noteNumber +
+                "_Left";
         }
         else
         {
             selectedHitArea = rightHitArea;
-            newNote.name += "_Right";
+
+            newNote.name =
+                "FallingNote_" +
+                noteNumber +
+                "_Right";
         }
 
         Vector3 hitAreaLocalPosition =
@@ -141,6 +177,15 @@ public class RandomLaneNoteManager : MonoBehaviour
 
         activeNotes.Add(newNote);
 
+        spawnedNoteCount++;
+
+        Debug.Log(
+            "生成数：" +
+            spawnedNoteCount +
+            " / " +
+            totalNoteCount
+        );
+
         if (isLeftLane)
         {
             Debug.Log(
@@ -153,6 +198,22 @@ public class RandomLaneNoteManager : MonoBehaviour
             Debug.Log(
                 noteNumber +
                 "個目：右側にノーツ生成"
+            );
+        }
+
+        // ノーツがないときにミスクリックしていた場合
+        if (pendingMissCount > 0)
+        {
+            pendingMissCount--;
+
+            Debug.Log(
+                "先ほどのミスクリックにより、このノーツを消しました"
+            );
+
+            activeNotes.Remove(newNote);
+
+            Destroy(
+                newNote.gameObject
             );
         }
     }
@@ -195,7 +256,10 @@ public class RandomLaneNoteManager : MonoBehaviour
                 );
 
                 activeNotes.RemoveAt(i);
-                Destroy(note.gameObject);
+
+                Destroy(
+                    note.gameObject
+                );
             }
         }
     }
@@ -208,8 +272,14 @@ public class RandomLaneNoteManager : MonoBehaviour
         }
 
         if (
-            Mouse.current
-                .leftButton
+            clickCount >= totalNoteCount
+        )
+        {
+            return;
+        }
+
+        if (
+            Mouse.current.leftButton
                 .wasPressedThisFrame
         )
         {
@@ -218,10 +288,8 @@ public class RandomLaneNoteManager : MonoBehaviour
                 "Left"
             );
         }
-
-        if (
-            Mouse.current
-                .rightButton
+        else if (
+            Mouse.current.rightButton
                 .wasPressedThisFrame
         )
         {
@@ -234,10 +302,19 @@ public class RandomLaneNoteManager : MonoBehaviour
 
     void CheckLaneClick(
         RectTransform selectedHitArea,
-        string requiredLane)
+        string requiredLane
+    )
     {
+        if (gameFinished)
+        {
+            return;
+        }
+
+        clickCount++;
+
         RectTransform successfulNote = null;
 
+        // 判定内にある正しいレーンのノーツを探す
         for (
             int i = 0;
             i < activeNotes.Count;
@@ -254,7 +331,7 @@ public class RandomLaneNoteManager : MonoBehaviour
 
             bool correctLane =
                 note.name.Contains(
-                    requiredLane
+                    "_" + requiredLane
                 );
 
             bool overlapping =
@@ -288,6 +365,8 @@ public class RandomLaneNoteManager : MonoBehaviour
                 );
             }
 
+            PlaySuccessSE();
+
             activeNotes.Remove(
                 successfulNote
             );
@@ -310,12 +389,134 @@ public class RandomLaneNoteManager : MonoBehaviour
                     "失敗：右クリック"
                 );
             }
+
+            RemoveNextNote();
         }
+
+        Debug.Log(
+            "クリック数：" +
+            clickCount +
+            " / " +
+            totalNoteCount
+        );
+
+        if (
+            clickCount >= totalNoteCount
+        )
+        {
+            FinishGame();
+        }
+    }
+
+    void PlaySuccessSE()
+    {
+        if (
+            audioSource == null ||
+            successSE == null
+        )
+        {
+            Debug.LogWarning(
+                "Audio SourceまたはSuccess SEが設定されていません"
+            );
+
+            return;
+        }
+
+        audioSource.PlayOneShot(
+            successSE
+        );
+    }
+
+    void RemoveNextNote()
+    {
+        RectTransform nextNote = null;
+
+        // 一番下にあるノーツを探す
+        for (
+            int i = 0;
+            i < activeNotes.Count;
+            i++
+        )
+        {
+            RectTransform note =
+                activeNotes[i];
+
+            if (note == null)
+            {
+                continue;
+            }
+
+            if (
+                nextNote == null ||
+                note.position.y <
+                nextNote.position.y
+            )
+            {
+                nextNote = note;
+            }
+        }
+
+        if (nextNote != null)
+        {
+            Debug.Log(
+                "ミスクリックしたため、次のノーツを消しました"
+            );
+
+            activeNotes.Remove(
+                nextNote
+            );
+
+            Destroy(
+                nextNote.gameObject
+            );
+        }
+        else
+        {
+            // 現在ノーツがない場合、
+            // 次に生成されたノーツを消す
+            pendingMissCount++;
+
+            Debug.Log(
+                "ミスクリックしたため、次に生成されるノーツを消します"
+            );
+        }
+    }
+
+    void FinishGame()
+    {
+        gameFinished = true;
+
+        StopAllCoroutines();
+
+        Debug.Log(
+            "ノーツゲーム終了：6回クリックしました"
+        );
+
+        // 残ったノーツをすべて消す
+        for (
+            int i = activeNotes.Count - 1;
+            i >= 0;
+            i--
+        )
+        {
+            RectTransform note =
+                activeNotes[i];
+
+            if (note != null)
+            {
+                Destroy(
+                    note.gameObject
+                );
+            }
+        }
+
+        activeNotes.Clear();
     }
 
     bool IsOverlapping(
         RectTransform note,
-        RectTransform hitArea)
+        RectTransform hitArea
+    )
     {
         Vector3[] noteCorners =
             new Vector3[4];
