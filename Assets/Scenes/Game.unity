@@ -1327,9 +1327,11 @@ MonoBehaviour:
   - {fileID: 1032377446}
   - {fileID: 351470998}
   lootItems:
-  - {fileID: 5733744267415380732, guid: ffb063fb14e41e74198404ca5715f0bc, type: 3}
-  - {fileID: 744877211151390331, guid: 4c275f24bcca00b42ae725cf9752dfc0, type: 3}
   - {fileID: 2714343283010329495, guid: 0d45531709ed5d34db6898440b11c3bd, type: 3}
+  - {fileID: 2714343283010329495, guid: c64adf5a416fca346871c7d8abac22ce, type: 3}
+  - {fileID: 2714343283010329495, guid: 107cfb5893af80a48ad80689cc6ffe9f, type: 3}
+  - {fileID: 2714343283010329495, guid: f289229fb2663cf428104579518f78ba, type: 3}
+  - {fileID: 2714343283010329495, guid: 9f12958081a3fd840acf7834b20e5905, type: 3}
   animateTime: 1
   _selectableItemCount: 2
 --- !u!1 &410087039
@@ -2485,8 +2487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4556ed7226132548886147d1e8b568b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGameManager
-  miniGameObjects:
-  - {fileID: 8891421537598198882}
+  miniGames: []
 --- !u!4 &1055936464
 Transform:
   m_ObjectHideFlags: 0

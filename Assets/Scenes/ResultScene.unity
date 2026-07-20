@@ -2759,7 +2759,7 @@ MonoBehaviour:
   _losePresenter: {fileID: 1661952848}
   _useDebugData: 1
   _debugData:
-    ResultType: 1
+    ResultType: 0
     CharacterName: MIMIM
     WinBackgroundImage: {fileID: 21300000, guid: fb2ba60c163f9524795bb6e7c3197daf, type: 3}
     CharacterVoice: {fileID: 8300000, guid: 9167063de4477ad478a472e1f5c26a39, type: 3}
