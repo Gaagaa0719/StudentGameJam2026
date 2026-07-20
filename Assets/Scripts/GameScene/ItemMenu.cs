@@ -9,9 +9,6 @@ public class ItemMenu : MonoBehaviour {
 
     private readonly List<GameObject> items = new List<GameObject>();
 
-    [Header("アイテムのドラッグ移動させたくないときに疎外するためのプロテクター")]
-    public GameObject protector;
-
     private void Start()
     {
         instance = this;
@@ -23,10 +20,10 @@ public class ItemMenu : MonoBehaviour {
     }
 
     // アイテム追加処理
-    public void Add(GameObject item)
+    public bool Add(GameObject item)
     {
         // displayAnchorの数が足りない場合
-        if (displayAnchors.Count <= items.Count) return; 
+        if (displayAnchors.Count <= items.Count) return false; 
 
         items.Add(item);
         GameObject displayAnchor = displayAnchors[items.Count - 1];
@@ -35,6 +32,8 @@ public class ItemMenu : MonoBehaviour {
         item.transform.SetParent(displayAnchor.transform, false);
         item.transform.localPosition = Vector3.zero;
         item.transform.localScale = Vector3.one;
+
+        return true;
     }
 
     // アイテム削除処理
@@ -51,18 +50,5 @@ public class ItemMenu : MonoBehaviour {
             item.transform.SetParent(displayAnchors[i].transform, false);
             item.transform.localPosition = Vector3.zero;
         }
-    }
-
-    // プロテクターオブジェクト有効化
-    public void EnableProtector()
-    {
-        protector.SetActive(true);
-    }
-
-
-    // プロテクターオブジェクト無効化
-    public void DisableProtector()
-    {
-        protector.SetActive(false);
     }
 }

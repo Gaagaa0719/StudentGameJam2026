@@ -33,8 +33,10 @@ public class Enemy : MonoBehaviour
 
     public void SetDegreePoint(float value)
     {
-        currentDegreePoint = value;
-        DegreeBar.fillAmount = Mathf.Min(currentDegreePoint / maxDegreePoint, 1);
+        currentDegreePoint = Mathf.Min(value, maxDegreePoint);
+
+        DegreeBar.fillAmount = currentDegreePoint / maxDegreePoint;
+
         DegreePointText.text = $"{currentDegreePoint}/{maxDegreePoint}";
     }
 

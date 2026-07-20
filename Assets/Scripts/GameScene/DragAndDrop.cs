@@ -63,43 +63,30 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         RaycastHit hit;
 
         // 2. レイを飛ばして、オブジェクトのコライダーに衝突するか判定（距離は無限大: Mathf.Infinity）
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
-            GameObject hitObject = hit.collider.gameObject;
-
-            if (hitObject.CompareTag("Glass")) DropToGlass(hitObject);
-            if (hitObject.CompareTag("Enemy")) DropToEnemy(hitObject);
-        }
-        else
-        {
-            Debug.Log("何も検出されませんでした。");
-            menu.Add(gameObject);
-        }
-    }
-
-    private bool DropToEnemy (GameObject hitObject)
-    {
-        Enemy enemy = hitObject.GetComponent<Enemy>();
-        if (enemy == null)
+        if (!Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             ResetPos();
-            return false;
+            return;
         }
 
-        return true;
+        GameObject hitObject = hit.collider.gameObject;
+
+        if (DropToGlass(hitObject)) return;
+        ResetPos();
     }
 
     private bool DropToGlass (GameObject hitObject)
     {
+        if(!hitObject.CompareTag("PlayerGlass")) return false;
+        if(!menu.Contains(gameObject)) return false;
+
         Glass glass = hitObject.GetComponent<Glass>();
-        if (glass == null)
-        {
-            ResetPos();
-            return false;
-        }
+        if (glass == null) return false;
+
+        menu.Remove(gameObject);
 
         glass.items.Enqueue(gameObject);
-        transform.parent = null;
+        transform.SetParent(null);
         transform.position = new Vector3(0, 0, 1000);
         return true;
     }
@@ -131,6 +118,7 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (!hitObject.CompareTag("ItemOption")) return false;
 
         menu.Remove(gameObject);
+        ItemOptions.addedItemCount--;
         gameObject.transform.SetParent(hitObject.transform, false);
         gameObject.transform.localPosition = Vector3.zero;
         transform.localScale = Vector3.one;
@@ -139,10 +127,12 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     private bool DropToItemMenu(GameObject hitObject)
     {
+        if (ItemOptions.selectableItemCount <= ItemOptions.addedItemCount) return false;
         if (menu.Contains(gameObject)) return false;
         if (!hitObject.CompareTag("ItemMenu")) return false;
+        if (!menu.Add(gameObject)) return false;
 
-        menu.Add(gameObject);
+        ItemOptions.addedItemCount++;
         return true;
     }
 

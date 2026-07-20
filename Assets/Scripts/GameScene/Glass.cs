@@ -20,11 +20,11 @@ public class Glass : MonoBehaviour
 
     public int CalcDegreePoint()
     {
-        foreach (var item in items)
-        {
-            IItem itemComp = item.GetComponent<IItem>();
-            itemComp.ChangeGlassParams(ref alcohol, ref amount);
-        }
+        //foreach (var item in items)
+        //{
+        //    IItem itemComp = item.GetComponent<IItem>();
+        //    itemComp.ChangeGlassParams(ref alcohol, ref amount);
+        //}
 
         return (int)(amount * alcohol);
     }

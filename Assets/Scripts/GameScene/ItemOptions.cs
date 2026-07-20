@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ItemOptions : MonoBehaviour
 {
+    public static int selectableItemCount = 0;
+    public static int addedItemCount = 0;
+
     [SerializeField]
     private List<RectTransform> itemHolders = new List<RectTransform>();
 
@@ -13,30 +16,24 @@ public class ItemOptions : MonoBehaviour
     [SerializeField]
     private float animateTime = 1.0f;
 
-    private List<int> selectedChildlenIndex = new List<int>();
+    [SerializeField]
+    private int _selectableItemCount = 2;
 
-    private GameManager gameManager;
+    private List<int> selectedChildlenIndex = new List<int>();
 
     private CanvasGroup group;
 
     private void Start()
     {
-        gameManager = GameManager.GetInstance();
+        selectableItemCount = _selectableItemCount;
         group = GetComponent<CanvasGroup>();
     }
 
     public void StartItemSelection()
     {
-        Init();
-        if(gameManager == null) gameManager = GameManager.GetInstance();
-        gameManager.currentPhase = GamePhase.ItemSelection;
-    }
-
-    private void Init()
-    {
         foreach (var holder in itemHolders)
         {
-            foreach(Transform child in holder.transform)
+            foreach (Transform child in holder.transform)
             {
                 if (child.tag != "item") continue;
                 Destroy(child.gameObject);
@@ -50,37 +47,23 @@ public class ItemOptions : MonoBehaviour
         StartCoroutine(nameof(BecomeVisible), animateTime);
     }
 
-    public void Confirm()
+    public IEnumerator EndItemSelection()
     {
-        if (selectedChildlenIndex.Count != 2)
-        {
-            Debug.Log("2つ選択したください。");
-            return;
-        }
-
-            foreach (var index in selectedChildlenIndex)
-        {
-            GameObject child = transform.GetChild(index).gameObject;
-            Debug.Log(child.name + "を選択しました。");
-        }
-        StartCoroutine(nameof(BecomeInvisible), animateTime);
+        yield return StartCoroutine(nameof(BecomeInvisible), animateTime);
+        RemoveItems();
+        ItemOptions.addedItemCount = 0;
     }
 
-    public void ChooseItem(int index)
+    private void RemoveItems()
     {
-        if (selectedChildlenIndex.Contains(index))
+        foreach (var holder in itemHolders)
         {
-            selectedChildlenIndex.Remove(index);
-            return;
+            foreach (Transform child in holder.transform)
+            {
+                if (!child.CompareTag("Item")) continue;
+                Destroy(child.gameObject);
+            }
         }
-
-        if (selectedChildlenIndex.Count < 2)
-        {
-            selectedChildlenIndex.Add(index);
-            return;
-        }
-
-        Debug.Log("もう選択できません。");
     }
 
     private IEnumerator BecomeVisible(float animateTime)

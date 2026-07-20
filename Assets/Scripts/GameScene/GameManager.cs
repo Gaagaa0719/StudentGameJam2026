@@ -25,51 +25,74 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Enemy enemy;
 
-
     [SerializeField]
     Player player;
 
-    private void Start()
+    private bool isPlaying = false;
+
+    private bool waiting = false;
+
+    private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
         glassManager = GlassManager.instance;
-
-        StartGame();
+        StartCoroutine(StartGameLoop());
     }
 
-    // ゲーム開始処理
-    private void StartGame()
+    private IEnumerator StartGameLoop()
     {
-        StartRound();
+        isPlaying = true;
+        while (isPlaying)
+        {
+            // グラス初期化
+            glassManager.Init();
+
+            // アイテム選択フェーズ開始
+            currentPhase = GamePhase.ItemSelection;
+            waiting = true;
+            options.StartItemSelection();
+            yield return new WaitWhile(() => waiting);
+            StartCoroutine(options.EndItemSelection());
+
+            // 戦闘準備フェーズ開始
+            currentPhase = GamePhase.Prepare;
+            waiting = true;
+            yield return new WaitWhile(() => waiting);
+
+            // 戦闘フェーズ開始。
+            currentPhase = GamePhase.Battle;
+            yield return StartCoroutine(nameof(Battle));
+        }
     }
 
-    // ラウンド初期化処理
-    private void StartRound()
+    public void SetWainting (bool value)
     {
-        glassManager.Init();
-        options.StartItemSelection();
-    }
-
-    public void TurnEnd ()
-    {
-        StartCoroutine(EndRound());
+        waiting = value;
     }
 
     // ラウンド終了処理
-    public IEnumerator EndRound()
+    public IEnumerator Battle()
     {
+        currentPhase = GamePhase.Battle;
+        
+        // aaa
         yield return StartCoroutine(glassManager.SwapGlass());
+        
         Glass playerGlass = glassManager.PlayerGlass.GetComponent<Glass>();
         Glass enemyGlass = glassManager.EnemyGlass.GetComponent<Glass>();
+
         player.AddDegreePoint(enemyGlass.CalcDegreePoint());
         yield return new WaitForSeconds(1.0f);
+
         enemy.AddDegreePoint(playerGlass.CalcDegreePoint());
         yield return new WaitForSeconds(1.0f);
 
         if (enemy.GetDegreePoint() >= enemy.maxDegreePoint) {
             SceneManager.LoadScene("win");
         }
-
-        StartRound();
     }
 }
