@@ -12,6 +12,7 @@ namespace Game.Result
         [Header("参照")]
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private AudioSource _voiceAudioSource;
+        [SerializeField] private AudioSource _bgmAudioSource;
         [SerializeField] private TextMeshProUGUI _resultText;
         [SerializeField] private CanvasGroup _resultTextCanvasGroup;
         [SerializeField] private RectTransform _resultTextTargetPos;
@@ -22,6 +23,9 @@ namespace Game.Result
         [SerializeField] private CanvasGroup _buttonGroupCanvasGroup;
         [SerializeField] private Button _retryButton;
         [SerializeField] private Button _toTitleButton;
+
+        [Header("BGM")]
+        [SerializeField] private AudioClip _winBgmClip;
 
         [Header("評価ランク画像")]
         [SerializeField] private RankSpriteEntry[] _rankSprites;
@@ -52,7 +56,7 @@ namespace Game.Result
 
         [Header("シーン遷移設定")]
         [SerializeField] private string _titleSceneName = "SampleScene";
-        [SerializeField] private string _gameplaySceneName = "Game";
+        [SerializeField] private string _gameplaySceneName = "SampleScene";
 
         private Coroutine _sequenceCoroutine;
         private Vector3 _resultTextStartPos;
@@ -78,6 +82,13 @@ namespace Game.Result
             // 1. 背景の一枚絵を表示
             _backgroundImage.sprite = data.WinBackgroundImage;
             _backgroundImage.enabled = true;
+
+            // BGM再生開始
+            if (_winBgmClip != null)
+            {
+                _bgmAudioSource.clip = _winBgmClip;
+                _bgmAudioSource.Play();
+            }
 
             // 2. 初期状態を非表示に揃える
             _resultTextCanvasGroup.alpha = 0f;
@@ -205,7 +216,7 @@ namespace Game.Result
             _buttonGroupCanvasGroup.blocksRaycasts = true;
         }
 
-        // ボタンのOnClickから呼ぶ想定(手順8で配線)
+        // ボタンのOnClickから呼ぶ想定
         public void OnClickRetry()
         {
             Debug.Log($"[WinResultPresenter] Retryボタンが押されました。遷移先想定シーン: {_gameplaySceneName}");

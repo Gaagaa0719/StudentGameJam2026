@@ -10,6 +10,7 @@ namespace Game.Result
     {
         [Header("参照")]
         [SerializeField] private Image _backgroundImage;
+        [SerializeField] private AudioSource _bgmAudioSource;
         [SerializeField] private TextMeshProUGUI _resultText;
         [SerializeField] private CanvasGroup _resultTextCanvasGroup;
         [SerializeField] private RectTransform _resultTextStartPos;
@@ -21,6 +22,9 @@ namespace Game.Result
         [Header("敗北時の固定背景画像")]
         [SerializeField] private Sprite _fixedBackgroundSprite; // ゴミ箱に吐く後ろ姿の固定画像
 
+        [Header("BGM")]
+        [SerializeField] private AudioClip _loseBgmClip;
+
         [Header("演出設定:敗北文字のフェード&落下")]
         [SerializeField] private float _textFallDuration = 0.6f;
 
@@ -29,7 +33,7 @@ namespace Game.Result
 
         [Header("シーン遷移設定")]
         [SerializeField] private string _titleSceneName = "TitleScene";
-        [SerializeField] private string _gameplaySceneName = "GameplayScene";
+        [SerializeField] private string _gameplaySceneName = "SampleScene";
 
         private Coroutine _sequenceCoroutine;
 
@@ -47,6 +51,13 @@ namespace Game.Result
             // 1. 背景は固定画像を使用(データからは受け取らない)
             _backgroundImage.sprite = _fixedBackgroundSprite;
             _backgroundImage.enabled = true;
+
+            // BGM再生開始
+            if (_loseBgmClip != null)
+            {
+                _bgmAudioSource.clip = _loseBgmClip;
+                _bgmAudioSource.Play();
+            }
 
             // 2. 初期状態を非表示に揃える
             _resultTextCanvasGroup.alpha = 0f;
@@ -89,13 +100,13 @@ namespace Game.Result
         public void OnClickRetry()
         {
             Debug.Log($"[LoseResultPresenter] Retryボタンが押されました。遷移先想定シーン: {_gameplaySceneName}");
-            // UnityEngine.SceneManagement.SceneManager.LoadScene(_gameplaySceneName);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(_gameplaySceneName);
         }
 
         public void OnClickToTitle()
         {
             Debug.Log($"[LoseResultPresenter] タイトルに戻るボタンが押されました。遷移先想定シーン: {_titleSceneName}");
-            // UnityEngine.SceneManagement.SceneManager.LoadScene(_titleSceneName);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(_titleSceneName);
         }
     }
 }
