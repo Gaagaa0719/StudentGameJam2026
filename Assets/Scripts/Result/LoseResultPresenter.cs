@@ -33,7 +33,7 @@ namespace Game.Result
 
         [Header("ƒV[ƒ“‘JˆÚİ’è")]
         [SerializeField] private string _titleSceneName = "TitleScene";
-        [SerializeField] private string _gameplaySceneName = "SampleScene";
+        [SerializeField] private string _gameplaySceneName = "Game";
 
         private Coroutine _sequenceCoroutine;
 

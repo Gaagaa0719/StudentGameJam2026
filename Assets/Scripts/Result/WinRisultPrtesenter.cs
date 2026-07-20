@@ -55,8 +55,8 @@ namespace Game.Result
         [SerializeField] private float _buttonFadeInDuration = 0.3f;
 
         [Header("ÉVÅ[ÉìëJà⁄ê›íË")]
-        [SerializeField] private string _titleSceneName = "SampleScene";
-        [SerializeField] private string _gameplaySceneName = "SampleScene";
+        [SerializeField] private string _titleSceneName = "TitleScene";
+        [SerializeField] private string _gameplaySceneName = "Game";
 
         private Coroutine _sequenceCoroutine;
         private Vector3 _resultTextStartPos;

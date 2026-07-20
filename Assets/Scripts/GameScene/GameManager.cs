@@ -77,6 +77,21 @@ public class GameManager : MonoBehaviour
             currentPhase = GamePhase.Battle;
             yield return StartCoroutine(nameof(Battle));
 
+            if(enemy.GetDegreePoint() >= enemy.maxDegreePoint)
+            {
+                var data = new ResultSceneData
+                {
+                    ResultType = ResultType.Win,
+                    CharacterName = "リリス",
+                    WinBackgroundImage = WinBackground,
+                    FinalScore = 1000,
+                    Rank = ResultRank.S
+                };
+                ResultSceneLoader.SetData(data);
+                SceneManager.LoadScene("ResultScene");
+                yield break;
+            }
+
             // ミニゲームフェーズ開始
             currentPhase = GamePhase.Minigame;
             IMiniGameManager miniGame = miniGameManager.GetRandomOne();
@@ -84,27 +99,26 @@ public class GameManager : MonoBehaviour
             miniGame.gameObject.SetActive(true);
             yield return StartCoroutine(miniGame.StartGame(player.GetDegreePoint()));
 
-            if(miniGame.GetIsSuccessed()) player.AddDegreePoint(-5);
-            else
-            {
-                if(player.GetDegreePoint() >= player.maxDegreePoint)
-                {
-                    var data = new ResultSceneData
-                    {
-                        ResultType = ResultType.Lose, // または ResultType.Lose
-                        CharacterName = "リリス",
-                        WinBackgroundImage = LoseBackground,  // 勝利時のみ使用。キャラごとに異なる酔いつぶれ画像
-                        FinalScore = 1000,
-                        Rank = ResultRank.S                   // ResultRank.E〜S。ランク算出ロジックは呼び出し側の責務
-                    };
-
-                    ResultSceneLoader.SetData(data);
-                    SceneManager.LoadScene("ResultScene");
-                }
-                else player.AddDegreePoint(20);
-            }
+            bool isSuccessed = miniGame.GetIsSuccessed();
+            if (isSuccessed) player.AddDegreePoint(-5);
+            else player.AddDegreePoint(20);
 
             miniGame.gameObject.SetActive(false);
+
+            if(!isSuccessed && player.GetDegreePoint() >= player.maxDegreePoint)
+            {
+                var data = new ResultSceneData
+                {
+                    ResultType = ResultType.Lose, // または ResultType.Lose
+                    CharacterName = "リリス",
+                    WinBackgroundImage = LoseBackground,  // 勝利時のみ使用。キャラごとに異なる酔いつぶれ画像
+                    FinalScore = 1000,
+                    Rank = ResultRank.S                   // ResultRank.E〜S。ランク算出ロジックは呼び出し側の責務
+                };
+
+                ResultSceneLoader.SetData(data);
+                SceneManager.LoadScene("ResultScene");
+            }
         }
     }
 
