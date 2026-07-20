@@ -7,7 +7,7 @@ public class IMiniGameManager : MonoBehaviour
     protected bool isSuccess = false;
     public CanvasGroup group;
 
-    public IEnumerator StartGame()
+    virtual public IEnumerator StartGame(float DegreePoint)
     {
         isPlaying = true;
 

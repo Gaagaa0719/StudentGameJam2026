@@ -16,9 +16,23 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     public float maxDegreePoint = 0;
 
+    [SerializeField]
+    private Animator animator;
+
+    private int currentFrame = 0;
+
     private void Start()
     {
         DegreePointText.text = $"{currentDegreePoint}/{maxDegreePoint}";
+    }
+
+    private void Update()
+    {
+        currentFrame++;
+        if(currentFrame % (60 * 10) == 0)
+        {
+            animator.SetTrigger("animate");
+        }
     }
 
     public void AddDegreePoint(float value)

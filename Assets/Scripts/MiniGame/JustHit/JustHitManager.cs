@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,12 +34,19 @@ public class JustHitManager : IMiniGameManager
         if (HitArea.Instance != null && HitArea.Instance.IsNoteInside(note))
         {
             audioSource.Play();
-            EndGame(true);
+            Invoke(nameof(EndGame), 0.5f);
         }
         else EndGame(false);
     }
 
-    public void EndGame(bool isSuccess)
+    override public IEnumerator StartGame(float DegreePoint)
+    {
+        //note.GetComponent<NoteMover>().Init();
+        hitArea.Init(DegreePoint);
+        yield return StartCoroutine(base.StartGame(DegreePoint));
+    }
+
+    public void EndGame(bool isSuccess = true)
     {
         this.isSuccess = isSuccess;
 

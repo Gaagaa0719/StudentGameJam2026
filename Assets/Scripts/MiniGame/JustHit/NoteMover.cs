@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEditorInternal.ReorderableList;
 
 public class NoteMover : MonoBehaviour
 {
@@ -13,6 +14,12 @@ public class NoteMover : MonoBehaviour
 
     // 1 = âEÅA-1 = ç∂
     private float direction = 1f;
+
+    public void Init()
+    {
+        transform.localPosition = defaultPos;
+        direction = 1f;
+    }
 
     private void Start()
     {

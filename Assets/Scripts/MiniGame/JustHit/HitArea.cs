@@ -51,9 +51,10 @@ public class HitArea : MonoBehaviour
         RandomizePosition();
     }
 
-    public void Init()
+    public void Init(float degreePoint)
     {
         hitAreaRect = GetComponent<RectTransform>();
+        drunkenness = degreePoint;
         UpdateRange();
     }
 

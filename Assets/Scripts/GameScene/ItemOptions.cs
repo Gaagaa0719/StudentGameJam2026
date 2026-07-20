@@ -19,11 +19,9 @@ public class ItemOptions : MonoBehaviour
     [SerializeField]
     private int _selectableItemCount = 2;
 
-    private List<int> selectedChildlenIndex = new List<int>();
-
     private CanvasGroup group;
 
-    private void Start()
+    private void Awake()
     {
         selectableItemCount = _selectableItemCount;
         group = GetComponent<CanvasGroup>();
@@ -44,7 +42,7 @@ public class ItemOptions : MonoBehaviour
             item.transform.position = holder.transform.position;
         }
 
-        StartCoroutine(nameof(BecomeVisible), animateTime);
+        StartCoroutine(nameof(BecomeVisible));
     }
 
     public IEnumerator EndItemSelection()
@@ -66,7 +64,7 @@ public class ItemOptions : MonoBehaviour
         }
     }
 
-    private IEnumerator BecomeVisible(float animateTime)
+    private IEnumerator BecomeVisible()
     {
         float alphaDelta = 1 / (animateTime * 60);
         for (int i = 0; i < (animateTime * 60); i++)
