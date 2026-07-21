@@ -18,28 +18,36 @@ public class GameManager : MonoBehaviour
 
     public GamePhase currentPhase;
 
-    private GlassManager glassManager;
+    [Header("BGMのオーディオソース")]
+    public AudioSource bgmSource;
 
-    private MiniGameManager miniGameManager;
+    [Header("SEのオーディオソース")]
+    public AudioSource seSource;
 
+    [Header("アイテム選択用UI")]
     [SerializeField]
     private ItemOptions options;
 
+    [Header("敵キャラクタ")]
     [SerializeField]
-    Enemy enemy;
+    private Enemy enemy;
 
+    [Header("プレイヤーキャラクタ")]
     [SerializeField]
-    Player player;
+    private Player player;
 
+    [Header("勝利時の背景画像")]
     [SerializeField]
     private Sprite WinBackground;
 
+    [Header("敗北時の背景画像")]
     [SerializeField]
     private Sprite LoseBackground;
 
     private bool isPlaying = false;
-
     private bool waiting = false;
+    private GlassManager glassManager;
+    private MiniGameManager miniGameManager;
 
     private void Awake()
     {
@@ -122,19 +130,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetWainting (bool value)
-    {
-        waiting = value;
-    }
-
-    // ラウンド終了処理
-    public IEnumerator Battle()
+    // 戦闘処理
+    private IEnumerator Battle()
     {
         currentPhase = GamePhase.Battle;
-        
-        // aaa
+
+        // 互いのグラスを交換
         yield return StartCoroutine(glassManager.SwapGlass());
-        
+
         Glass playerGlass = glassManager.PlayerGlass.GetComponent<Glass>();
         Glass enemyGlass = glassManager.EnemyGlass.GetComponent<Glass>();
 
@@ -143,5 +146,20 @@ public class GameManager : MonoBehaviour
 
         enemy.AddDegreePoint(playerGlass.CalcDegreePoint());
         yield return new WaitForSeconds(1.0f);
+    }
+
+    public void SetWainting (bool value)
+    {
+        waiting = value;
+    }
+
+    static public AudioSource GetBGMSource()
+    {
+        return instance.bgmSource;
+    }
+
+    static public AudioSource GetSESource()
+    {
+        return instance.seSource;
     }
 }

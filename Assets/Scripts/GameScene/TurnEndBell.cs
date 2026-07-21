@@ -7,6 +7,9 @@ public class TurnEndBell : MonoBehaviour
     Animator animator;
 
     [SerializeField]
+    private AudioSource SESource;
+
+    [SerializeField]
     private AudioClip bellSound;
 
     private void Start()
@@ -24,6 +27,7 @@ public class TurnEndBell : MonoBehaviour
             if (!Physics.Raycast(ray, out RaycastHit hit)) return;
             if (hit.collider.gameObject != gameObject) return;
 
+            SESource.PlayOneShot(bellSound);
             manager.SetWainting(false);
             animator.SetTrigger("push");
         }

@@ -979,7 +979,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7f1bbac0328954abeb9bb2175d4581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MyGlassClick
-  bellSound: {fileID: 0}
+  SESource: {fileID: 267229423}
+  bellSound: {fileID: 8300000, guid: cb47c24e7cb60b34d9c7bbc6a31df520, type: 3}
 --- !u!65 &607921818
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1166,6 +1167,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   currentPhase: 0
+  bgmSource: {fileID: 1484434413}
+  seSource: {fileID: 267229423}
   options: {fileID: 1586166379}
   enemy: {fileID: 1461680873}
   player: {fileID: 330585548}

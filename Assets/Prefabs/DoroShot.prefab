@@ -90,6 +90,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ace9cbe6ee1c5439662a73ad646f34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragAndDrop
+  dropIntoItemOptionSound: {fileID: 8300000, guid: fa0a81e1e248e2d4fa113d7f77f55eaf, type: 3}
+  dropIntoItemMenuSound: {fileID: 8300000, guid: 1ad547edb4a760b4ea93df2f8a7e75cf, type: 3}
+  dropIntoTrashSound: {fileID: 0}
+  dropIntoGlassSound: {fileID: 8300000, guid: 1a08108fb96ea714c8286c4f81f19d73, type: 3}
 --- !u!225 &8390413643370921088
 CanvasGroup:
   m_ObjectHideFlags: 0

@@ -5,13 +5,26 @@ using UnityEngine.InputSystem;
 
 public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
-    Camera mainCamera;
-    Vector3 defaultPos = Vector3.zero;
-    Transform defaultParent;
-    CanvasGroup group;
-    GameManager gameManager;
-    ItemMenu menu;
-    Transform dragOverlay;
+    private Camera mainCamera;
+    private Vector3 defaultPos = Vector3.zero;
+    private Transform defaultParent;
+    private CanvasGroup group;
+    private GameManager gameManager;
+    private ItemMenu menu;
+    private Transform dragOverlay;
+    private AudioSource seSource;
+
+    [SerializeField]
+    private AudioClip dropIntoItemOptionSound;
+
+    [SerializeField]
+    private AudioClip dropIntoItemMenuSound;
+
+    [SerializeField]
+    private AudioClip dropIntoTrashSound;
+
+    [SerializeField]
+    private AudioClip dropIntoGlassSound;
 
     private void Start()
     {
@@ -20,6 +33,8 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         gameManager = GameManager.GetInstance();
         group = GetComponent<CanvasGroup>();
         dragOverlay = GameObject.Find("DragOverlay").transform;
+
+        seSource = GameManager.GetSESource();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -71,11 +86,11 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         GameObject hitObject = hit.collider.gameObject;
 
-        if (DropToGlass(hitObject)) return;
+        if (DropIntoGlass(hitObject)) return;
         ResetPos();
     }
 
-    private bool DropToGlass (GameObject hitObject)
+    private bool DropIntoGlass (GameObject hitObject)
     {
         if(!hitObject.CompareTag("PlayerGlass")) return false;
         if(!menu.Contains(gameObject)) return false;
@@ -85,6 +100,7 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         menu.Remove(gameObject);
 
+        seSource.PlayOneShot(dropIntoGlassSound);
         glass.items.Enqueue(gameObject);
         transform.SetParent(null);
         transform.position = new Vector3(0, 0, 1000);
@@ -119,6 +135,7 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         menu.Remove(gameObject);
         ItemOptions.addedItemCount--;
+        seSource.PlayOneShot(dropIntoItemOptionSound);
         gameObject.transform.SetParent(hitObject.transform, false);
         gameObject.transform.localPosition = Vector3.zero;
         transform.localScale = Vector3.one;
@@ -133,12 +150,15 @@ public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (!menu.Add(gameObject)) return false;
 
         ItemOptions.addedItemCount++;
+        seSource.PlayOneShot(dropIntoItemMenuSound);
         return true;
     }
 
     private bool DropToTrash(GameObject hitObject)
     {
         if (!hitObject.CompareTag("Trash")) return false;
+
+        seSource.PlayOneShot(dropIntoTrashSound);
         Destroy(gameObject);
         return true;
     }
