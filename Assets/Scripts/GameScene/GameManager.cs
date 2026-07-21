@@ -108,11 +108,6 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(miniGame.StartGame(player.GetDegreePoint()));
 
             bool isSuccessed = miniGame.GetIsSuccessed();
-            if (isSuccessed) player.AddDegreePoint(-5);
-            else player.AddDegreePoint(20);
-
-            miniGame.gameObject.SetActive(false);
-
             if(!isSuccessed && player.GetDegreePoint() >= player.maxDegreePoint)
             {
                 var data = new ResultSceneData
@@ -127,6 +122,10 @@ public class GameManager : MonoBehaviour
                 ResultSceneLoader.SetData(data);
                 SceneManager.LoadScene("ResultScene");
             }
+
+            if (isSuccessed) player.AddDegreePoint(-5);
+            else player.AddDegreePoint(20);
+            miniGame.gameObject.SetActive(false);
         }
     }
 
