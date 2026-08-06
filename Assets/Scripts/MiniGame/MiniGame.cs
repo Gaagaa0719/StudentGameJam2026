@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 public abstract class MiniGame : MonoBehaviour
 {
+    protected bool isPlaying = false;
     private TaskCompletionSource<bool> GameResultTcs;
 
     /// <summary>
@@ -12,10 +13,14 @@ public abstract class MiniGame : MonoBehaviour
     /// <param name="dp">酔い度</param>
     public Task<bool> StartGameAsync(float dp)
     {
+        // ミニゲームが複数起動しないように
+        if (GameResultTcs != null && !GameResultTcs.Task.IsCompleted) return GameResultTcs.Task;
+
         GameResultTcs = new TaskCompletionSource<bool>();
 
         // ゲーム開始処理
         gameObject.SetActive(true);
+        isPlaying = true;
         OnStart(dp);
 
         return GameResultTcs.Task;
@@ -28,7 +33,7 @@ public abstract class MiniGame : MonoBehaviour
     protected abstract void OnStart(float dp);
 
     /// <summary>
-    /// ミニゲームの終了を終了し、結果を呼び出し元に返す。
+    /// ミニゲームを終了し、結果を呼び出し元に返す。
     /// </summary>
     /// <param name="isSuccess">成功したかどうか</param>
     protected void FinishGame (bool isSuccess)
@@ -37,6 +42,7 @@ public abstract class MiniGame : MonoBehaviour
         if (GameResultTcs == null || GameResultTcs.Task.IsCompleted) return;
 
         // ゲーム終了処理
+        isPlaying = false;
         gameObject.SetActive(false);
         GameResultTcs.SetResult(isSuccess);
     }
