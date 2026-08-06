@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Game.Result;
+using System.Threading.Tasks;
 
 public enum GamePhase
 {
@@ -102,13 +103,17 @@ public class GameManager : MonoBehaviour
 
             // ミニゲームフェーズ開始
             currentPhase = GamePhase.Minigame;
-            IMiniGameManager miniGame = miniGameManager.GetRandomOne();
+            MiniGame miniGame = miniGameManager.GetRandomOne();
 
-            miniGame.gameObject.SetActive(true);
-            yield return StartCoroutine(miniGame.StartGame(player.GetDegreePoint()));
+            // ミニゲームを実行
+            Task<bool> task = miniGame.StartGameAsync(player.GetDegreePoint());
 
-            bool isSuccessed = miniGame.GetIsSuccessed();
-            if(!isSuccessed && player.GetDegreePoint() >= player.maxDegreePoint)
+            // ミニゲームが終了するまで待機
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            // 結果を受け取る
+            bool isSuccessed = task.Result;
+            if (!isSuccessed && player.GetDegreePoint() >= player.maxDegreePoint)
             {
                 var data = new ResultSceneData
                 {
