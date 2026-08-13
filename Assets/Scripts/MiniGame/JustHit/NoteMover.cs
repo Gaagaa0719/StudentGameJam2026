@@ -5,96 +5,172 @@ public class NoteMover : MonoBehaviour
     [Header("移動速度")]
     [SerializeField] private float speed = 10200f;
 
+    [Header("左の黒枠")]
+    [SerializeField] private RectTransform leftWall;
+
+    [Header("右の黒枠")]
+    [SerializeField] private RectTransform rightWall;
+
     private RectTransform noteRect;
-    private RectTransform moveAreaRect;
 
     private JustHitManager manager;
+
     private Vector3 defaultPos;
 
     // 1 = 右、-1 = 左
     private float direction = 1f;
 
-    public void Init()
+    private void Awake()
     {
-        transform.localPosition = defaultPos;
-        direction = 1f;
+        noteRect = GetComponent<RectTransform>();
+
+        defaultPos = transform.localPosition;
     }
 
     private void Start()
     {
         manager = JustHitManager.instance;
-        noteRect = GetComponent<RectTransform>();
+    }
 
-        // NoteMoverの親を移動範囲として使用
-        moveAreaRect = transform.parent.GetComponent<RectTransform>();
+    public void Init()
+    {
+        transform.localPosition = defaultPos;
+
+        direction = 1f;
     }
 
     private void Update()
     {
-        if (!manager.GetIsPlaying()) return;
+        // Managerが存在する場合だけ
+        // Playing状態を確認する
+        if (manager != null)
+        {
+            if (!manager.GetIsPlaying())
+            {
+                return;
+            }
+        }
+
         MoveNote();
         CheckWall();
     }
 
     private void MoveNote()
     {
+        if (noteRect == null)
+        {
+            return;
+        }
+
         noteRect.anchoredPosition +=
-            Vector2.right * direction * speed * Time.deltaTime;
+            Vector2.right *
+            direction *
+            speed *
+            Time.deltaTime;
     }
 
     private void CheckWall()
     {
-        if (moveAreaRect == null)
+        if (leftWall == null)
         {
-            Debug.LogWarning("NoteMoverの親にRectTransformがありません");
+            Debug.LogWarning(
+                "Left Wallに左側の黒枠を設定してください"
+            );
+
             return;
         }
 
-        Rect noteWorldRect = GetWorldRect(noteRect);
-        Rect moveAreaWorldRect = GetWorldRect(moveAreaRect);
+        if (rightWall == null)
+        {
+            Debug.LogWarning(
+                "Right Wallに右側の黒枠を設定してください"
+            );
 
-        // ノーツの右端が移動範囲の右端に到達
-        if (direction > 0f &&
-            noteWorldRect.xMax >= moveAreaWorldRect.xMax)
+            return;
+        }
+
+        Rect noteWorldRect =
+            GetWorldRect(noteRect);
+
+        Rect leftWallRect =
+            GetWorldRect(leftWall);
+
+        Rect rightWallRect =
+            GetWorldRect(rightWall);
+
+        // =========================
+        // 右の黒枠
+        // =========================
+        if (
+            direction > 0f &&
+            noteWorldRect.xMax >= rightWallRect.xMin
+        )
         {
             direction = -1f;
 
-            // 壁の外に出ないように位置を戻す
+            // 黒枠の中にめり込んだ分だけ戻す
             float difference =
-                noteWorldRect.xMax - moveAreaWorldRect.xMax;
+                noteWorldRect.xMax -
+                rightWallRect.xMin;
 
-            noteRect.position -= new Vector3(difference, 0f, 0f);
+            noteRect.position -=
+                new Vector3(
+                    difference,
+                    0f,
+                    0f
+                );
 
-            Debug.Log("右の黒い壁で跳ね返りました");
+            Debug.Log(
+                "右の黒枠で跳ね返りました"
+            );
         }
 
-        // ノーツの左端が移動範囲の左端に到達
-        if (direction < 0f &&
-            noteWorldRect.xMin <= moveAreaWorldRect.xMin)
+        // =========================
+        // 左の黒枠
+        // =========================
+        if (
+            direction < 0f &&
+            noteWorldRect.xMin <= leftWallRect.xMax
+        )
         {
             direction = 1f;
 
-            // 壁の外に出ないように位置を戻す
+            // 黒枠の中にめり込んだ分だけ戻す
             float difference =
-                moveAreaWorldRect.xMin - noteWorldRect.xMin;
+                leftWallRect.xMax -
+                noteWorldRect.xMin;
 
             noteRect.position +=
-                new Vector3(difference, 0f, 0f);
+                new Vector3(
+                    difference,
+                    0f,
+                    0f
+                );
 
-            Debug.Log("左の黒い壁で跳ね返りました");
+            Debug.Log(
+                "左の黒枠で跳ね返りました"
+            );
         }
     }
 
-    private Rect GetWorldRect(RectTransform target)
+    private Rect GetWorldRect(
+        RectTransform target
+    )
     {
-        Vector3[] corners = new Vector3[4];
-        target.GetWorldCorners(corners);
+        Vector3[] corners =
+            new Vector3[4];
+
+        target.GetWorldCorners(
+            corners
+        );
 
         return new Rect(
             corners[0].x,
             corners[0].y,
-            corners[2].x - corners[0].x,
-            corners[2].y - corners[0].y
+            corners[2].x -
+            corners[0].x,
+            corners[2].y -
+            corners[0].y
         );
     }
 }

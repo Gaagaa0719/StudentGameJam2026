@@ -11,19 +11,17 @@ public class HitArea : MonoBehaviour
     [Header("判定エリアの高さ")]
     [SerializeField] private float height = 100f;
 
-    [Header("判定エリアの最低幅")]
-    [SerializeField] private float minimumWidth = 20f;
+    [Header("左側の黒枠")]
+    [SerializeField] private RectTransform leftWall;
 
-    [Header("同じ幅にする当たり判定")]
-    [SerializeField] private RectTransform hitBox;
+    [Header("右側の黒枠")]
+    [SerializeField] private RectTransform rightWall;
 
-    [Header("ランダム配置する範囲")]
-    [SerializeField] private RectTransform randomArea;
-
-    [Header("端から空ける距離")]
-    [SerializeField] private float rightMargin = 10f;
-
+    [Header("中央から離す距離")]
     [SerializeField] private float centerMargin = 10f;
+
+    [Header("右の黒枠から離す距離")]
+    [SerializeField] private float rightMargin = 10f;
 
     private RectTransform hitAreaRect;
 
@@ -31,17 +29,10 @@ public class HitArea : MonoBehaviour
     {
         Instance = this;
 
-        hitAreaRect = GetComponent<RectTransform>();
+        hitAreaRect =
+            GetComponent<RectTransform>();
 
-        // 数式から幅を計算して反映
         UpdateRange();
-
-        // 配置範囲が設定されていなければ親を使用
-        if (randomArea == null && transform.parent != null)
-        {
-            randomArea =
-                transform.parent.GetComponent<RectTransform>();
-        }
     }
 
     private void Start()
@@ -53,8 +44,17 @@ public class HitArea : MonoBehaviour
 
     public void Init(float degreePoint)
     {
-        hitAreaRect = GetComponent<RectTransform>();
         drunkenness = degreePoint;
+
+        UpdateRange();
+
+        Canvas.ForceUpdateCanvases();
+
+        RandomizePosition();
+    }
+
+    private void Update()
+    {
         UpdateRange();
     }
 
@@ -66,7 +66,10 @@ public class HitArea : MonoBehaviour
         }
     }
 
-    // 数式を使って成功判定と当たり判定の幅を変更
+    // ====================================
+    // 酔い度によって黄色い判定エリアを変更
+    // ====================================
+
     private void UpdateRange()
     {
         if (hitAreaRect == null)
@@ -74,56 +77,69 @@ public class HitArea : MonoBehaviour
             return;
         }
 
-        float x = drunkenness;
+        float x =
+            Mathf.Max(
+                drunkenness,
+                0f
+            );
+
         float range;
 
-        // xがマイナスにならないようにする
-        x = Mathf.Max(x, 0f);
-
         // 0以上100未満
-        // 範囲 = 1000 - 5x
         if (x < 100f)
         {
-            range = 1000f - (5f * x);
+            range =
+                1000f -
+                (5f * x);
         }
 
         // 100以上300未満
-        // 範囲 = 700 - 2x
         else if (x < 300f)
         {
-            range = 700f - (2f * x);
+            range =
+                700f -
+                (2f * x);
         }
 
         // 300以上
-        // 範囲 = 20 + 16000 ÷ (2x - 400)
         else
         {
             range =
-                20f + (16000f / ((2f * x) - 400f));
+                20f +
+                (
+                    16000f /
+                    ((2f * x) - 400f)
+                );
         }
 
-        // 幅が20未満にならないようにする
-        range = Mathf.Max(range, minimumWidth);
+        // 最低幅20
+        range =
+            Mathf.Max(
+                range,
+                20f
+            );
 
-        // 成功判定の幅と高さを変更
+        // 黄色い見た目そのものを判定範囲にする
         hitAreaRect.sizeDelta =
-            new Vector2(range, height);
-
-        // 当たり判定も同じ幅と高さに変更
-        if (hitBox != null)
-        {
-            hitBox.sizeDelta =
-                new Vector2(range, height);
-        }
+            new Vector2(
+                range,
+                height
+            );
     }
 
-    // 右半分のランダムな場所へ移動
+    // ====================================
+    // 黄色い判定を右半分へランダム配置
+    // ====================================
+
     public void RandomizePosition()
     {
-        if (randomArea == null)
+        if (
+            leftWall == null ||
+            rightWall == null
+        )
         {
             Debug.LogWarning(
-                "ランダム配置する範囲が設定されていません"
+                "左右の黒枠が設定されていません"
             );
 
             return;
@@ -131,63 +147,54 @@ public class HitArea : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        Rect areaWorldRect =
-            GetWorldRect(randomArea);
+        Rect leftRect =
+            GetWorldRect(leftWall);
 
-        Rect hitWorldRect =
+        Rect rightRect =
+            GetWorldRect(rightWall);
+
+        Rect yellowRect =
             GetWorldRect(hitAreaRect);
 
-        float halfHitWidth =
-            hitWorldRect.width / 2f;
+        // 左右の黒枠の内側
+        float gameLeft =
+            leftRect.xMax;
 
-        // 配置範囲の中央
-        float areaCenterX =
-            areaWorldRect.center.x;
+        float gameRight =
+            rightRect.xMin;
 
-        // 右半分で置ける最小X座標
+        // ゲームエリアの中央
+        float gameCenter =
+            (gameLeft + gameRight) / 2f;
+
+        // 黄色いエリアの半分の幅
+        float halfWidth =
+            yellowRect.width / 2f;
+
+        // 中央より右側
         float minimumX =
-            areaCenterX
-            + halfHitWidth
-            + centerMargin;
+            gameCenter +
+            centerMargin +
+            halfWidth;
 
-        // 右端からはみ出さない最大X座標
+        // 右側の黒枠からはみ出さない
         float maximumX =
-            areaWorldRect.xMax
-            - halfHitWidth
-            - rightMargin;
+            gameRight -
+            rightMargin -
+            halfWidth;
 
-        // 配置できる範囲がない場合
         if (maximumX < minimumX)
         {
             Debug.LogWarning(
-                "右半分の配置範囲が狭いため、右側中央に配置します"
+                "黄色い判定エリアが大きすぎます"
             );
 
-            float fallbackX =
-                areaCenterX
-                + areaWorldRect.width / 4f;
+            float safeX =
+                gameRight -
+                halfWidth -
+                rightMargin;
 
-            Vector3 fallbackPosition =
-                hitAreaRect.position;
-
-            fallbackPosition.x =
-                fallbackX;
-
-            hitAreaRect.position =
-                fallbackPosition;
-
-            // 当たり判定も同じ位置へ移動
-            if (hitBox != null)
-            {
-                Vector3 hitBoxPosition =
-                    hitBox.position;
-
-                hitBoxPosition.x =
-                    fallbackX;
-
-                hitBox.position =
-                    hitBoxPosition;
-            }
+            SetXPosition(safeX);
 
             return;
         }
@@ -198,85 +205,75 @@ public class HitArea : MonoBehaviour
                 maximumX
             );
 
-        Vector3 newPosition =
-            hitAreaRect.position;
-
-        newPosition.x =
-            randomX;
-
-        hitAreaRect.position =
-            newPosition;
-
-        // 当たり判定も同じ位置へ移動
-        if (hitBox != null)
-        {
-            Vector3 hitBoxPosition =
-                hitBox.position;
-
-            hitBoxPosition.x =
-                randomX;
-
-            hitBox.position =
-                hitBoxPosition;
-        }
+        SetXPosition(randomX);
 
         Debug.Log(
-            "HitAreaを右半分に配置しました。X：" + randomX
+            "HitArea配置 X：" +
+            randomX
         );
     }
 
-    // ノーツと判定エリアが重なっているか
-    public bool IsNoteInside(RectTransform noteRect)
+    private void SetXPosition(float x)
+    {
+        Vector3 position =
+            hitAreaRect.position;
+
+        position.x = x;
+
+        hitAreaRect.position =
+            position;
+    }
+
+    // ====================================
+    // 赤いノーツと黄色いエリアの重なり判定
+    // ====================================
+
+    public bool IsNoteInside(
+        RectTransform noteRect
+    )
     {
         if (noteRect == null)
         {
-            Debug.LogWarning(
-                "判定するノーツが見つかりません"
-            );
-
             return false;
         }
 
-        RectTransform judgmentRect =
-            hitAreaRect;
-
-        // 当たり判定が設定されている場合は、
-        // 当たり判定側を使って重なりを調べる
-        if (hitBox != null)
-        {
-            judgmentRect =
-                hitBox;
-        }
-
-        Rect hitAreaWorldRect =
-            GetWorldRect(judgmentRect);
+        // 黄色い成功判定そのものを使う
+        Rect yellowRect =
+            GetWorldRect(
+                hitAreaRect
+            );
 
         Rect noteWorldRect =
-            GetWorldRect(noteRect);
+            GetWorldRect(
+                noteRect
+            );
 
-        return hitAreaWorldRect.Overlaps(
-            noteWorldRect
-        );
+        bool overlapping =
+            yellowRect.Overlaps(
+                noteWorldRect
+            );
+
+        return overlapping;
     }
 
-    private Rect GetWorldRect(RectTransform target)
+    private Rect GetWorldRect(
+        RectTransform target
+    )
     {
         Vector3[] corners =
             new Vector3[4];
 
-        target.GetWorldCorners(corners);
-
-        float rectWidth =
-            corners[2].x - corners[0].x;
-
-        float rectHeight =
-            corners[2].y - corners[0].y;
+        target.GetWorldCorners(
+            corners
+        );
 
         return new Rect(
             corners[0].x,
             corners[0].y,
-            rectWidth,
-            rectHeight
+            corners[2].x -
+            corners[0].x,
+            corners[2].y -
+            corners[0].y
         );
     }
 }
