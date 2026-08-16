@@ -11,14 +11,15 @@ TagManager:
   - Trash
   - ItemMenu
   - ItemOption
+  - Note
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Metaball
   - Water
   - UI
-  - 
+  - Minigame
   - 
   - 
   - 

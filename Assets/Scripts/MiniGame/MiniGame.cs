@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 public abstract class MiniGame : MonoBehaviour
 {
+    [Header("ゲームに対応したUIオブジェクト")]
+    [SerializeField] GameObject UI;
+
     protected bool isPlaying = false;
     private TaskCompletionSource<bool> GameResultTcs;
 
@@ -20,6 +23,7 @@ public abstract class MiniGame : MonoBehaviour
 
         // ゲーム開始処理
         gameObject.SetActive(true);
+        UI.SetActive(true);
         isPlaying = true;
         OnStart(dp);
 
@@ -43,6 +47,7 @@ public abstract class MiniGame : MonoBehaviour
 
         // ゲーム終了処理
         isPlaying = false;
+        UI.SetActive(false);
         gameObject.SetActive(false);
         GameResultTcs.SetResult(isSuccess);
     }
