@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "MiniGame",
+            "id": "6ee09f9a-b4c0-4741-9c63-4ce633f93644",
+            "actions": [
+                {
+                    "name": "MainAction",
+                    "type": "Button",
+                    "id": "71da79ba-6713-4b28-8e2e-be5d403faa36",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ff959ea0-ad8d-4bab-8758-e3730be5d4cc",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MainAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

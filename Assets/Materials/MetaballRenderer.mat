@@ -32,7 +32,7 @@ Material:
     m_Floats:
     - _ColorMask: 15
     - _Cutoff: 0.5
-    - _OutLine: 0.65
+    - _OutLine: 0.75
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -41,7 +41,7 @@ Material:
     - _Stroke: 0.65
     - _UseUIAlphaClip: 0
     m_Colors:
-    - _Color: {r: 0.7075472, g: 0.01668743, b: 0.28580144, a: 1}
+    - _Color: {r: 1, g: 0.18396229, b: 0.40274337, a: 1}
     - _OutLineColor: {r: 0.4811321, g: 0, b: 0.043832615, a: 1}
     - _StrokeColor: {r: 0, g: 0.49832526, b: 0.735849, a: 1}
   m_BuildTextureStacks: []
