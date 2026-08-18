@@ -2317,7 +2317,8 @@ Transform:
   m_LocalPosition: {x: -0.24, y: -2.46, z: 0}
   m_LocalScale: {x: 1.45, y: 1.45, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1891838059}
   m_Father: {fileID: 1240370960}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!68 &1061581585
@@ -2692,7 +2693,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1240370960
 Transform:
   m_ObjectHideFlags: 0
@@ -2725,6 +2726,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BottleTapGame
   UI: {fileID: 5349466142691122886}
+  wineDetection: {fileID: 1891838061}
+  wineBottle: {fileID: 1791319905}
 --- !u!1 &1255985804
 GameObject:
   m_ObjectHideFlags: 0
@@ -2982,7 +2985,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4556ed7226132548886147d1e8b568b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGameManager
-  miniGames: []
+  miniGames:
+  - {fileID: 1240370961}
 --- !u!1001 &1434624019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4422,10 +4426,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8929ab7e03c7c174f80498a68673e819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineBottle
-  returnSpeed: 1
-  tiltOnce: 7.5
+  returnSpeed: 15
+  tiltOnce: 4
   wineFlowThreshold: 10
-  maxTilt: 25
+  maxTilt: 30
   wine: {fileID: 2227041769462039659, guid: 5b4f31d6df01d0041b220be2d34aeb64, type: 3}
   wineSpawnPos: {fileID: 138323629}
 --- !u!1 &1802028106
@@ -4578,6 +4582,95 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1877791247}
   m_CullTransparentMesh: 1
+--- !u!1 &1891838058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1891838059}
+  - component: {fileID: 1891838060}
+  - component: {fileID: 1891838061}
+  m_Layer: 6
+  m_Name: MetaballDetectionLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1891838059
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891838058}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.53, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1061581584}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &1891838060
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891838058}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.8, y: 0}
+  - {x: 0.8, y: 0}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
+--- !u!114 &1891838061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891838058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7b5786a85ae2f4e941f6298296926b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WineDetection
+  clearThreshold: 50
 --- !u!1 &1910967355
 GameObject:
   m_ObjectHideFlags: 0
@@ -5407,7 +5500,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5419321461049689945
 RectTransform:
   m_ObjectHideFlags: 0

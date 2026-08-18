@@ -12,6 +12,7 @@ TagManager:
   - ItemMenu
   - ItemOption
   - Note
+  - Wine
   layers:
   - Default
   - TransparentFX

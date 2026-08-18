@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 947033548910758801}
   m_Layer: 3
   m_Name: WineDrop
-  m_TagString: Untagged
+  m_TagString: Wine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -22,12 +22,18 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
     [Header("ワインのスポーン位置")]
     [SerializeField] private Transform wineSpawnPos;
 
+    private bool isTilting = false;
     private InputActions actions;
 
     private float CurrentTilt
     {
         get{ return transform.rotation.eulerAngles.z; }
         set { transform.rotation = Quaternion.Euler(0, 0, value); }
+    }
+
+    public void Init()
+    {
+        CurrentTilt = 0;
     }
 
     private void Awake()
@@ -52,12 +58,17 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
         if (!context.performed) return;
         if(CurrentTilt >= maxTilt) return;
 
-        StartCoroutine(AddTilt(tiltOnce));
+        StopAllCoroutines();
+        StartCoroutine(Tilt());
     }
 
     public void ReturnOrigin()
     {
+        if (isTilting) return;
+        if (CurrentTilt <= 0) return;
 
+        CurrentTilt -= returnSpeed * Time.deltaTime;
+        if(CurrentTilt < 0 || CurrentTilt > maxTilt) CurrentTilt = 0;
     }
 
     public void SpawnWine()
@@ -68,11 +79,12 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
         if (Time.frameCount % a == 0) Instantiate(wine, wineSpawnPos.position, Quaternion.identity);
     }
 
-    public IEnumerator AddTilt(float tilt)
+    public IEnumerator Tilt()
     {
+        isTilting = true;
         float animateTime = 0.2f;
         float elapssedTime = 0f;
-        Quaternion target = transform.rotation * Quaternion.Euler(0, 0, tilt);
+        Quaternion target = transform.rotation * Quaternion.Euler(0, 0, tiltOnce);
 
         while (elapssedTime < animateTime)
         {
@@ -86,5 +98,6 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
 
             yield return null;
         }
+        isTilting = false;
     }
 }
