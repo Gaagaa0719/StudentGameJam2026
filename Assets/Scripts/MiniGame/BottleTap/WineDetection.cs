@@ -19,7 +19,6 @@ public class WineDetection : MonoBehaviour
 
         if(wineCount >= clearThreshold)
         {
-            Debug.Log("クリア条件を満たしました。");
             BottleTapGame.Instance.EndGame(true);
         }
     }
