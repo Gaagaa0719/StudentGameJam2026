@@ -5197,7 +5197,7 @@ GameObject:
   - component: {fileID: 6198546274569109596}
   - component: {fileID: 23006976145643722}
   m_Layer: 5
-  m_Name: seikou
+  m_Name: success
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5272,7 +5272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b86772410ed117748aab4b7c171ec9ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitArea
-  drunkenness: 69
   height: 100
   leftWall: {fileID: 3661243333721050620}
   rightWall: {fileID: 5958628630808241208}
@@ -5290,7 +5289,7 @@ GameObject:
   - component: {fileID: 8838162546632876946}
   - component: {fileID: 3113712247245716592}
   m_Layer: 5
-  m_Name: "\u6A2A\u68D2\uFF12"
+  m_Name: Right_wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5821,7 +5820,7 @@ GameObject:
   - component: {fileID: 2805941209925993335}
   - component: {fileID: 4681963081901237969}
   m_Layer: 5
-  m_Name: "\u5F53\u305F\u308A\u5224\u5B9A"
+  m_Name: Hit_Judgement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5896,8 +5895,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad001986dc513ee448a63ba0f85ea8d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClickNote
-  audioSource: {fileID: 4681963081901237969}
-  successSE: {fileID: 8300000, guid: b61d288344b21c34bb4944d7e1cb0d76, type: 3}
 --- !u!82 &4681963081901237969
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6007,7 +6004,7 @@ GameObject:
   - component: {fileID: 4633427371591914007}
   - component: {fileID: 613280539759094183}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: Left_wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6169,7 +6166,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa66d36190fd78d4b93d78b34beb1e4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JustHitManager
-  isPlaying: 1
-  group: {fileID: 0}
-  successSound: {fileID: 8300000, guid: b61d288344b21c34bb4944d7e1cb0d76, type: 3}
+  noteMover: {fileID: 0}
+  hitArea: {fileID: 0}
+  audioSource: {fileID: 0}
+  successSE: {fileID: 0}
   successEffectPrefab: {fileID: 3047229690150222027}
+  autoStartForTest: 1
+  testDrunkenness: 50

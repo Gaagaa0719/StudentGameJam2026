@@ -1,77 +1,207 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class RandomLaneNoteManager : MonoBehaviour
+public class RandomLaneNoteManager : MiniGame
 {
-    [Header("ã‚É’u‚¢‚Ä‚ ‚éŒ³‚Ìƒm[ƒc")]
-    public RectTransform noteTemplate;
+    [Header("ä¸Šã«ç½®ã„ã¦ã‚ã‚‹å…ƒã®ãƒãƒ¼ãƒ„")]
+    [SerializeField]
+    private RectTransform noteTemplate;
 
-    [Header("¶‘¤‚ÌŠDF‚Ì¬Œ÷”»’è")]
-    public RectTransform leftHitArea;
+    [Header("å·¦å´ã®ç°è‰²ã®æˆåŠŸåˆ¤å®š")]
+    [SerializeField]
+    private RectTransform leftHitArea;
 
-    [Header("‰E‘¤‚ÌŠDF‚Ì¬Œ÷”»’è")]
-    public RectTransform rightHitArea;
+    [Header("å³å´ã®ç°è‰²ã®æˆåŠŸåˆ¤å®š")]
+    [SerializeField]
+    private RectTransform rightHitArea;
 
-    [Header("¬Œ÷‚ÌŒø‰Ê‰¹")]
-    public AudioSource audioSource;
-    public AudioClip successSE;
+    [Header("æˆåŠŸæ™‚ã®åŠ¹æœéŸ³")]
+    [SerializeField]
+    private AudioSource audioSource;
 
-    [Header("ƒm[ƒcİ’è")]
-    public int totalNoteCount = 6;
-    public float spawnInterval = 1f;
-    public float fallSpeed = 200f;
+    [SerializeField]
+    private AudioClip successSE;
 
-    [Header("”»’è‚ğ’Ê‰ß‚µ‚½Œã‚ÉÁ‚¦‚é‹——£")]
-    public float missDistance = 300f;
+    [Header("æˆåŠŸæ™‚ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ")]
+    [SerializeField]
+    private GameObject successEffectPrefab;
+
+    [Header("ãƒãƒ¼ãƒ„è¨­å®š")]
+    [SerializeField]
+    private int totalNoteCount = 6;
+
+    [SerializeField]
+    private float spawnInterval = 0.3f;
+
+    [Header("åŸºæœ¬ã®è½ä¸‹é€Ÿåº¦")]
+    [SerializeField]
+    private float baseFallSpeed = 200f;
+
+    [Header("é…”ã„åº¦1ã«ã¤ãå¢—ãˆã‚‹é€Ÿåº¦")]
+    [SerializeField]
+    private float speedIncreasePerDrunkenness = 1f;
+
+    [Header("æœ€å¤§è½ä¸‹é€Ÿåº¦")]
+    [SerializeField]
+    private float maxFallSpeed = 800f;
+
+    [Header("ä¸Šç«¯ã‹ã‚‰å°‘ã—ç©ºã‘ã‚‹è·é›¢")]
+    [SerializeField]
+    private float spawnTopMargin = 20f;
+
+    [Header("åˆ¤å®šã‚’é€šéã—ãŸå¾Œã«æ¶ˆãˆã‚‹è·é›¢")]
+    [SerializeField]
+    private float missDistance = 300f;
+
+    [Header("Unityã®å†ç”Ÿãƒœã‚¿ãƒ³ã§ãƒ†ã‚¹ãƒˆ")]
+    [SerializeField]
+    private bool autoStartForTest = true;
+
+    [Header("ãƒ†ã‚¹ãƒˆæ™‚ã®é…”ã„åº¦")]
+    [SerializeField]
+    private float testDrunkenness = 0f;
 
     private RectTransform noteParent;
 
     private List<RectTransform> activeNotes =
         new List<RectTransform>();
 
-    private int clickCount = 0;
-    private int spawnedNoteCount = 0;
+    private RectTransform currentNote;
 
-    // ƒm[ƒc‚ª‚È‚¢ó‘Ô‚Åƒ~ƒXƒNƒŠƒbƒN‚µ‚½‰ñ”
+    private int spawnedNoteCount = 0;
+    private int resolvedNoteCount = 0;
+    private int successCount = 0;
+    private int clickCount = 0;
     private int pendingMissCount = 0;
 
     private bool gameFinished = false;
+    private bool testMode = false;
 
-    void Start()
+    // ç¾åœ¨ã®è½ä¸‹é€Ÿåº¦
+    private float currentFallSpeed;
+
+    private void Awake()
     {
-        Debug.Log("ƒm[ƒcƒQ[ƒ€ŠJn");
+        if (audioSource == null)
+        {
+            audioSource =
+                GetComponent<AudioSource>();
+
+            if (audioSource == null)
+            {
+                audioSource =
+                    gameObject.AddComponent<AudioSource>();
+            }
+        }
+
+        audioSource.playOnAwake = false;
+    }
+
+    private void Start()
+    {
+        FindObjects();
+
+        if (autoStartForTest && !isPlaying)
+        {
+            Debug.Log(
+                "2ã¤ç›®ã®ãƒŸãƒ‹ã‚²ãƒ¼ãƒ ã‚’ãƒ†ã‚¹ãƒˆé–‹å§‹"
+            );
+
+            testMode = true;
+
+            isPlaying = true;
+
+            OnStart(
+                testDrunkenness
+            );
+        }
+    }
+
+    private void Update()
+    {
+        if (!isPlaying)
+        {
+            return;
+        }
+
+        if (gameFinished)
+        {
+            return;
+        }
+
+        MoveNotes();
+
+        CheckMouseClick();
+    }
+
+    // =========================================
+    // MiniGameé–‹å§‹
+    // =========================================
+
+    protected override void OnStart(float dp)
+    {
+        Debug.Log(
+            "2ã¤ç›®ã®ãƒŸãƒ‹ã‚²ãƒ¼ãƒ é–‹å§‹ã€€é…”ã„åº¦ï¼š" + dp
+        );
+
+        StopAllCoroutines();
+
+        ClearAllNotes();
+
+        spawnedNoteCount = 0;
+        resolvedNoteCount = 0;
+        successCount = 0;
+        clickCount = 0;
+        pendingMissCount = 0;
+
+        currentNote = null;
+
+        gameFinished = false;
 
         totalNoteCount = 6;
+
+        FindObjects();
+
+        // =====================================
+        // é…”ã„åº¦ã‹ã‚‰è½ä¸‹é€Ÿåº¦ã‚’è¨ˆç®—
+        // =====================================
+
+        CalculateFallSpeed(
+            dp
+        );
 
         if (noteTemplate == null)
         {
             Debug.LogError(
-                "Note Template‚Éƒm[ƒc‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢"
+                "Note TemplateãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“"
             );
 
-            enabled = false;
+            EndMiniGame(false);
+
             return;
         }
 
         if (leftHitArea == null)
         {
             Debug.LogError(
-                "Left Hit Area‚É¶¬Œ÷”»’è‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢"
+                "Left Hit AreaãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“"
             );
 
-            enabled = false;
+            EndMiniGame(false);
+
             return;
         }
 
         if (rightHitArea == null)
         {
             Debug.LogError(
-                "Right Hit Area‚É‰E¬Œ÷”»’è‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢"
+                "Right Hit AreaãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“"
             );
 
-            enabled = false;
+            EndMiniGame(false);
+
             return;
         }
 
@@ -81,52 +211,179 @@ public class RandomLaneNoteManager : MonoBehaviour
         if (noteParent == null)
         {
             Debug.LogError(
-                "ƒm[ƒc‚Ìe‚ÉRectTransform‚ª‚ ‚è‚Ü‚¹‚ñ"
+                "Note Templateã®è¦ªã«RectTransformãŒã‚ã‚Šã¾ã›ã‚“"
             );
 
-            enabled = false;
+            EndMiniGame(false);
+
             return;
         }
 
-        // Œ³‚Ìƒm[ƒc‚ÍŒ©–{‚È‚Ì‚Å”ñ•\¦
-        noteTemplate.gameObject.SetActive(false);
+        noteTemplate.gameObject.SetActive(
+            false
+        );
 
-        StartCoroutine(SpawnNotes());
+        StartCoroutine(
+            SpawnNotes()
+        );
     }
 
-    void Update()
+    // =========================================
+    // é…”ã„åº¦ã«ã‚ˆã‚‹é€Ÿåº¦è¨ˆç®—
+    // =========================================
+
+    private void CalculateFallSpeed(
+        float dp
+    )
     {
-        if (gameFinished)
+        float drunkenness =
+            Mathf.Max(
+                dp,
+                0f
+            );
+
+        currentFallSpeed =
+            baseFallSpeed +
+            (
+                drunkenness *
+                speedIncreasePerDrunkenness
+            );
+
+        // é€Ÿããªã‚Šã™ããªã„ã‚ˆã†ã«åˆ¶é™
+        currentFallSpeed =
+            Mathf.Min(
+                currentFallSpeed,
+                maxFallSpeed
+            );
+
+        Debug.Log(
+            "ç¾åœ¨ã®ãƒãƒ¼ãƒ„é€Ÿåº¦ï¼š" +
+            currentFallSpeed
+        );
+    }
+
+    private void FindObjects()
+    {
+        if (noteTemplate == null)
         {
-            return;
+            GameObject templateObject =
+                GameObject.Find(
+                    "Note Template"
+                );
+
+            if (templateObject != null)
+            {
+                noteTemplate =
+                    templateObject.GetComponent<
+                        RectTransform
+                    >();
+            }
         }
 
-        MoveNotes();
-        CheckMouseClick();
+        if (leftHitArea == null)
+        {
+            GameObject leftObject =
+                GameObject.Find(
+                    "Left Hit Area"
+                );
+
+            if (leftObject != null)
+            {
+                leftHitArea =
+                    leftObject.GetComponent<
+                        RectTransform
+                    >();
+            }
+        }
+
+        if (rightHitArea == null)
+        {
+            GameObject rightObject =
+                GameObject.Find(
+                    "Right Hit Area"
+                );
+
+            if (rightObject != null)
+            {
+                rightHitArea =
+                    rightObject.GetComponent<
+                        RectTransform
+                    >();
+            }
+        }
     }
 
-    IEnumerator SpawnNotes()
+    private IEnumerator SpawnNotes()
     {
-        for (int i = 0; i < totalNoteCount; i++)
+        for (
+            int noteNumber = 1;
+            noteNumber <= totalNoteCount;
+            noteNumber++
+        )
         {
-            if (gameFinished)
+            if (
+                !isPlaying ||
+                gameFinished
+            )
             {
                 yield break;
             }
 
-            CreateNote(i + 1);
+            if (pendingMissCount > 0)
+            {
+                pendingMissCount--;
+
+                spawnedNoteCount++;
+                resolvedNoteCount++;
+
+                Debug.Log(
+                    noteNumber +
+                    "å€‹ç›®ã¯ãƒŸã‚¹ã‚¯ãƒªãƒƒã‚¯ã«ã‚ˆã‚Šæ¶ˆè²»ã•ã‚Œã¾ã—ãŸ"
+                );
+
+                CheckGameEnd();
+
+                if (gameFinished)
+                {
+                    yield break;
+                }
+
+                yield return new WaitForSeconds(
+                    spawnInterval
+                );
+
+                continue;
+            }
+
+            CreateNote(
+                noteNumber
+            );
+
+            while (
+                currentNote != null &&
+                isPlaying &&
+                !gameFinished
+            )
+            {
+                yield return null;
+            }
+
+            if (gameFinished)
+            {
+                yield break;
+            }
 
             yield return new WaitForSeconds(
                 spawnInterval
             );
         }
 
-        Debug.Log(
-            "6ŒÂ‚·‚×‚Ä‚Ìƒm[ƒc‚ğ¶¬‚µ‚Ü‚µ‚½"
-        );
+        CheckGameEnd();
     }
 
-    void CreateNote(int noteNumber)
+    private void CreateNote(
+        int noteNumber
+    )
     {
         RectTransform newNote =
             Instantiate(
@@ -134,7 +391,9 @@ public class RandomLaneNoteManager : MonoBehaviour
                 noteParent
             );
 
-        newNote.gameObject.SetActive(true);
+        newNote.gameObject.SetActive(
+            true
+        );
 
         bool isLeftLane =
             Random.Range(0, 2) == 0;
@@ -143,7 +402,8 @@ public class RandomLaneNoteManager : MonoBehaviour
 
         if (isLeftLane)
         {
-            selectedHitArea = leftHitArea;
+            selectedHitArea =
+                leftHitArea;
 
             newNote.name =
                 "FallingNote_" +
@@ -152,7 +412,8 @@ public class RandomLaneNoteManager : MonoBehaviour
         }
         else
         {
-            selectedHitArea = rightHitArea;
+            selectedHitArea =
+                rightHitArea;
 
             newNote.name =
                 "FallingNote_" +
@@ -165,63 +426,47 @@ public class RandomLaneNoteManager : MonoBehaviour
                 selectedHitArea.position
             );
 
-        Vector3 startLocalPosition =
-            noteTemplate.localPosition;
+        float halfNoteHeight =
+            newNote.rect.height / 2f;
+
+        float startY =
+            noteParent.rect.yMax -
+            halfNoteHeight -
+            spawnTopMargin;
 
         newNote.localPosition =
             new Vector3(
                 hitAreaLocalPosition.x,
-                startLocalPosition.y,
-                startLocalPosition.z
+                startY,
+                0f
             );
 
-        activeNotes.Add(newNote);
+        activeNotes.Add(
+            newNote
+        );
+
+        currentNote =
+            newNote;
 
         spawnedNoteCount++;
 
         Debug.Log(
-            "¶¬”F" +
+            "ç”Ÿæˆæ•°ï¼š" +
             spawnedNoteCount +
             " / " +
             totalNoteCount
         );
-
-        if (isLeftLane)
-        {
-            Debug.Log(
-                noteNumber +
-                "ŒÂ–ÚF¶‘¤‚Éƒm[ƒc¶¬"
-            );
-        }
-        else
-        {
-            Debug.Log(
-                noteNumber +
-                "ŒÂ–ÚF‰E‘¤‚Éƒm[ƒc¶¬"
-            );
-        }
-
-        // ƒm[ƒc‚ª‚È‚¢‚Æ‚«‚Éƒ~ƒXƒNƒŠƒbƒN‚µ‚Ä‚¢‚½ê‡
-        if (pendingMissCount > 0)
-        {
-            pendingMissCount--;
-
-            Debug.Log(
-                "æ‚Ù‚Ç‚Ìƒ~ƒXƒNƒŠƒbƒN‚É‚æ‚èA‚±‚Ìƒm[ƒc‚ğÁ‚µ‚Ü‚µ‚½"
-            );
-
-            activeNotes.Remove(newNote);
-
-            Destroy(
-                newNote.gameObject
-            );
-        }
     }
 
-    void MoveNotes()
+    // =========================================
+    // ãƒãƒ¼ãƒ„ç§»å‹•
+    // =========================================
+
+    private void MoveNotes()
     {
         for (
-            int i = activeNotes.Count - 1;
+            int i =
+                activeNotes.Count - 1;
             i >= 0;
             i--
         )
@@ -235,9 +480,10 @@ public class RandomLaneNoteManager : MonoBehaviour
                 continue;
             }
 
+            // â˜…é…”ã„åº¦ã‹ã‚‰è¨ˆç®—ã—ãŸé€Ÿåº¦ã‚’ä½¿ç”¨
             note.localPosition +=
                 Vector3.down *
-                fallSpeed *
+                currentFallSpeed *
                 Time.deltaTime;
 
             float hitAreaY =
@@ -248,32 +494,48 @@ public class RandomLaneNoteManager : MonoBehaviour
 
             if (
                 note.position.y <
-                hitAreaY - missDistance
+                hitAreaY -
+                missDistance
             )
             {
                 Debug.Log(
-                    "¸”sFƒm[ƒc‚ğ“¦‚µ‚Ü‚µ‚½"
+                    "å¤±æ•—ï¼šãƒãƒ¼ãƒ„ã‚’é€ƒã—ã¾ã—ãŸ"
                 );
 
-                activeNotes.RemoveAt(i);
-
-                Destroy(
-                    note.gameObject
+                ResolveMissedNote(
+                    note
                 );
+
+                break;
             }
         }
     }
 
-    void CheckMouseClick()
+    private void ResolveMissedNote(
+        RectTransform note
+    )
     {
-        if (Mouse.current == null)
+        activeNotes.Remove(
+            note
+        );
+
+        if (currentNote == note)
         {
-            return;
+            currentNote = null;
         }
 
-        if (
-            clickCount >= totalNoteCount
-        )
+        Destroy(
+            note.gameObject
+        );
+
+        resolvedNoteCount++;
+
+        CheckGameEnd();
+    }
+
+    private void CheckMouseClick()
+    {
+        if (Mouse.current == null)
         {
             return;
         }
@@ -283,26 +545,29 @@ public class RandomLaneNoteManager : MonoBehaviour
                 .wasPressedThisFrame
         )
         {
-            CheckLaneClick(
-                leftHitArea,
-                "Left"
+            ProcessClick(
+                "Left",
+                leftHitArea
             );
+
+            return;
         }
-        else if (
+
+        if (
             Mouse.current.rightButton
                 .wasPressedThisFrame
         )
         {
-            CheckLaneClick(
-                rightHitArea,
-                "Right"
+            ProcessClick(
+                "Right",
+                rightHitArea
             );
         }
     }
 
-    void CheckLaneClick(
-        RectTransform selectedHitArea,
-        string requiredLane
+    private void ProcessClick(
+        string requiredLane,
+        RectTransform selectedHitArea
     )
     {
         if (gameFinished)
@@ -310,115 +575,107 @@ public class RandomLaneNoteManager : MonoBehaviour
             return;
         }
 
-        clickCount++;
-
-        RectTransform successfulNote = null;
-
-        // ”»’è“à‚É‚ ‚é³‚µ‚¢ƒŒ[ƒ“‚Ìƒm[ƒc‚ğ’T‚·
-        for (
-            int i = 0;
-            i < activeNotes.Count;
-            i++
+        if (
+            clickCount >=
+            totalNoteCount
         )
         {
-            RectTransform note =
-                activeNotes[i];
-
-            if (note == null)
-            {
-                continue;
-            }
-
-            bool correctLane =
-                note.name.Contains(
-                    "_" + requiredLane
-                );
-
-            bool overlapping =
-                IsOverlapping(
-                    note,
-                    selectedHitArea
-                );
-
-            if (
-                correctLane &&
-                overlapping
-            )
-            {
-                successfulNote = note;
-                break;
-            }
+            return;
         }
 
-        if (successfulNote != null)
+        clickCount++;
+
+        if (currentNote == null)
         {
-            if (requiredLane == "Left")
-            {
-                Debug.Log(
-                    "¬Œ÷F¶ƒNƒŠƒbƒN"
-                );
-            }
-            else
-            {
-                Debug.Log(
-                    "¬Œ÷F‰EƒNƒŠƒbƒN"
-                );
-            }
+            Debug.Log(
+                "å¤±æ•—ï¼šãƒãƒ¼ãƒ„ãŒãªã„ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§ã‚¯ãƒªãƒƒã‚¯"
+            );
+
+            pendingMissCount++;
+
+            return;
+        }
+
+        RectTransform note =
+            currentNote;
+
+        bool correctLane =
+            note.name.Contains(
+                "_" + requiredLane
+            );
+
+        bool overlapping =
+            IsOverlapping(
+                note,
+                selectedHitArea
+            );
+
+        if (
+            correctLane &&
+            overlapping
+        )
+        {
+            Debug.Log(
+                "æˆåŠŸï¼š" +
+                requiredLane +
+                "ã‚¯ãƒªãƒƒã‚¯"
+            );
+
+            successCount++;
 
             PlaySuccessSE();
 
-            activeNotes.Remove(
-                successfulNote
+            PlaySuccessEffect(
+                note
             );
 
-            Destroy(
-                successfulNote.gameObject
+            ResolveClickedNote(
+                note
             );
         }
         else
         {
-            if (requiredLane == "Left")
-            {
-                Debug.Log(
-                    "¸”sF¶ƒNƒŠƒbƒN"
-                );
-            }
-            else
-            {
-                Debug.Log(
-                    "¸”sF‰EƒNƒŠƒbƒN"
-                );
-            }
+            Debug.Log(
+                "å¤±æ•—ï¼š" +
+                requiredLane +
+                "ã‚¯ãƒªãƒƒã‚¯"
+            );
 
-            RemoveNextNote();
-        }
-
-        Debug.Log(
-            "ƒNƒŠƒbƒN”F" +
-            clickCount +
-            " / " +
-            totalNoteCount
-        );
-
-        if (
-            clickCount >= totalNoteCount
-        )
-        {
-            FinishGame();
+            ResolveClickedNote(
+                note
+            );
         }
     }
 
-    void PlaySuccessSE()
+    private void ResolveClickedNote(
+        RectTransform note
+    )
+    {
+        activeNotes.Remove(
+            note
+        );
+
+        if (currentNote == note)
+        {
+            currentNote = null;
+        }
+
+        Destroy(
+            note.gameObject
+        );
+
+        resolvedNoteCount++;
+
+        CheckGameEnd();
+    }
+
+    private void PlaySuccessSE()
     {
         if (
             audioSource == null ||
             successSE == null
         )
         {
-            Debug.LogWarning(
-                "Audio Source‚Ü‚½‚ÍSuccess SE‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"
-            );
-
             return;
         }
 
@@ -427,74 +684,116 @@ public class RandomLaneNoteManager : MonoBehaviour
         );
     }
 
-    void RemoveNextNote()
+    private void PlaySuccessEffect(
+        RectTransform successfulNote
+    )
     {
-        RectTransform nextNote = null;
-
-        // ˆê”Ô‰º‚É‚ ‚éƒm[ƒc‚ğ’T‚·
-        for (
-            int i = 0;
-            i < activeNotes.Count;
-            i++
+        if (
+            successEffectPrefab == null ||
+            successfulNote == null
         )
         {
-            RectTransform note =
-                activeNotes[i];
-
-            if (note == null)
-            {
-                continue;
-            }
-
-            if (
-                nextNote == null ||
-                note.position.y <
-                nextNote.position.y
-            )
-            {
-                nextNote = note;
-            }
+            return;
         }
 
-        if (nextNote != null)
+        Vector3 effectPosition =
+            successfulNote.position;
+
+        GameObject effect =
+            Instantiate(
+                successEffectPrefab,
+                effectPosition,
+                Quaternion.identity
+            );
+
+        ParticleSystem particle =
+            effect.GetComponent<
+                ParticleSystem
+            >();
+
+        if (particle == null)
         {
-            Debug.Log(
-                "ƒ~ƒXƒNƒŠƒbƒN‚µ‚½‚½‚ßAŸ‚Ìƒm[ƒc‚ğÁ‚µ‚Ü‚µ‚½"
-            );
-
-            activeNotes.Remove(
-                nextNote
-            );
-
-            Destroy(
-                nextNote.gameObject
-            );
+            particle =
+                effect.GetComponentInChildren<
+                    ParticleSystem
+                >();
         }
-        else
+
+        if (particle != null)
         {
-            // Œ»İƒm[ƒc‚ª‚È‚¢ê‡A
-            // Ÿ‚É¶¬‚³‚ê‚½ƒm[ƒc‚ğÁ‚·
-            pendingMissCount++;
-
-            Debug.Log(
-                "ƒ~ƒXƒNƒŠƒbƒN‚µ‚½‚½‚ßAŸ‚É¶¬‚³‚ê‚éƒm[ƒc‚ğÁ‚µ‚Ü‚·"
-            );
+            particle.Clear(true);
+            particle.Play(true);
         }
+
+        Destroy(
+            effect,
+            3f
+        );
     }
 
-    void FinishGame()
+    private void CheckGameEnd()
     {
-        gameFinished = true;
+        if (gameFinished)
+        {
+            return;
+        }
+
+        if (
+            resolvedNoteCount <
+            totalNoteCount
+        )
+        {
+            return;
+        }
+
+        bool finalSuccess =
+            successCount ==
+            totalNoteCount;
+
+        EndMiniGame(
+            finalSuccess
+        );
+    }
+
+    private void EndMiniGame(
+        bool success
+    )
+    {
+        if (gameFinished)
+        {
+            return;
+        }
+
+        gameFinished =
+            true;
 
         StopAllCoroutines();
 
-        Debug.Log(
-            "ƒm[ƒcƒQ[ƒ€I—¹F6‰ñƒNƒŠƒbƒN‚µ‚Ü‚µ‚½"
-        );
+        ClearAllNotes();
 
-        // c‚Á‚½ƒm[ƒc‚ğ‚·‚×‚ÄÁ‚·
+        if (testMode)
+        {
+            isPlaying = false;
+
+            Debug.Log(
+                success
+                    ? "ãƒ†ã‚¹ãƒˆçµæœï¼šæˆåŠŸ"
+                    : "ãƒ†ã‚¹ãƒˆçµæœï¼šå¤±æ•—"
+            );
+
+            return;
+        }
+
+        FinishGame(
+            success
+        );
+    }
+
+    private void ClearAllNotes()
+    {
         for (
-            int i = activeNotes.Count - 1;
+            int i =
+                activeNotes.Count - 1;
             i >= 0;
             i--
         )
@@ -511,13 +810,49 @@ public class RandomLaneNoteManager : MonoBehaviour
         }
 
         activeNotes.Clear();
+
+        currentNote = null;
+
+        if (noteParent != null)
+        {
+            for (
+                int i =
+                    noteParent.childCount - 1;
+                i >= 0;
+                i--
+            )
+            {
+                Transform child =
+                    noteParent.GetChild(i);
+
+                if (
+                    child != null &&
+                    child.name.StartsWith(
+                        "FallingNote_"
+                    )
+                )
+                {
+                    Destroy(
+                        child.gameObject
+                    );
+                }
+            }
+        }
     }
 
-    bool IsOverlapping(
+    private bool IsOverlapping(
         RectTransform note,
         RectTransform hitArea
     )
     {
+        if (
+            note == null ||
+            hitArea == null
+        )
+        {
+            return false;
+        }
+
         Vector3[] noteCorners =
             new Vector3[4];
 

@@ -1,36 +1,51 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class JustHitManager : IMiniGameManager
+public class JustHitManager : MiniGame
 {
-    public static JustHitManager instance;
+    [Header("赤いバー")]
+    [SerializeField]
+    private NoteMover noteMover;
+
+    [Header("黄色い成功判定")]
+    [SerializeField]
+    private HitArea hitArea;
 
     [Header("成功時のSE")]
     [SerializeField]
-    private AudioClip successSound;
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private AudioClip successSE;
 
     [Header("成功時のエフェクト")]
     [SerializeField]
     private GameObject successEffectPrefab;
 
-    private RectTransform note;
-    private HitArea hitArea;
-    private AudioSource audioSource;
+    [Header("Sceneを直接再生するときのテスト設定")]
+    [SerializeField]
+    private bool autoStartForTest = true;
+
+    [SerializeField]
+    private float testDrunkenness = 50f;
+
+    // 1ゲーム中に判定済みか
+    private bool hasJudged = false;
 
     private void Awake()
     {
-        instance = this;
-
-        group = GetComponent<CanvasGroup>();
-
-        audioSource =
-            GetComponent<AudioSource>();
+        FindObjects();
 
         if (audioSource == null)
         {
             audioSource =
-                gameObject.AddComponent<AudioSource>();
+                GetComponent<AudioSource>();
+
+            if (audioSource == null)
+            {
+                audioSource =
+                    gameObject.AddComponent<AudioSource>();
+            }
         }
 
         audioSource.playOnAwake = false;
@@ -39,26 +54,24 @@ public class JustHitManager : IMiniGameManager
     private void Start()
     {
         FindObjects();
-    }
 
-    private void FindObjects()
-    {
-        if (note == null)
+        // ==============================
+        // Sceneを直接Playした場合のテスト用
+        // ==============================
+
+        if (autoStartForTest && !isPlaying)
         {
-            GameObject noteObject =
-                GameObject.Find("NoteMover");
+            Debug.Log(
+                "テストモードでJustHitを開始"
+            );
 
-            if (noteObject != null)
-            {
-                note =
-                    noteObject.GetComponent<RectTransform>();
-            }
-        }
+            // StartGameAsyncを通していないので、
+            // ここでisPlayingをONにする
+            isPlaying = true;
 
-        if (hitArea == null)
-        {
-            hitArea =
-                FindFirstObjectByType<HitArea>();
+            OnStart(
+                testDrunkenness
+            );
         }
     }
 
@@ -69,31 +82,113 @@ public class JustHitManager : IMiniGameManager
             return;
         }
 
+        if (hasJudged)
+        {
+            return;
+        }
+
         if (Mouse.current == null)
         {
             return;
         }
 
+        // 左クリックされた瞬間
         if (
             Mouse.current.leftButton
                 .wasPressedThisFrame
         )
         {
-            CheckHit();
+            Judge();
         }
     }
 
-    private void CheckHit()
+    // =====================================
+    // MiniGame開始
+    // =====================================
+
+    protected override void OnStart(float dp)
     {
+        Debug.Log(
+            "JustHit開始　酔い度：" + dp
+        );
+
+        // 毎回必ず初期化
+        hasJudged = false;
+
         FindObjects();
 
-        if (note == null)
+        // ==============================
+        // 赤いバーを初期化
+        // ==============================
+
+        if (noteMover != null)
+        {
+            noteMover.ResetNote();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "NoteMoverが見つかりません"
+            );
+        }
+
+        // ==============================
+        // 黄色い判定を初期化
+        // ==============================
+
+        if (hitArea != null)
+        {
+            hitArea.Init(dp);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "HitAreaが見つかりません"
+            );
+        }
+    }
+
+    // =====================================
+    // 必要なオブジェクトを探す
+    // =====================================
+
+    private void FindObjects()
+    {
+        if (noteMover == null)
+        {
+            noteMover =
+                FindFirstObjectByType<NoteMover>();
+        }
+
+        if (hitArea == null)
+        {
+            hitArea =
+                FindFirstObjectByType<HitArea>();
+        }
+    }
+
+    // =====================================
+    // クリックしたときの判定
+    // =====================================
+
+    private void Judge()
+    {
+        if (hasJudged)
+        {
+            return;
+        }
+
+        hasJudged = true;
+
+        FindObjects();
+
+        if (noteMover == null)
         {
             Debug.Log(
-                "失敗：NoteMoverが見つかりません"
+                "失敗：NoteMoverがありません"
             );
 
-            EndGame(false);
+            EndMiniGame(false);
 
             return;
         }
@@ -101,143 +196,151 @@ public class JustHitManager : IMiniGameManager
         if (hitArea == null)
         {
             Debug.Log(
-                "失敗：HitAreaが見つかりません"
+                "失敗：HitAreaがありません"
             );
 
-            EndGame(false);
+            EndMiniGame(false);
 
             return;
         }
 
-        bool isOverlapping =
-            hitArea.IsNoteInside(note);
+        RectTransform noteRect =
+            noteMover.GetComponent<RectTransform>();
 
-        if (isOverlapping)
+        if (noteRect == null)
+        {
+            Debug.Log(
+                "失敗：NoteMoverにRectTransformがありません"
+            );
+
+            EndMiniGame(false);
+
+            return;
+        }
+
+        // 赤いバーと黄色い範囲が
+        // 重なっているか確認
+        bool success =
+            hitArea.IsNoteInside(
+                noteRect
+            );
+
+        // ==============================
+        // 成功
+        // ==============================
+
+        if (success)
         {
             Debug.Log("成功");
 
-            PlaySuccessSound();
+            PlaySuccessSE();
 
-            // 成功時だけエフェクト
-            PlaySuccessEffect();
+            PlaySuccessEffect(
+                noteRect.position
+            );
 
-            EndGame(true);
+            EndMiniGame(true);
         }
+
+        // ==============================
+        // 失敗
+        // ==============================
+
         else
         {
             Debug.Log("失敗");
 
-            EndGame(false);
+            EndMiniGame(false);
         }
     }
 
-    private void PlaySuccessSound()
+    // =====================================
+    // 成功SE
+    // =====================================
+
+    private void PlaySuccessSE()
     {
         if (
-            audioSource != null &&
-            successSound != null
+            audioSource == null ||
+            successSE == null
         )
         {
-            audioSource.PlayOneShot(
-                successSound
-            );
+            return;
         }
+
+        audioSource.PlayOneShot(
+            successSE
+        );
     }
 
-    private void PlaySuccessEffect()
+    // =====================================
+    // 成功エフェクト
+    // =====================================
+
+    private void PlaySuccessEffect(
+        Vector3 position
+    )
     {
         if (successEffectPrefab == null)
         {
-            Debug.LogWarning(
-                "Success Effect Prefabが設定されていません"
-            );
-
             return;
         }
 
-        if (note == null)
-        {
-            Debug.LogWarning(
-                "NoteMoverが見つからないためエフェクトを出せません"
-            );
-
-            return;
-        }
-
-        // エフェクトを生成
         GameObject effect =
             Instantiate(
-                successEffectPrefab
+                successEffectPrefab,
+                position,
+                Quaternion.identity
             );
 
-        // ノーツと同じ位置にする
-        effect.transform.position =
-            note.position;
-
-        // ParticleSystemを取得
         ParticleSystem particle =
             effect.GetComponent<ParticleSystem>();
 
         if (particle == null)
         {
             particle =
-                effect.GetComponentInChildren<ParticleSystem>();
+                effect.GetComponentInChildren<
+                    ParticleSystem
+                >();
         }
 
-        // 強制的に再生
         if (particle != null)
         {
             particle.Clear(true);
+
             particle.Play(true);
-
-            Debug.Log(
-                "成功エフェクトを再生しました"
-            );
-        }
-        else
-        {
-            Debug.LogWarning(
-                "PrefabにParticle Systemがありません"
-            );
         }
 
-        // 3秒後に削除
         Destroy(
             effect,
             3f
         );
     }
 
-    public override IEnumerator StartGame(
-        float DegreePoint
+    // =====================================
+    // ゲーム終了
+    // =====================================
+
+    private void EndMiniGame(
+        bool success
     )
     {
-        FindObjects();
+        // 二度目のクリックを禁止
+        isPlaying = false;
 
-        if (hitArea != null)
+        // 赤いバー停止
+        if (noteMover != null)
         {
-            hitArea.Init(
-                DegreePoint
-            );
+            noteMover.StopNote();
         }
 
-        yield return base.StartGame(
-            DegreePoint
+        Debug.Log(
+            success
+                ? "ミニゲーム成功"
+                : "ミニゲーム失敗"
         );
-    }
 
-    public void EndGame(
-        bool isSuccess
-    )
-    {
-        this.isSuccess =
-            isSuccess;
-
-        isPlaying = false;
-    }
-
-    public bool GetIsPlaying()
-    {
-        return isPlaying;
+        // MiniGame側の終了処理を必ず呼ぶ
+        FinishGame(success);
     }
 }
