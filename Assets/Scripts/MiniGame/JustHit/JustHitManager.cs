@@ -281,6 +281,9 @@ public class JustHitManager : MiniGame
         Vector3 position
     )
     {
+        Debug.Log(
+            "成功エフェクト再生"
+        );
         if (successEffectPrefab == null)
         {
             return;

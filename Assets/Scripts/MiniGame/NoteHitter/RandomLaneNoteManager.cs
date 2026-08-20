@@ -28,6 +28,11 @@ public class RandomLaneNoteManager : MiniGame
     [SerializeField]
     private GameObject successEffectPrefab;
 
+    // ★追加
+    [Header("成功エフェクトの大きさ")]
+    [SerializeField]
+    private float successEffectScale = 5f;
+
     [Header("ノーツ設定")]
     [SerializeField]
     private int totalNoteCount = 6;
@@ -79,7 +84,6 @@ public class RandomLaneNoteManager : MiniGame
     private bool gameFinished = false;
     private bool testMode = false;
 
-    // 現在の落下速度
     private float currentFallSpeed;
 
     private void Awake()
@@ -110,7 +114,6 @@ public class RandomLaneNoteManager : MiniGame
             );
 
             testMode = true;
-
             isPlaying = true;
 
             OnStart(
@@ -137,7 +140,7 @@ public class RandomLaneNoteManager : MiniGame
     }
 
     // =========================================
-    // MiniGame開始
+    // ミニゲーム開始
     // =========================================
 
     protected override void OnStart(float dp)
@@ -163,10 +166,6 @@ public class RandomLaneNoteManager : MiniGame
         totalNoteCount = 6;
 
         FindObjects();
-
-        // =====================================
-        // 酔い度から落下速度を計算
-        // =====================================
 
         CalculateFallSpeed(
             dp
@@ -205,8 +204,7 @@ public class RandomLaneNoteManager : MiniGame
             return;
         }
 
-        noteParent =
-            noteTemplate.parent as RectTransform;
+        noteParent = transform as RectTransform;
 
         if (noteParent == null)
         {
@@ -229,12 +227,10 @@ public class RandomLaneNoteManager : MiniGame
     }
 
     // =========================================
-    // 酔い度による速度計算
+    // 酔い度による速度
     // =========================================
 
-    private void CalculateFallSpeed(
-        float dp
-    )
+    private void CalculateFallSpeed(float dp)
     {
         float drunkenness =
             Mathf.Max(
@@ -249,7 +245,6 @@ public class RandomLaneNoteManager : MiniGame
                 speedIncreasePerDrunkenness
             );
 
-        // 速くなりすぎないように制限
         currentFallSpeed =
             Mathf.Min(
                 currentFallSpeed,
@@ -262,56 +257,58 @@ public class RandomLaneNoteManager : MiniGame
         );
     }
 
+    // =========================================
+    // オブジェクトを探す
+    // =========================================
+
     private void FindObjects()
     {
         if (noteTemplate == null)
         {
-            GameObject templateObject =
+            GameObject obj =
                 GameObject.Find(
                     "Note Template"
                 );
 
-            if (templateObject != null)
+            if (obj != null)
             {
                 noteTemplate =
-                    templateObject.GetComponent<
-                        RectTransform
-                    >();
+                    obj.GetComponent<RectTransform>();
             }
         }
 
         if (leftHitArea == null)
         {
-            GameObject leftObject =
+            GameObject obj =
                 GameObject.Find(
                     "Left Hit Area"
                 );
 
-            if (leftObject != null)
+            if (obj != null)
             {
                 leftHitArea =
-                    leftObject.GetComponent<
-                        RectTransform
-                    >();
+                    obj.GetComponent<RectTransform>();
             }
         }
 
         if (rightHitArea == null)
         {
-            GameObject rightObject =
+            GameObject obj =
                 GameObject.Find(
                     "Right Hit Area"
                 );
 
-            if (rightObject != null)
+            if (obj != null)
             {
                 rightHitArea =
-                    rightObject.GetComponent<
-                        RectTransform
-                    >();
+                    obj.GetComponent<RectTransform>();
             }
         }
     }
+
+    // =========================================
+    // ノーツ生成
+    // =========================================
 
     private IEnumerator SpawnNotes()
     {
@@ -321,10 +318,7 @@ public class RandomLaneNoteManager : MiniGame
             noteNumber++
         )
         {
-            if (
-                !isPlaying ||
-                gameFinished
-            )
+            if (!isPlaying || gameFinished)
             {
                 yield break;
             }
@@ -359,6 +353,7 @@ public class RandomLaneNoteManager : MiniGame
                 noteNumber
             );
 
+            // 1個が処理されるまで次を出さない
             while (
                 currentNote != null &&
                 isPlaying &&
@@ -381,9 +376,11 @@ public class RandomLaneNoteManager : MiniGame
         CheckGameEnd();
     }
 
-    private void CreateNote(
-        int noteNumber
-    )
+    // =========================================
+    // 1個のノーツを作る
+    // =========================================
+
+    private void CreateNote(int noteNumber)
     {
         RectTransform newNote =
             Instantiate(
@@ -456,6 +453,21 @@ public class RandomLaneNoteManager : MiniGame
             " / " +
             totalNoteCount
         );
+
+        if (isLeftLane)
+        {
+            Debug.Log(
+                noteNumber +
+                "個目：左レーン"
+            );
+        }
+        else
+        {
+            Debug.Log(
+                noteNumber +
+                "個目：右レーン"
+            );
+        }
     }
 
     // =========================================
@@ -476,11 +488,13 @@ public class RandomLaneNoteManager : MiniGame
 
             if (note == null)
             {
-                activeNotes.RemoveAt(i);
+                activeNotes.RemoveAt(
+                    i
+                );
+
                 continue;
             }
 
-            // ★酔い度から計算した速度を使用
             note.localPosition +=
                 Vector3.down *
                 currentFallSpeed *
@@ -511,6 +525,10 @@ public class RandomLaneNoteManager : MiniGame
         }
     }
 
+    // =========================================
+    // ノーツを逃した
+    // =========================================
+
     private void ResolveMissedNote(
         RectTransform note
     )
@@ -532,6 +550,10 @@ public class RandomLaneNoteManager : MiniGame
 
         CheckGameEnd();
     }
+
+    // =========================================
+    // クリック
+    // =========================================
 
     private void CheckMouseClick()
     {
@@ -565,6 +587,10 @@ public class RandomLaneNoteManager : MiniGame
         }
     }
 
+    // =========================================
+    // クリック判定
+    // =========================================
+
     private void ProcessClick(
         string requiredLane,
         RectTransform selectedHitArea
@@ -575,10 +601,7 @@ public class RandomLaneNoteManager : MiniGame
             return;
         }
 
-        if (
-            clickCount >=
-            totalNoteCount
-        )
+        if (clickCount >= totalNoteCount)
         {
             return;
         }
@@ -592,6 +615,13 @@ public class RandomLaneNoteManager : MiniGame
             );
 
             pendingMissCount++;
+
+            Debug.Log(
+                "クリック数：" +
+                clickCount +
+                " / " +
+                totalNoteCount
+            );
 
             return;
         }
@@ -610,6 +640,10 @@ public class RandomLaneNoteManager : MiniGame
                 selectedHitArea
             );
 
+        // =====================================
+        // 成功
+        // =====================================
+
         if (
             correctLane &&
             overlapping
@@ -625,6 +659,7 @@ public class RandomLaneNoteManager : MiniGame
 
             PlaySuccessSE();
 
+            // ★成功したときだけパーティクル
             PlaySuccessEffect(
                 note
             );
@@ -633,6 +668,11 @@ public class RandomLaneNoteManager : MiniGame
                 note
             );
         }
+
+        // =====================================
+        // 失敗
+        // =====================================
+
         else
         {
             Debug.Log(
@@ -645,7 +685,18 @@ public class RandomLaneNoteManager : MiniGame
                 note
             );
         }
+
+        Debug.Log(
+            "クリック数：" +
+            clickCount +
+            " / " +
+            totalNoteCount
+        );
     }
+
+    // =========================================
+    // ノーツ削除
+    // =========================================
 
     private void ResolveClickedNote(
         RectTransform note
@@ -669,13 +720,27 @@ public class RandomLaneNoteManager : MiniGame
         CheckGameEnd();
     }
 
+    // =========================================
+    // 成功SE
+    // =========================================
+
     private void PlaySuccessSE()
     {
-        if (
-            audioSource == null ||
-            successSE == null
-        )
+        if (audioSource == null)
         {
+            Debug.LogWarning(
+                "Audio Sourceが設定されていません"
+            );
+
+            return;
+        }
+
+        if (successSE == null)
+        {
+            Debug.LogWarning(
+                "Success SEが設定されていません"
+            );
+
             return;
         }
 
@@ -684,21 +749,37 @@ public class RandomLaneNoteManager : MiniGame
         );
     }
 
+    // =========================================
+    // ★成功パーティクル
+    // =========================================
+
     private void PlaySuccessEffect(
         RectTransform successfulNote
     )
     {
-        if (
-            successEffectPrefab == null ||
-            successfulNote == null
-        )
+        if (successEffectPrefab == null)
         {
+            Debug.LogWarning(
+                "Success Effect Prefabが設定されていません"
+            );
+
             return;
         }
 
+        if (successfulNote == null)
+        {
+            Debug.LogWarning(
+                "成功したノーツがありません"
+            );
+
+            return;
+        }
+
+        // ノーツが消える前に位置を保存
         Vector3 effectPosition =
             successfulNote.position;
 
+        // パーティクルを生成
         GameObject effect =
             Instantiate(
                 successEffectPrefab,
@@ -706,6 +787,19 @@ public class RandomLaneNoteManager : MiniGame
                 Quaternion.identity
             );
 
+        // =====================================
+        // ★2つ目のゲームだけ大きくする
+        // =====================================
+
+        effect.transform.localScale =
+            Vector3.one *
+            successEffectScale;
+
+        effect.SetActive(
+            true
+        );
+
+        // Particle Systemを探す
         ParticleSystem particle =
             effect.GetComponent<
                 ParticleSystem
@@ -716,20 +810,54 @@ public class RandomLaneNoteManager : MiniGame
             particle =
                 effect.GetComponentInChildren<
                     ParticleSystem
-                >();
+                >(
+                    true
+                );
         }
 
-        if (particle != null)
+        if (particle == null)
         {
-            particle.Clear(true);
-            particle.Play(true);
+            Debug.LogWarning(
+                "Success Effect Prefabの中にParticle Systemがありません"
+            );
+
+            Destroy(
+                effect
+            );
+
+            return;
         }
 
+        // 一度停止してリセット
+        particle.Stop(
+            true,
+            ParticleSystemStopBehavior
+                .StopEmittingAndClear
+        );
+
+        particle.Clear(
+            true
+        );
+
+        // 再生
+        particle.Play(
+            true
+        );
+
+        Debug.Log(
+            "2つ目：成功パーティクルを再生しました"
+        );
+
+        // 3秒後に削除
         Destroy(
             effect,
             3f
         );
     }
+
+    // =========================================
+    // 終了確認
+    // =========================================
 
     private void CheckGameEnd()
     {
@@ -755,6 +883,10 @@ public class RandomLaneNoteManager : MiniGame
         );
     }
 
+    // =========================================
+    // ミニゲーム終了
+    // =========================================
+
     private void EndMiniGame(
         bool success
     )
@@ -764,12 +896,22 @@ public class RandomLaneNoteManager : MiniGame
             return;
         }
 
-        gameFinished =
-            true;
+        gameFinished = true;
 
         StopAllCoroutines();
 
         ClearAllNotes();
+
+        Debug.Log(
+            "2つ目のミニゲーム終了"
+        );
+
+        Debug.Log(
+            "成功数：" +
+            successCount +
+            " / " +
+            totalNoteCount
+        );
 
         if (testMode)
         {
@@ -788,6 +930,10 @@ public class RandomLaneNoteManager : MiniGame
             success
         );
     }
+
+    // =========================================
+    // 全ノーツ削除
+    // =========================================
 
     private void ClearAllNotes()
     {
@@ -823,7 +969,9 @@ public class RandomLaneNoteManager : MiniGame
             )
             {
                 Transform child =
-                    noteParent.GetChild(i);
+                    noteParent.GetChild(
+                        i
+                    );
 
                 if (
                     child != null &&
@@ -839,6 +987,10 @@ public class RandomLaneNoteManager : MiniGame
             }
         }
     }
+
+    // =========================================
+    // 重なり判定
+    // =========================================
 
     private bool IsOverlapping(
         RectTransform note,
