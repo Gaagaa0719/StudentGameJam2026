@@ -34,6 +34,7 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
     public void Init()
     {
         CurrentTilt = 0;
+        if(actions != null) actions.Enable();
     }
 
     private void Awake()
