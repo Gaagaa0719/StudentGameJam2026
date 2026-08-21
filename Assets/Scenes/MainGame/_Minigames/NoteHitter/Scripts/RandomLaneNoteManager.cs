@@ -7,15 +7,15 @@ public class RandomLaneNoteManager : MiniGame
 {
     [Header("上に置いてある元のノーツ")]
     [SerializeField]
-    private RectTransform noteTemplate;
+    private GameObject noteTemplate;
 
     [Header("左側の灰色の成功判定")]
     [SerializeField]
-    private RectTransform leftHitArea;
+    private Transform leftHitArea;
 
     [Header("右側の灰色の成功判定")]
     [SerializeField]
-    private RectTransform rightHitArea;
+    private Transform rightHitArea;
 
     [Header("成功時の効果音")]
     [SerializeField]
@@ -52,10 +52,6 @@ public class RandomLaneNoteManager : MiniGame
     [SerializeField]
     private float maxFallSpeed = 800f;
 
-    [Header("上端から少し空ける距離")]
-    [SerializeField]
-    private float spawnTopMargin = 20f;
-
     [Header("判定を通過した後に消える距離")]
     [SerializeField]
     private float missDistance = 300f;
@@ -68,12 +64,12 @@ public class RandomLaneNoteManager : MiniGame
     [SerializeField]
     private float testDrunkenness = 0f;
 
-    private RectTransform noteParent;
+    private Transform noteParent;
 
-    private List<RectTransform> activeNotes =
-        new List<RectTransform>();
+    private List<Transform> activeNotes =
+        new List<Transform>();
 
-    private RectTransform currentNote;
+    private Transform currentNote;
 
     private int spawnedNoteCount = 0;
     private int resolvedNoteCount = 0;
@@ -165,8 +161,6 @@ public class RandomLaneNoteManager : MiniGame
 
         totalNoteCount = 6;
 
-        FindObjects();
-
         CalculateFallSpeed(
             dp
         );
@@ -204,7 +198,7 @@ public class RandomLaneNoteManager : MiniGame
             return;
         }
 
-        noteParent = transform as RectTransform;
+        noteParent = transform;
 
         if (noteParent == null)
         {
@@ -273,7 +267,7 @@ public class RandomLaneNoteManager : MiniGame
             if (obj != null)
             {
                 noteTemplate =
-                    obj.GetComponent<RectTransform>();
+                    obj.GetComponent<GameObject>();
             }
         }
 
@@ -382,11 +376,11 @@ public class RandomLaneNoteManager : MiniGame
 
     private void CreateNote(int noteNumber)
     {
-        RectTransform newNote =
+        Transform newNote =
             Instantiate(
                 noteTemplate,
                 noteParent
-            );
+            ).transform;
 
         newNote.gameObject.SetActive(
             true
@@ -395,7 +389,7 @@ public class RandomLaneNoteManager : MiniGame
         bool isLeftLane =
             Random.Range(0, 2) == 0;
 
-        RectTransform selectedHitArea;
+        Transform selectedHitArea;
 
         if (isLeftLane)
         {
@@ -424,12 +418,9 @@ public class RandomLaneNoteManager : MiniGame
             );
 
         float halfNoteHeight =
-            newNote.rect.height / 2f;
+            newNote.localScale.y / 2f;
 
-        float startY =
-            noteParent.rect.yMax -
-            halfNoteHeight -
-            spawnTopMargin;
+        float startY = 6.5f - halfNoteHeight;
 
         newNote.localPosition =
             new Vector3(
@@ -483,7 +474,7 @@ public class RandomLaneNoteManager : MiniGame
             i--
         )
         {
-            RectTransform note =
+            Transform note =
                 activeNotes[i];
 
             if (note == null)
@@ -530,7 +521,7 @@ public class RandomLaneNoteManager : MiniGame
     // =========================================
 
     private void ResolveMissedNote(
-        RectTransform note
+        Transform note
     )
     {
         activeNotes.Remove(
@@ -593,7 +584,7 @@ public class RandomLaneNoteManager : MiniGame
 
     private void ProcessClick(
         string requiredLane,
-        RectTransform selectedHitArea
+        Transform selectedHitArea
     )
     {
         if (gameFinished)
@@ -626,7 +617,7 @@ public class RandomLaneNoteManager : MiniGame
             return;
         }
 
-        RectTransform note =
+        Transform note =
             currentNote;
 
         bool correctLane =
@@ -699,7 +690,7 @@ public class RandomLaneNoteManager : MiniGame
     // =========================================
 
     private void ResolveClickedNote(
-        RectTransform note
+        Transform note
     )
     {
         activeNotes.Remove(
@@ -754,7 +745,7 @@ public class RandomLaneNoteManager : MiniGame
     // =========================================
 
     private void PlaySuccessEffect(
-        RectTransform successfulNote
+        Transform successfulNote
     )
     {
         if (successEffectPrefab == null)
@@ -944,7 +935,7 @@ public class RandomLaneNoteManager : MiniGame
             i--
         )
         {
-            RectTransform note =
+            Transform note =
                 activeNotes[i];
 
             if (note != null)
@@ -993,8 +984,8 @@ public class RandomLaneNoteManager : MiniGame
     // =========================================
 
     private bool IsOverlapping(
-        RectTransform note,
-        RectTransform hitArea
+        Transform note,
+        Transform hitArea
     )
     {
         if (
@@ -1005,38 +996,20 @@ public class RandomLaneNoteManager : MiniGame
             return false;
         }
 
-        Vector3[] noteCorners =
-            new Vector3[4];
-
-        Vector3[] hitAreaCorners =
-            new Vector3[4];
-
-        note.GetWorldCorners(
-            noteCorners
-        );
-
-        hitArea.GetWorldCorners(
-            hitAreaCorners
-        );
-
         Rect noteRect =
             new Rect(
-                noteCorners[0].x,
-                noteCorners[0].y,
-                noteCorners[2].x -
-                noteCorners[0].x,
-                noteCorners[2].y -
-                noteCorners[0].y
+                note.localPosition.x - 1,
+                note.localPosition.y - 1,
+                2,
+                2
             );
 
         Rect hitAreaRect =
             new Rect(
-                hitAreaCorners[0].x,
-                hitAreaCorners[0].y,
-                hitAreaCorners[2].x -
-                hitAreaCorners[0].x,
-                hitAreaCorners[2].y -
-                hitAreaCorners[0].y
+                hitArea.localPosition.x - 1,
+                hitArea.localPosition.y - 1,
+                2,
+                2
             );
 
         return noteRect.Overlaps(
