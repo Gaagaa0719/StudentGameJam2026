@@ -23,6 +23,7 @@ namespace Sakemottekoi.Minigame.JustTimerStop
         private void Awake()
         {
             digitRenderers = GetComponentsInChildren<Renderer>();
+            digitRenderers = System.Array.FindAll(digitRenderers, r => r.gameObject != this.gameObject);
         }
 
         public void Init()
