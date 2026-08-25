@@ -32,7 +32,7 @@ namespace Sakemottekoi.Minigame.JustTimerStop
             oneSecond.UpdateDisplay(0);
             firstDecimal.UpdateDisplay(0);
             secondDecimal.UpdateDisplay(0);
-            HideDigits();
+            StartCoroutine(HideDigits());
         }
 
         private void Update()
