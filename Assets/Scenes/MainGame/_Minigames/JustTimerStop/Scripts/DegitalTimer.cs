@@ -53,6 +53,17 @@ namespace Sakemottekoi.Minigame.JustTimerStop
             secondDecimal.UpdateDisplay(secondDecimalValue);
         }
 
+        public void Stop()
+        {
+            isStoped = true;
+            foreach (var renderer in digitRenderers)
+            {
+                var color = renderer.material.color;
+                color.a = 1f;
+                renderer.material.color = color;
+            }
+        }
+
         private IEnumerator HideDigits()
         {
             while (currentTime < visibleDuration)
