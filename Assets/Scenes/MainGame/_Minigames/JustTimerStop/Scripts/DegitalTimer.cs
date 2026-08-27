@@ -54,7 +54,10 @@ namespace Sakemottekoi.Minigame.JustTimerStop
             secondDecimal.UpdateDisplay(secondDecimalValue);
         }
 
-        public void Stop()
+        /// <summary>
+        /// タイマーを停止し、その時までに測定した時間を返します。
+        /// </summary>
+        public float Stop()
         {
             isStoped = true;
             foreach (var renderer in digitRenderers)
@@ -63,6 +66,8 @@ namespace Sakemottekoi.Minigame.JustTimerStop
                 color.a = 1f;
                 renderer.material.color = color;
             }
+
+            return currentTime;
         }
 
         private IEnumerator HideDigits()
