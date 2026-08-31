@@ -1,172 +1,175 @@
-using System.Collections.Generic;
+Ôªøusing System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+namespace Sakemottekoi.Maingame
 {
-    private Camera mainCamera;
-    private Vector3 defaultPos = Vector3.zero;
-    private Transform defaultParent;
-    private CanvasGroup group;
-    private GameManager gameManager;
-    private ItemMenu menu;
-    private Transform dragOverlay;
-    private AudioSource seSource;
-
-    [SerializeField]
-    private AudioClip dropIntoItemOptionSound;
-
-    [SerializeField]
-    private AudioClip dropIntoItemMenuSound;
-
-    [SerializeField]
-    private AudioClip dropIntoTrashSound;
-
-    [SerializeField]
-    private AudioClip dropIntoGlassSound;
-
-    private void Start()
+    public class DragAndDrop : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
-        menu = ItemMenu.instance;
-        mainCamera = Camera.main;
-        gameManager = GameManager.GetInstance();
-        group = GetComponent<CanvasGroup>();
-        dragOverlay = GameObject.Find("DragOverlay").transform;
+        private Camera mainCamera;
+        private Vector3 defaultPos = Vector3.zero;
+        private Transform defaultParent;
+        private CanvasGroup group;
+        private GameManager gameManager;
+        private ItemMenu menu;
+        private Transform dragOverlay;
+        private AudioSource seSource;
 
-        seSource = GameManager.GetSESource();
-    }
+        [SerializeField]
+        private AudioClip dropIntoItemOptionSound;
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        group.blocksRaycasts = false;
-        defaultPos = transform.position;
-        defaultParent = transform.parent;
-        transform.SetParent(dragOverlay, true);
-    }
+        [SerializeField]
+        private AudioClip dropIntoItemMenuSound;
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        transform.position = eventData.position;
-    }
+        [SerializeField]
+        private AudioClip dropIntoTrashSound;
 
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        switch (gameManager.currentPhase)
+        [SerializeField]
+        private AudioClip dropIntoGlassSound;
+
+        private void Start()
         {
-            case GamePhase.Prepare:
-                DropTo3D();
-                break;
+            menu = ItemMenu.instance;
+            mainCamera = Camera.main;
+            gameManager = GameManager.Instance;
+            group = GetComponent<CanvasGroup>();
+            dragOverlay = GameObject.Find("DragOverlay").transform;
 
-            case GamePhase.ItemSelection:
-                DropTo2D(eventData);
-                break;
+            seSource = GameManager.GetSESource();
+        }
 
-            default:
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            group.blocksRaycasts = false;
+            defaultPos = transform.position;
+            defaultParent = transform.parent;
+            transform.SetParent(dragOverlay, true);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            transform.position = eventData.position;
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            //switch (gameManager.currentPhase)
+            //{
+            //    case GamePhase.Prepare:
+            //        DropTo3D();
+            //        break;
+
+            //    case GamePhase.ItemSelection:
+            //        DropTo2D(eventData);
+            //        break;
+
+            //    default:
+            //        ResetPos();
+            //        break;
+            //}
+
+            group.blocksRaycasts = true;
+        }
+
+        private void DropTo3D()
+        {
+            // 1. „Éû„Ç¶„Çπ„ÅÆ„Çπ„ÇØ„É™„Éº„É≥Â∫ßÊ®ô„Åã„Çâ„ÄÅ3DÁ©∫Èñì„Å´Âêë„Åã„ÅÜ„É¨„Ç§ÔºàÂÖâÁ∑öÔºâ„ÇíÁîüÊàê
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+            RaycastHit hit;
+
+            // 2. „É¨„Ç§„ÇíÈ£õ„Å∞„Åó„Å¶„ÄÅ„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà„ÅÆ„Ç≥„É©„Ç§„ÉÄ„Éº„Å´Ë°ùÁ™Å„Åô„Çã„ÅãÂà§ÂÆöÔºàË∑ùÈõ¢„ÅØÁÑ°ÈôêÂ§ß: Mathf.InfinityÔºâ
+            if (!Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
                 ResetPos();
-                break;
-        }
+                return;
+            }
 
-        group.blocksRaycasts = true;
-    }
+            GameObject hitObject = hit.collider.gameObject;
 
-    private void DropTo3D()
-    {
-        // 1. É}ÉEÉXÇÃÉXÉNÉäÅ[Éìç¿ïWÇ©ÇÁÅA3DãÛä‘Ç…å¸Ç©Ç§ÉåÉCÅiåıê¸ÅjÇê∂ê¨
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
-
-        // 2. ÉåÉCÇîÚÇŒÇµÇƒÅAÉIÉuÉWÉFÉNÉgÇÃÉRÉâÉCÉ_Å[Ç…è’ìÀÇ∑ÇÈÇ©îªíËÅiãóó£ÇÕñ≥å¿ëÂ: Mathf.InfinityÅj
-        if (!Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
+            if (DropIntoGlass(hitObject)) return;
             ResetPos();
-            return;
         }
 
-        GameObject hitObject = hit.collider.gameObject;
-
-        if (DropIntoGlass(hitObject)) return;
-        ResetPos();
-    }
-
-    private bool DropIntoGlass (GameObject hitObject)
-    {
-        if(!hitObject.CompareTag("PlayerGlass")) return false;
-        if(!menu.Contains(gameObject)) return false;
-
-        Glass glass = hitObject.GetComponent<Glass>();
-        if (glass == null) return false;
-
-        menu.Remove(gameObject);
-
-        seSource.PlayOneShot(dropIntoGlassSound);
-        glass.items.Enqueue(gameObject);
-        transform.SetParent(null);
-        transform.position = new Vector3(0, 0, 1000);
-        return true;
-    }
-
-    private void DropTo2D(PointerEventData eventData)
-    {
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, results);
-
-        if (results.Count == 0)
+        private bool DropIntoGlass(GameObject hitObject)
         {
-            Debug.Log("ÉhÉçÉbÉvÇµÇΩà íuÇ…UIÇÕÇ†ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩÅB");
-            ResetPos();
-            return;
+            if (!hitObject.CompareTag("PlayerGlass")) return false;
+            if (!menu.Contains(gameObject)) return false;
+
+            Glass glass = hitObject.GetComponent<Glass>();
+            if (glass == null) return false;
+
+            menu.Remove(gameObject);
+
+            seSource.PlayOneShot(dropIntoGlassSound);
+            glass.items.Enqueue(gameObject);
+            transform.SetParent(null);
+            transform.position = new Vector3(0, 0, 1000);
+            return true;
         }
-        GameObject droppedOn = results[0].gameObject;
 
-        if (DropToItemMenu(droppedOn)) return;
-        if (DropToTrash(droppedOn)) return;
-        if (DropToItemOption(droppedOn)) return;
+        private void DropTo2D(PointerEventData eventData)
+        {
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
 
-        ResetPos();
-    }
+            if (results.Count == 0)
+            {
+                Debug.Log("„Éâ„É≠„ÉÉ„Éó„Åó„Åü‰ΩçÁΩÆ„Å´UI„ÅØ„ÅÇ„Çä„Åæ„Åõ„Çì„Åß„Åó„Åü„ÄÇ");
+                ResetPos();
+                return;
+            }
+            GameObject droppedOn = results[0].gameObject;
 
-    private bool DropToItemOption(GameObject hitObject)
-    {
-        if (!menu.Contains(gameObject)) return false;
-        if (hitObject.transform.childCount > 2) return false;
-        if (!hitObject.CompareTag("ItemOption")) return false;
+            if (DropToItemMenu(droppedOn)) return;
+            if (DropToTrash(droppedOn)) return;
+            if (DropToItemOption(droppedOn)) return;
 
-        menu.Remove(gameObject);
-        ItemOptions.addedItemCount--;
-        seSource.PlayOneShot(dropIntoItemOptionSound);
-        gameObject.transform.SetParent(hitObject.transform, false);
-        gameObject.transform.localPosition = Vector3.zero;
-        transform.localScale = Vector3.one;
-        return true;
-    }
+            ResetPos();
+        }
 
-    private bool DropToItemMenu(GameObject hitObject)
-    {
-        if (ItemOptions.selectableItemCount <= ItemOptions.addedItemCount) return false;
-        if (menu.Contains(gameObject)) return false;
-        if (!hitObject.CompareTag("ItemMenu")) return false;
-        if (!menu.Add(gameObject)) return false;
+        private bool DropToItemOption(GameObject hitObject)
+        {
+            if (!menu.Contains(gameObject)) return false;
+            if (hitObject.transform.childCount > 2) return false;
+            if (!hitObject.CompareTag("ItemOption")) return false;
 
-        ItemOptions.addedItemCount++;
-        seSource.PlayOneShot(dropIntoItemMenuSound);
-        return true;
-    }
+            menu.Remove(gameObject);
+            ItemOptions.addedItemCount--;
+            seSource.PlayOneShot(dropIntoItemOptionSound);
+            gameObject.transform.SetParent(hitObject.transform, false);
+            gameObject.transform.localPosition = Vector3.zero;
+            transform.localScale = Vector3.one;
+            return true;
+        }
 
-    private bool DropToTrash(GameObject hitObject)
-    {
-        if (!hitObject.CompareTag("Trash")) return false;
+        private bool DropToItemMenu(GameObject hitObject)
+        {
+            if (ItemOptions.selectableItemCount <= ItemOptions.addedItemCount) return false;
+            if (menu.Contains(gameObject)) return false;
+            if (!hitObject.CompareTag("ItemMenu")) return false;
+            if (!menu.Add(gameObject)) return false;
 
-        seSource.PlayOneShot(dropIntoTrashSound);
-        Destroy(gameObject);
-        return true;
-    }
+            ItemOptions.addedItemCount++;
+            seSource.PlayOneShot(dropIntoItemMenuSound);
+            return true;
+        }
 
-    private void ResetPos()
-    {
-        transform.SetParent(defaultParent, false);
-        transform.position = defaultPos;
-        transform.localScale = Vector3.one;
+        private bool DropToTrash(GameObject hitObject)
+        {
+            if (!hitObject.CompareTag("Trash")) return false;
+
+            seSource.PlayOneShot(dropIntoTrashSound);
+            Destroy(gameObject);
+            return true;
+        }
+
+        private void ResetPos()
+        {
+            transform.SetParent(defaultParent, false);
+            transform.position = defaultPos;
+            transform.localScale = Vector3.one;
+        }
     }
 }

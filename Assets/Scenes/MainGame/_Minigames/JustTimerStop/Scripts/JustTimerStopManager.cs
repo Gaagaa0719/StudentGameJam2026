@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Sakemottekoi.Maingame;
 
 namespace Sakemottekoi.Minigame.JustTimerStop
 {
