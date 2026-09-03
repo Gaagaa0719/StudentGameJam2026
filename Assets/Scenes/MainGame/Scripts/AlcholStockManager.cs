@@ -1,38 +1,42 @@
 ﻿using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 
 namespace Sakemottekoi.Maingame
 {
     public enum AlcholType
     {
-        High,
-        Midium,
-        Low
+        SuperHigh = 0,
+        High = 1,
+        Midium = 2,
+        Low = 3
     }
 
     [System.Serializable]
     public class AlcholStockData
     {
-        public int High = 0;
-        public int Midium = 0;
-        public int Low = 0;
+        [EnumIndex(typeof(AlcholType))]
+        public int[] stocks = new int[4];
 
-        public AlcholStockData(int high, int midium, int low)
+        public int this[AlcholType type]
         {
-            High = high;
-            Midium = midium;
-            Low = low;
+            get => stocks[(int)type];
+            set => stocks[(int)type] = value;
         }
 
         public static AlcholStockData operator +(AlcholStockData data1, AlcholStockData data2)
         {
-            return new AlcholStockData(data1.High + data2.High, data1.Midium + data2.Midium, data1.Low + data2.Low);
+            AlcholStockData result = new();
+            for (int i = 0; i < result.stocks.Length; i ++)
+            {
+                result.stocks[i] = data1.stocks[i] + data1.stocks[i];
+            }
+            return result;
         }
     }
 
     [System.Serializable]
-    public class ReplenishmentEntry
+    public class RestockEntry
     {
         public int amount;
         public List<AlcholStockData> alcholStocks;
@@ -43,18 +47,15 @@ namespace Sakemottekoi.Maingame
         public static AlcholStockManager Instance { private set; get; }
 
         [Header("在庫補充の際に選ばれる候補")]
-        [SerializeField] private List<ReplenishmentEntry> candidates = new();
+        [SerializeField] private List<RestockEntry> candidates = new();
 
-        [Header("度数の高い酒")]
-        [SerializeField] private GameObject HighAlcholGlass;
+        [Header("お酒用のプレファブ")]
+        [SerializeField] private AlcholGlass alcholPrefab;
 
-        [Header("度数普通くらいの酒")]
-        [SerializeField] private GameObject MidiumAlcholGlass;
+        [Header("酔い度の上昇量")]
+        [SerializeField] private AlcholStockData alcholContent = new();
 
-        [Header("度数の低い酒")]
-        [SerializeField] private GameObject LowAlcholGlass;
-
-        private AlcholStockData alcholStock = new(0, 0, 0);
+        private AlcholStockData alcholStock = new();
 
 
         private void Awake()
@@ -65,9 +66,9 @@ namespace Sakemottekoi.Maingame
         /// <summary>
         /// 在庫を補充する。
         /// </summary>
-        public void ReplenishStock(int amount)
+        public void Restock(int amount)
         {
-            ReplenishmentEntry entry = candidates.Find(v => v.amount == amount)
+            RestockEntry entry = candidates.Find(v => v.amount == amount)
                 ?? throw new System.Exception("求められた数量に一致する候補がありません。");
 
             AlcholStockData stockData = entry.alcholStocks[Random.Range(0, entry.alcholStocks.Count)];
@@ -81,33 +82,36 @@ namespace Sakemottekoi.Maingame
         {
             int r = Random.Range(0, GetStockCount());
 
-            if(r < alcholStock.High)
+            if (r < alcholStock[AlcholType.SuperHigh])
             {
-                alcholStock.High--;
+                alcholStock[AlcholType.SuperHigh]--;
+                return AlcholType.SuperHigh;
+            }
+            r -= alcholStock[AlcholType.SuperHigh];
+
+            if (r < alcholStock[AlcholType.High])
+            {
+                alcholStock[AlcholType.High]--;
                 return AlcholType.High;
             }
-            r -= alcholStock.High;
+            r -= alcholStock[AlcholType.High];
 
-            if(r < alcholStock.Midium)
+            if (r < alcholStock[AlcholType.Midium])
             {
-                alcholStock.Midium--;
+                alcholStock[AlcholType.Midium]--;
                 return AlcholType.Midium;
             }
-            r -= alcholStock.Midium;
+            r -= alcholStock[AlcholType.Midium];
 
-            alcholStock.Low--;
+            alcholStock[AlcholType.Low]--;
             return AlcholType.Low;
         }
 
         public GameObject InstantiateAlchol(AlcholType type)
         {
-            return type switch
-            {
-                AlcholType.High => Instantiate(HighAlcholGlass),
-                AlcholType.Midium => Instantiate(MidiumAlcholGlass),
-                AlcholType.Low => Instantiate(LowAlcholGlass),
-                _ => throw new System.NotImplementedException()
-            };
+            AlcholGlass alcholObj = Instantiate(alcholPrefab);
+            alcholObj.content = alcholContent[type];
+            return alcholObj.gameObject;
         }
 
         /// <summary>
@@ -134,7 +138,7 @@ namespace Sakemottekoi.Maingame
         /// </summary>
         public int GetStockCount()
         {
-            return alcholStock.High + alcholStock.Midium + alcholStock.Low;
+            return alcholStock.stocks.Sum();
         }
     }
 }
