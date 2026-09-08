@@ -1,19 +1,23 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using UnityEngine;
 
-public enum GamePhase
-{
-    ItemSelection,
-    Minigame,
-    Prepare,
-    Battle
-}
 
 namespace Sakemottekoi.Maingame
 {
+    public enum GamePhase
+    {
+        Prepare,
+        ItemSelection,
+        Battle,
+        Minigame,
+    }
+
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { private set; get; }
+
+        public Phase PreparePhase = new Phase();
 
         public GamePhase CurrentPhase { private set; get; }
 
@@ -32,7 +36,10 @@ namespace Sakemottekoi.Maingame
 
         private void Start()
         {
-            StartCoroutine(StartGameLoop());
+            AlcholStockManager.Instance.Restock(3);
+
+
+            //StartCoroutine(StartGameLoop());
         }
 
         private IEnumerator StartGameLoop()
@@ -40,7 +47,7 @@ namespace Sakemottekoi.Maingame
             isPlaying = true;
             while (isPlaying)
             {
-                AlcholStockManager.Instance.ReplenishStock();
+                AlcholStockManager.Instance.Restock(3);
                 yield return null;
             }
         }

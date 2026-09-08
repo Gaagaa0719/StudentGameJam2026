@@ -140,5 +140,13 @@ namespace Sakemottekoi.Maingame
         {
             return alcholStock.stocks.Sum();
         }
+
+        /// <summary>
+        /// 現在の在庫データをクリアします。
+        /// </summary>
+        public void Clear()
+        {
+            alcholStock = new();
+        }
     }
 }
