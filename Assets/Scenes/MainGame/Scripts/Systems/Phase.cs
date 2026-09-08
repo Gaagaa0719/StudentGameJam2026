@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assets.Scenes.MainGame;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Sakemottekoi.Maingame
@@ -130,17 +132,29 @@ namespace Sakemottekoi.Maingame
             isDirty = false;
         }
 
-        public void Run()
+        public IEnumerator Run()
         {
+            isRunning = true;
             if (isDirty) Sort();
-            foreach (var system in systemList)
-            {
-                system.Execute();
-            }
 
-            // 一度きりの処理をクリア
-            var removeCount = systemList.RemoveAll((v) => v.IsOneshot);
-            if (removeCount != 0) isDirty = true;
+            try
+            {
+
+                foreach (var system in systemList)
+                {
+                    system.Execute();
+
+                    yield return VisualQueue.PlayAll();
+                }
+
+                // 一度きりの処理をクリア
+                var removeCount = systemList.RemoveAll((v) => v.IsOneShot);
+                if (removeCount != 0) isDirty = true;
+            }
+            finally
+            {
+                isRunning = false;
+            }
         }
     }
 }
