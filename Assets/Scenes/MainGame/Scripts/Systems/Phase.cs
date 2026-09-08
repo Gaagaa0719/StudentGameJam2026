@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 
 namespace Sakemottekoi.Maingame
 {
@@ -18,7 +16,7 @@ namespace Sakemottekoi.Maingame
         }
 
         // 外部から動的に処理を追加する用の関数。
-        public void Add(params GameSystem[] systems)
+        public void Add(IEnumerable<GameSystem> systems)
         {
             if (isRunning) throw new Exception("フェーズの処理が走っている最中に追加を試みました。");
             systemList.AddRange(systems);
@@ -124,7 +122,7 @@ namespace Sakemottekoi.Maingame
             // 4. 循環参照の検知 (AがBを待ち、BがAを待っているとソートされないまま残る)
             if (sortedList.Count != systemList.Count)
             {
-                throw new Exception("順序破綻: System間の依存関係に循環参照（デッドロック）が存在します。");
+                throw new Exception("順序破綻: System間の依存関係に循環参照が存在します。");
             }
 
             // ソート成功
@@ -139,6 +137,10 @@ namespace Sakemottekoi.Maingame
             {
                 system.Execute();
             }
+
+            // 一度きりの処理をクリア
+            var removeCount = systemList.RemoveAll((v) => v.IsOneshot);
+            if (removeCount != 0) isDirty = true;
         }
     }
 }
