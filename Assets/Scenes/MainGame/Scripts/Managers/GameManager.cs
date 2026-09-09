@@ -9,6 +9,7 @@ namespace Sakemottekoi.MainGame
     {
         Prepare,
         ItemSelection,
+        AlcholSelection,
         Battle,
         Minigame,
     }
@@ -17,7 +18,12 @@ namespace Sakemottekoi.MainGame
     {
         public static GameManager Instance { private set; get; }
 
-        public Phase PreparePhase = new Phase();
+        public readonly Phase PreparePhase = new(new GameSystem[]
+        {
+            new PrepareAlchols()
+        });
+
+        public Phase BattlePhase = new();
 
         public GamePhase CurrentPhase { private set; get; }
 
@@ -36,10 +42,7 @@ namespace Sakemottekoi.MainGame
 
         private void Start()
         {
-            AlcholStockManager.Instance.Restock(3);
-
-
-            //StartCoroutine(StartGameLoop());
+            StartCoroutine(StartGameLoop());
         }
 
         private IEnumerator StartGameLoop()
@@ -47,8 +50,23 @@ namespace Sakemottekoi.MainGame
             isPlaying = true;
             while (isPlaying)
             {
-                AlcholStockManager.Instance.Restock(3);
-                yield return null;
+                AlcholStockManager.Instance.Restock(5);
+                while(2 < AlcholStockManager.Instance.GetStockCount())
+                {
+                    CurrentPhase = GamePhase.Prepare;
+                    yield return PreparePhase.Run();
+
+                    CurrentPhase = GamePhase.ItemSelection;
+                    // アイテム使用フェーズが終わった合図を待つ
+
+                    CurrentPhase = GamePhase.AlcholSelection;
+                    // アルコールが選ばれるのを待つ。
+                    // 選択に被りがある場合、ミニゲームを実行する。
+                        // ミニゲームの勝者が敗者の飲むアルコールを選ぶのを待つ。
+
+                    CurrentPhase = GamePhase.Battle;
+                    yield return BattlePhase.Run();
+                }
             }
         }
 
