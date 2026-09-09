@@ -30,8 +30,14 @@ namespace Sakemottekoi.MainGame
                 if (hit.collider.gameObject != gameObject) return;
 
                 SESource.PlayOneShot(bellSound);
-                //manager.SetWainting(false);
                 animator.SetTrigger("push");
+
+                switch (manager.CurrentPhase)
+                {
+                    case GamePhase.ItemSelection:
+                        ItemSelectionPhaseManager.Instance.EndPhase();
+                        break;
+                }
             }
         }
     }

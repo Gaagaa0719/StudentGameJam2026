@@ -1,55 +1,71 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using Sakemottekoi.MainGame;
 
 public class ItemOptions : MonoBehaviour
 {
-    public static int selectableItemCount = 0;
-    public static int addedItemCount = 0;
+    public static ItemOptions Instance { private set; get; }
 
     [SerializeField]
-    private List<RectTransform> itemHolders = new List<RectTransform>();
+    private List<RectTransform> itemHolders = new ();
 
     [SerializeField]
-    private List<GameObject> lootItems = new List<GameObject>();
+    private List<GameObject> lootItems = new ();
 
     [SerializeField]
     private float animateTime = 1.0f;
-
-    [SerializeField]
-    private int _selectableItemCount = 2;
 
     private CanvasGroup group;
 
     private void Awake()
     {
-        selectableItemCount = _selectableItemCount;
+        Instance = this;
         group = GetComponent<CanvasGroup>();
+
+        ItemSelectionPhaseManager.OnStartItemSlection += Init;
+        ItemSelectionPhaseManager.OnEndItemSlection += () => StartCoroutine(nameof(CleanUp));
     }
 
-    public void StartItemSelection()
+    // アイテムのないホルダーにアイテムを設定する関数。
+    public void RestockItems()
+    {
+        foreach (var holder in itemHolders)
+        {
+            // アイテムを持たないホルダーは対象外
+            if (holder.childCount != 0) continue;
+            SetRandomItem(holder);
+        }
+    }
+
+    private void Init()
     {
         foreach (var holder in itemHolders)
         {
             foreach (Transform child in holder.transform)
             {
-                if (child.tag != "item") continue;
+                if (!child.CompareTag("item")) continue;
                 Destroy(child.gameObject);
             }
 
-            var item = Instantiate(lootItems[Random.Range(0, lootItems.Count)]);
-            item.transform.SetParent(holder.transform, false);
-            item.transform.position = holder.transform.position;
+            SetRandomItem(holder);
         }
 
         StartCoroutine(nameof(BecomeVisible));
     }
 
-    public IEnumerator EndItemSelection()
+    private IEnumerator CleanUp()
     {
         yield return StartCoroutine(nameof(BecomeInvisible), animateTime);
         RemoveItems();
-        ItemOptions.addedItemCount = 0;
+    }
+
+    // ホルダーにランダムなアイテムを設定する関数。
+    private void SetRandomItem(Transform holder)
+    {
+        var item = Instantiate(lootItems[Random.Range(0, lootItems.Count)]);
+        item.transform.SetParent(holder.transform, false);
+        item.transform.position = holder.transform.position;
     }
 
     private void RemoveItems()
