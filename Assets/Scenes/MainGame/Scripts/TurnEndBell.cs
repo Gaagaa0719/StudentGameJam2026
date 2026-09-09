@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Sakemottekoi.Maingame
+namespace Sakemottekoi.MainGame
 {
     public class TurnEndBell : MonoBehaviour
     {

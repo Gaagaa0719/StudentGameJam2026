@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Sakemottekoi.Maingame;
+using Sakemottekoi.MainGame;
 
 namespace Sakemottekoi.Minigame.JustTimerStop
 {
