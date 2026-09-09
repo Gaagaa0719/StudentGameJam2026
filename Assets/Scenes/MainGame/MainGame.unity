@@ -1431,6 +1431,7 @@ GameObject:
   - component: {fileID: 645558818}
   - component: {fileID: 645558817}
   - component: {fileID: 645558819}
+  - component: {fileID: 645558820}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1485,6 +1486,18 @@ MonoBehaviour:
   alcholPrefab: {fileID: 0}
   alcholContent:
     stocks: 00000000000000000000000000000000
+--- !u!114 &645558820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2882dafe4bd612042aebac605d054845, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemSelectionPhaseManager
 --- !u!114 &678706445 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7841424387797809139, guid: 3c6d6bd32de7b0044a0b3f86d955899c, type: 3}
@@ -3469,6 +3482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509714bd193fb1848ab382256f9d0f8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemOptions
+  fadeTime: 1
   itemHolders:
   - {fileID: 8946009991216641681}
   - {fileID: 1910967356}
@@ -3479,8 +3493,6 @@ MonoBehaviour:
   - {fileID: 2714343283010329495, guid: 9f12958081a3fd840acf7834b20e5905, type: 3}
   - {fileID: 2714343283010329495, guid: f289229fb2663cf428104579518f78ba, type: 3}
   - {fileID: 2714343283010329495, guid: c64adf5a416fca346871c7d8abac22ce, type: 3}
-  animateTime: 1
-  _selectableItemCount: 2
 --- !u!225 &1586166380
 CanvasGroup:
   m_ObjectHideFlags: 0
