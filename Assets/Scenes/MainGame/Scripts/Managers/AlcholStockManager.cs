@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Sakemottekoi.Maingame
+namespace Sakemottekoi.MainGame
 {
     public enum AlcholType
     {

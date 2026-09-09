@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Assets.Scenes.MainGame
+namespace Sakemottekoi.MainGame
 {
     public abstract class VisualEvent
     {

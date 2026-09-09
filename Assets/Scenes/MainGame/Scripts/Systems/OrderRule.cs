@@ -1,4 +1,4 @@
-﻿namespace Sakemottekoi.Maingame
+﻿namespace Sakemottekoi.MainGame
 {
     public abstract class OrderRule
     {

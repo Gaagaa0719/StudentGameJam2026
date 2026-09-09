@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Assets.Scenes.MainGame
+namespace Sakemottekoi.MainGame
 {
     public class VisualQueue
     {

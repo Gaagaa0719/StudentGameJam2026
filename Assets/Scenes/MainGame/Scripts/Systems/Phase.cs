@@ -1,9 +1,8 @@
-﻿using Assets.Scenes.MainGame;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Sakemottekoi.Maingame
+namespace Sakemottekoi.MainGame
 {
     public class Phase
     {

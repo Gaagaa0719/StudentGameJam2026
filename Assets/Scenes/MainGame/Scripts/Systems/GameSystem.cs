@@ -1,9 +1,7 @@
-﻿
-using Assets.Scenes.MainGame;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Sakemottekoi.Maingame
+namespace Sakemottekoi.MainGame
 {
     public abstract class GameSystem
     {

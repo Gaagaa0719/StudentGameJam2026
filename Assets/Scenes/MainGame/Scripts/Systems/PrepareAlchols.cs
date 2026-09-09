@@ -1,11 +1,12 @@
-﻿using Sakemottekoi.Maingame;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Scenes.MainGame
+namespace Sakemottekoi.MainGame
 {
     public class PrepareAlchols : GameSystem
     {
         public override string Id => "PrepareAlchols";
+
+        public override bool IsOneShot => false;
 
         public override OrderRule OrderRule => new OrderRelative(priority: 1);
 
