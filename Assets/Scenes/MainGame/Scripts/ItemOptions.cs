@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Sakemottekoi.MainGame;
 
-public class ItemOptions : MonoBehaviour
+public class ItemOptions : FadeUIBase
 {
     public static ItemOptions Instance { private set; get; }
 
@@ -13,18 +13,13 @@ public class ItemOptions : MonoBehaviour
     [SerializeField]
     private List<GameObject> lootItems = new ();
 
-    [SerializeField]
-    private float animateTime = 1.0f;
-
-    private CanvasGroup group;
-
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         Instance = this;
-        group = GetComponent<CanvasGroup>();
 
-        ItemSelectionPhaseManager.OnStartItemSlection += Init;
-        ItemSelectionPhaseManager.OnEndItemSlection += () => StartCoroutine(nameof(CleanUp));
+        ItemSelectionPhaseManager.OnStartItemSlection += () => StartCoroutine(nameof(Show));
+        ItemSelectionPhaseManager.OnEndItemSlection += () => StartCoroutine(nameof(Hide));
     }
 
     // アイテムのないホルダーにアイテムを設定する関数。
@@ -38,10 +33,12 @@ public class ItemOptions : MonoBehaviour
         }
     }
 
-    private void Init()
+    // 表示する前に初期化
+    protected override void OnBeforeShow()
     {
         foreach (var holder in itemHolders)
         {
+            // 残っているアイテムを削除
             foreach (Transform child in holder.transform)
             {
                 if (!child.CompareTag("item")) continue;
@@ -50,13 +47,12 @@ public class ItemOptions : MonoBehaviour
 
             SetRandomItem(holder);
         }
-
-        StartCoroutine(nameof(BecomeVisible));
     }
 
-    private IEnumerator CleanUp()
+
+    // 非表示にした後にアイテム削除
+    protected override void OnAfterHide()
     {
-        yield return StartCoroutine(nameof(BecomeInvisible), animateTime);
         RemoveItems();
     }
 
@@ -77,28 +73,6 @@ public class ItemOptions : MonoBehaviour
                 if (!child.CompareTag("Item")) continue;
                 Destroy(child.gameObject);
             }
-        }
-    }
-
-    private IEnumerator BecomeVisible()
-    {
-        float alphaDelta = 1 / (animateTime * 60);
-        for (int i = 0; i < (animateTime * 60); i++)
-        {
-            group.alpha += alphaDelta;
-            yield return null;
-        }
-        group.blocksRaycasts = true;
-    }
-
-    private IEnumerator BecomeInvisible(float animateTime)
-    {
-        group.blocksRaycasts = false;
-        float alphaDelta = 1 / (animateTime * 60);
-        for (int i = 0; i < (animateTime * 60); i++)
-        {
-            group.alpha -= alphaDelta;
-            yield return null;
         }
     }
 }
