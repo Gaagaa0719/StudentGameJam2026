@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Sakemottekoi.MainGame
     {
         Prepare,
         ItemSelection,
+        ItemUse,
         AlcholSelection,
         Battle,
         Minigame,
@@ -17,6 +19,8 @@ namespace Sakemottekoi.MainGame
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { private set; get; }
+
+        public static event Action<GamePhase> OnPhaseChanged;
 
         public readonly Phase PreparePhase = new(new GameSystem[]
         {
@@ -50,24 +54,33 @@ namespace Sakemottekoi.MainGame
             isPlaying = true;
             while (isPlaying)
             {
+                // 新しいアイテムを取得するまで待つ。
+                yield return new WaitUntil();
+
                 AlcholStockManager.Instance.Restock(5);
                 while(2 < AlcholStockManager.Instance.GetStockCount())
                 {
-                    CurrentPhase = GamePhase.Prepare;
+                    ChangePhase(GamePhase.Prepare);
                     yield return PreparePhase.Run();
 
-                    CurrentPhase = GamePhase.ItemSelection;
+                    ChangePhase(GamePhase.ItemUse);
                     // アイテム使用フェーズが終わった合図を待つ
+                    yield return new WaitUntil(() => ItemUsePhaseManager.Instance.IsFinished);
 
-                    CurrentPhase = GamePhase.AlcholSelection;
+                    ChangePhase(GamePhase.AlcholSelection);
                     // アルコールが選ばれるのを待つ。
-                    // 選択に被りがある場合、ミニゲームを実行する。
-                        // ミニゲームの勝者が敗者の飲むアルコールを選ぶのを待つ。
+                    yield return new WaitUntil(() => AlcholSelectionManager.Instance.IsAlcholSelected);
 
-                    CurrentPhase = GamePhase.Battle;
+                    ChangePhase(GamePhase.Battle);
                     yield return BattlePhase.Run();
                 }
             }
+        }
+
+        private void ChangePhase(GamePhase newPhase)
+        {
+            CurrentPhase = newPhase;
+            OnPhaseChanged?.Invoke(newPhase);
         }
 
         static public AudioSource GetBGMSource()
