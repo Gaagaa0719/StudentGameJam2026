@@ -10,14 +10,11 @@ namespace Sakemottekoi.MainGame
 
         public override OrderRule OrderRule => new OrderRelative(priority: 1);
 
-        private Vector3[] AlcholPositions = new Vector3[3];
-
-        public PrepareAlchols(Vector3 firstAlcholLoc, Vector3 secondAlcholLoc, Vector3 thirdAlcholLoc)
-        {
-            AlcholPositions[0] = firstAlcholLoc;
-            AlcholPositions[1] = secondAlcholLoc;
-            AlcholPositions[2] = thirdAlcholLoc;
-        }
+        private readonly Vector3[] AlcholPositions = new Vector3[] {
+            new (0,0,0),
+            new (0,0,0),
+            new (0,0,0)
+        };
 
         public override void Execute()
         {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sakemottekoi.Maingame
+namespace Sakemottekoi.MainGame
 {
     public class AlcholGlass : MonoBehaviour
     {
