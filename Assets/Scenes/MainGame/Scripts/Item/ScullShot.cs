@@ -1,9 +1,6 @@
-using UnityEngine;
-
-// ƒAƒCƒeƒ€’Ç‰Á—pƒeƒXƒgƒvƒƒOƒ‰ƒ€
-public class ScullShot : MonoBehaviour, IItem
+ï»¿public class ScullShot : Item
 {
-    public void ChangeGlassParams(ref float alcohol, ref float amount)
+    public override void ChangeGlassParams(ref float alcohol, ref float amount)
     {
         alcohol *= 1.5f;
     }

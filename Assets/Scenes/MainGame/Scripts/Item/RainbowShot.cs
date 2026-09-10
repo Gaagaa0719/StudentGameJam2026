@@ -1,10 +1,7 @@
-using UnityEngine;
-
-// ƒAƒCƒeƒ€’Ç‰Á—pƒeƒXƒgƒvƒƒOƒ‰ƒ€
-public class RainbowShot : MonoBehaviour, IItem
+ï»¿public class RainbowShot : Item
 {
-    public void ChangeGlassParams(ref float alcohol, ref float amount)
+    public override void ChangeGlassParams(ref float alcohol, ref float amount)
     {
-        amount *= 1.1f; // Œ‚¢“x‚ğ10%ã¸
+        amount *= 1.1f; // é…”ã„åº¦ã‚’10%ä¸Šæ˜‡
     }
 }

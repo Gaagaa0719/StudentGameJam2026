@@ -1,9 +1,6 @@
-using UnityEngine;
-
-// ƒAƒCƒeƒ€’Ç‰Á—pƒeƒXƒgƒvƒƒOƒ‰ƒ€
-public class DoroShot : MonoBehaviour, IItem
+ï»¿public class DoroShot : Item
 {
-    public void ChangeGlassParams(ref float alcohol, ref float amount)
+    public override void ChangeGlassParams(ref float alcohol, ref float amount)
     {
         alcohol += 16;
     }

@@ -1,9 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
-// ƒAƒCƒeƒ€’Ç‰Á—pƒeƒXƒgƒvƒƒOƒ‰ƒ€
-public class BunbbleShot : MonoBehaviour, IItem
+public class BunbbleShot : Item
 {
-    public void ChangeGlassParams(ref float alcohol, ref float amount)
+    public override void ChangeGlassParams(ref float alcohol, ref float amount)
     {
         alcohol += Random.Range(12f, 20f);
     }

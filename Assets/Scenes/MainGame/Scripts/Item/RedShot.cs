@@ -1,9 +1,6 @@
-using UnityEngine;
-
-// ƒAƒCƒeƒ€’Ç‰Á—pƒeƒXƒgƒvƒƒOƒ‰ƒ€
-public class RedShot : MonoBehaviour, IItem
+ï»¿public class RedShot : Item
 {
-    public void ChangeGlassParams(ref float alcohol, ref float amount)
+    public override void ChangeGlassParams(ref float alcohol, ref float amount)
     {
         alcohol += 16;
     }
