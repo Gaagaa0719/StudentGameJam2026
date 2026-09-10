@@ -1429,7 +1429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 645558818}
-  - component: {fileID: 645558817}
+  - component: {fileID: 645558821}
   - component: {fileID: 645558819}
   - component: {fileID: 645558820}
   m_Layer: 0
@@ -1439,18 +1439,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &645558817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645558816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63b193bde956ea644b5d2727b52a5939, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!4 &645558818
 Transform:
   m_ObjectHideFlags: 0
@@ -1479,10 +1467,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlcholStockManager
   candidates:
-  - amount: 8
+  - amount: 5
     alcholStocks:
-    - stocks: 00000000070000000000000000000000
-    - stocks: 00000000000000000000000000000000
+    - stocks: 00000000010000000200000002000000
+    - stocks: 00000000020000000100000002000000
+    - stocks: 00000000020000000000000003000000
   alcholPrefab: {fileID: 0}
   alcholContent:
     stocks: 00000000000000000000000000000000
@@ -1498,6 +1487,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2882dafe4bd612042aebac605d054845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemSelectionPhaseManager
+--- !u!114 &645558821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63b193bde956ea644b5d2727b52a5939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.GameManager
+  BGMSource: {fileID: 1484434413}
+  SESource: {fileID: 267229423}
 --- !u!114 &678706445 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7841424387797809139, guid: 3c6d6bd32de7b0044a0b3f86d955899c, type: 3}

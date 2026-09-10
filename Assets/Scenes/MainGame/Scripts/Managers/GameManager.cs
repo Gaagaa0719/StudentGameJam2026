@@ -32,10 +32,10 @@ namespace Sakemottekoi.MainGame
         public GamePhase CurrentPhase { private set; get; }
 
         [Header("BGMのオーディオソース")]
-        private readonly AudioSource bgmSource;
+        [SerializeField] private AudioSource BGMSource;
 
         [Header("SEのオーディオソース")]
-        private readonly AudioSource seSource;
+        [SerializeField] private AudioSource SESource;
 
         private bool isPlaying = false;
 
@@ -57,8 +57,8 @@ namespace Sakemottekoi.MainGame
                 ChangePhase(GamePhase.ItemSelection);
                 // 新しいアイテムを取得するまで待つ。
                 yield return new WaitUntil(() => ItemSelectionPhaseManager.Instance.IsFinished);
-
                 AlcholStockManager.Instance.Restock(5);
+
                 while(2 < AlcholStockManager.Instance.GetStockCount())
                 {
                     ChangePhase(GamePhase.Prepare);
@@ -86,12 +86,12 @@ namespace Sakemottekoi.MainGame
 
         static public AudioSource GetBGMSource()
         {
-            return Instance.bgmSource;
+            return Instance.BGMSource;
         }
 
         static public AudioSource GetSESource()
         {
-            return Instance.seSource;
+            return Instance.SESource;
         }
     }
 }
