@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4938723989325836759}
   - component: {fileID: 534728062980697369}
   - component: {fileID: 2277813500327577762}
-  - component: {fileID: -1316564327986317893}
+  - component: {fileID: -5197072494933557608}
   m_Layer: 0
   m_Name: Glass
   m_TagString: Glass
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-1316564327986317893
+--- !u!114 &-5197072494933557608
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,8 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7665967115446775748}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0b2d2d69efce25459b2cd7da4bb4cd7, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ac9e8a4d37b69b4ca44e78b7f35fe08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Glass
-  alcohol: 2
-  amount: 10
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholGlass
+  content: 2

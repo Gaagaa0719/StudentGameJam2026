@@ -11,9 +11,9 @@ namespace Sakemottekoi.MainGame
         public override OrderRule OrderRule => new OrderRelative(priority: 1);
 
         private readonly Vector3[] AlcholPositions = new Vector3[] {
-            new (0,0,0),
-            new (0,0,0),
-            new (0,0,0)
+            new (-1.5f, -0.15f, -5),
+            new (0, -0.15f, -5),
+            new (1.5f, -0.15f, -5),
         };
 
         public override void Execute()

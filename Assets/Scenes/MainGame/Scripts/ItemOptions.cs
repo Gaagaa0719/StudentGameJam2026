@@ -41,7 +41,6 @@ public class ItemOptions : FadeUIBase
             // 残っているアイテムを削除
             foreach (Transform child in holder.transform)
             {
-                if (!child.CompareTag("item")) continue;
                 Destroy(child.gameObject);
             }
 

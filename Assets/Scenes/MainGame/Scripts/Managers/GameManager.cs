@@ -59,10 +59,11 @@ namespace Sakemottekoi.MainGame
                 yield return new WaitUntil(() => ItemSelectionPhaseManager.Instance.IsFinished);
                 AlcholStockManager.Instance.Restock(5);
 
-                while(2 < AlcholStockManager.Instance.GetStockCount())
+                while (2 < AlcholStockManager.Instance.GetStockCount())
                 {
                     ChangePhase(GamePhase.Prepare);
                     yield return PreparePhase.Run();
+
 
                     ChangePhase(GamePhase.ItemUse);
                     // アイテム使用フェーズが終わった合図を待つ

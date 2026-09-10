@@ -16,7 +16,7 @@ namespace Sakemottekoi.MainGame
     public class AlcholStockData
     {
         [EnumIndex(typeof(AlcholType))]
-        public int[] stocks = new int[4];
+        public int[] stocks = new int[4] {0, 0, 0, 0};
 
         public int this[AlcholType type]
         {
@@ -29,7 +29,7 @@ namespace Sakemottekoi.MainGame
             AlcholStockData result = new();
             for (int i = 0; i < result.stocks.Length; i ++)
             {
-                result.stocks[i] = data1.stocks[i] + data1.stocks[i];
+                result.stocks[i] = data1.stocks[i] + data2.stocks[i];
             }
             return result;
         }
