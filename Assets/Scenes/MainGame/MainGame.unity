@@ -1432,6 +1432,8 @@ GameObject:
   - component: {fileID: 645558821}
   - component: {fileID: 645558819}
   - component: {fileID: 645558820}
+  - component: {fileID: 645558823}
+  - component: {fileID: 645558822}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1499,6 +1501,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.GameManager
   BGMSource: {fileID: 1484434413}
   SESource: {fileID: 267229423}
+--- !u!114 &645558822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c983949417bb8f341ac9be1ccfebebf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholSelectionManager
+--- !u!114 &645558823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7116411ea08e2b1459b3bb053076d39c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemUsePhaseManager
 --- !u!114 &678706445 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7841424387797809139, guid: 3c6d6bd32de7b0044a0b3f86d955899c, type: 3}
@@ -3489,11 +3515,11 @@ MonoBehaviour:
   - {fileID: 1910967356}
   - {fileID: 2037878235}
   lootItems:
-  - {fileID: 2714343283010329495, guid: 107cfb5893af80a48ad80689cc6ffe9f, type: 3}
-  - {fileID: 2714343283010329495, guid: 0d45531709ed5d34db6898440b11c3bd, type: 3}
-  - {fileID: 2714343283010329495, guid: 9f12958081a3fd840acf7834b20e5905, type: 3}
-  - {fileID: 2714343283010329495, guid: f289229fb2663cf428104579518f78ba, type: 3}
-  - {fileID: 2714343283010329495, guid: c64adf5a416fca346871c7d8abac22ce, type: 3}
+  - {fileID: 761612654791159186, guid: e2ad075c023f3364e85ad19bd4563a18, type: 3}
+  - {fileID: 7072673785636438497, guid: 698236c11823657419884416b4b87405, type: 3}
+  - {fileID: 6078055179718331991, guid: 9804ae0efaea9c74ab6f302f22c22354, type: 3}
+  - {fileID: 2254680121288057390, guid: 03344679ceb220643922b142950d1214, type: 3}
+  - {fileID: 8997906066202688641, guid: 676d96160bc9e474a8e3ea97caf0635b, type: 3}
 --- !u!225 &1586166380
 CanvasGroup:
   m_ObjectHideFlags: 0

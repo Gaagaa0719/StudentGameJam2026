@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Sakemottekoi.MainGame
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class ItemDraggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         private Vector3 defaultPos = Vector3.zero;
@@ -49,7 +50,7 @@ namespace Sakemottekoi.MainGame
 
         private void DropTo2D(PointerEventData eventData)
         {
-            List<RaycastResult> results = new List<RaycastResult>();
+            List<RaycastResult> results = new();
             EventSystem.current.RaycastAll(eventData, results);
 
             if (results.Count == 0)
@@ -91,9 +92,8 @@ namespace Sakemottekoi.MainGame
 
         private void ResetPos()
         {
-            transform.SetParent(defaultParent, false);
+            transform.SetParent(defaultParent, true);
             transform.position = defaultPos;
-            transform.localScale = Vector3.one;
         }
     }
 }
