@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,23 +22,23 @@ public class Glass : MonoBehaviour
     {
         foreach (var item in items)
         {
-            IItem itemComp = item.GetComponent<IItem>();
+            Item itemComp = item.GetComponent<Item>();
             itemComp.ChangeGlassParams(ref alcohol, ref amount);
         }
 
         return (int)(amount * alcohol);
     }
 
-    // 1•b‚©‚¯‚ÄƒOƒ‰ƒX‚ğ‘Šè‚Ì•û‚ÖˆÚ“®‚³‚¹‚éB
+    // 1ç§’ã‹ã‘ã¦ã‚°ãƒ©ã‚¹ã‚’ç›¸æ‰‹ã®æ–¹ã¸ç§»å‹•ã•ã›ã‚‹ã€‚
     public IEnumerator MoveToOtherSide ()
     {
-        // ‘Šè‘¤‚ÌƒOƒ‰ƒX‚ÌˆÊ’u‚ğæ“¾
+        // ç›¸æ‰‹å´ã®ã‚°ãƒ©ã‚¹ã®ä½ç½®ã‚’å–å¾—
         Vector3 targetPos;
         if(gameObject.CompareTag("PlayerGlass")) targetPos = manager.EnemyGlassLocation;
         else targetPos = manager.PlayerGlassLocation;
         targetPos.x = transform.position.x;
 
-        // 1frame‚ ‚½‚è‚ÉˆÚ“®—Ê
+        // 1frameã‚ãŸã‚Šã«ç§»å‹•é‡
         Vector3 moveDelta = (targetPos - transform.position) / 60;
         for (int i = 0; i < 60; i++)
         {
