@@ -2,13 +2,18 @@
 
 namespace Sakemottekoi.MainGame
 {
-    public abstract class PhaseManager:  MonoBehaviour
+    /// <summary>
+    /// 継承する際は絶対に自分自身をTに代入すること！！！！！
+    /// </summary>
+    public abstract class PhaseManager<T>:  MonoBehaviour where T : PhaseManager<T>
     {
+        public static T Instance { private set; get; }
         public bool IsFinished { protected set; get; } = false;
         protected abstract GamePhase TargetPhase { get; }
 
         protected virtual void Awake()
         {
+            Instance = (T)this;
             GameManager.OnPhaseChanged += InternalStartPhase;
             Init();
         }

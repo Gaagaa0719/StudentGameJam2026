@@ -1,24 +1,7 @@
-﻿using UnityEngine;
-
-namespace Sakemottekoi.MainGame
+﻿namespace Sakemottekoi.MainGame
 {
-    public class ItemUsePhaseManager : MonoBehaviour
+    public class ItemUsePhaseManager : PhaseManager<ItemUsePhaseManager>
     {
-        public static ItemUsePhaseManager Instance { private set; get; }
-
-        public bool IsFinished { private set; get; } = false;
-
-
-        private void Awake()
-        {
-            Instance = this;
-            GameManager.OnPhaseChanged += StartItemUsePhase;
-        }
-
-        private void StartItemUsePhase(GamePhase gamePhase)
-        {
-            if(gamePhase != GamePhase.ItemUse) return;
-            IsFinished = false;
-        }
+        protected override GamePhase TargetPhase => GamePhase.ItemUse;
     }
 }
