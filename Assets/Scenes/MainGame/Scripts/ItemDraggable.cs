@@ -1,37 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Sakemottekoi.MainGame
 {
+    public class DroppedEvent
+    {
+        public DroppedEvent(GameObject dropped, GameObject droppedOn)
+        {
+            Dropped = dropped;
+            DroppedOn = droppedOn;
+            IsOwnerMoved = false;
+        }
+
+        /// <summary>
+        /// ドロップされたオブジェクト
+        /// </summary>
+        public GameObject Dropped { private set; get; }
+
+        /// <summary>
+        /// ドロップした先のUIオブジェクト
+        /// </summary>
+        public GameObject DroppedOn { private set; get; }
+
+        /// <summary>
+        /// 所有権が移ったかのフラグ
+        /// </summary>
+        public bool IsOwnerMoved { set; get; } 
+    }
+
     [RequireComponent(typeof(CanvasGroup))]
     public class ItemDraggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
+        public static event Action<DroppedEvent> OnDroppedUI;
+
         private Vector3 defaultPos = Vector3.zero;
         private Transform defaultParent;
         private CanvasGroup group;
         private ItemMenu menu;
         private Transform dragOverlay;
-        private AudioSource SESource;
+        private bool allowDrag = false; // ドラッグが許可されているかを保存しておく
 
+        [Header("ドラッグ可能なフェーズ")]
         [SerializeField]
-        private AudioClip dropIntoItemMenuSound;
-
-        [SerializeField]
-        private AudioClip dropIntoTrashSound;
+        private List<GamePhase> draggablePhases = new();
 
         private void Start()
         {
             menu = ItemMenu.instance;
             group = GetComponent<CanvasGroup>();
             dragOverlay = GameObject.Find("DragOverlay").transform;
-
-            SESource = GameManager.GetSESource();
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
+            // 今のフェーズ中にドラッグが許可されているかを確認する。
+            allowDrag = draggablePhases.FindIndex(v => v == GameManager.Instance.CurrentPhase) != -1;
+            if (!allowDrag) return;
+
             group.blocksRaycasts = false;
             defaultPos = transform.position;
             defaultParent = transform.parent;
@@ -40,57 +67,32 @@ namespace Sakemottekoi.MainGame
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
+            if (!allowDrag) return;
             transform.position = eventData.position;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
-            DropTo2D(eventData);
+            if (!allowDrag) return;
+            DropToUI(eventData);
             group.blocksRaycasts = true;
         }
 
-        private void DropTo2D(PointerEventData eventData)
+        private void DropToUI(PointerEventData eventData)
         {
             List<RaycastResult> results = new();
             EventSystem.current.RaycastAll(eventData, results);
 
             if (results.Count == 0)
             {
-                Debug.Log("ドロップした位置にUIはありませんでした。");
                 ResetPos();
                 return;
             }
             GameObject droppedOn = results[0].gameObject;
 
-            if (DropToItemMenu(droppedOn)) return;
-            if (DropToTrash(droppedOn)) return;
-
-            ResetPos();
-        }
-
-        private bool DropToItemMenu(GameObject hitObject)
-        {
-            if (ItemSelectionPhaseManager.SelectableItemCount <= ItemSelectionPhaseManager.SelectedItemCount) return false;
-            if (menu.Contains(gameObject)) return false;
-            if (!hitObject.CompareTag("ItemMenu")) return false;
-            if (!menu.Add(gameObject)) return false;
-
-            ItemSelectionPhaseManager.AddSelectedItemCount();
-            if(dropIntoItemMenuSound) SESource.PlayOneShot(dropIntoItemMenuSound);
-
-            ItemOptions.Instance.RestockItems();
-            return true;
-        }
-
-        private bool DropToTrash(GameObject hitObject)
-        {
-            if (!hitObject.CompareTag("Trash")) return false;
-
-            if (dropIntoTrashSound) SESource.PlayOneShot(dropIntoTrashSound);
-            Destroy(gameObject);
-            return true;
+            DroppedEvent dropEvent = new DroppedEvent(gameObject, droppedOn);
+            OnDroppedUI?.Invoke(dropEvent);
+            if(!dropEvent.IsOwnerMoved) ResetPos(); // 所有権が誰にも移らなかったら元の位置に戻す。
         }
 
         private void ResetPos()
