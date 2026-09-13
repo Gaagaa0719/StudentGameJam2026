@@ -3,16 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemMenu : MonoBehaviour {
-    public static ItemMenu instance;
+    public static ItemMenu Instance { private set; get; }
 
     [Header("アイテム表示位置用のアンカー達\n上から順番に詰めて表示される。")]
     public List<GameObject> displayAnchors = new List<GameObject>();
 
     private readonly List<GameObject> items = new List<GameObject>();
 
-    private void Start()
+    private void Awake()
     {
-        instance = this;
+        Instance = this;
+        ItemDraggable.OnDroppedUI += DroppedOnItem;
+    }
+
+    private void DroppedOnItem(DroppedEvent dropEvent)
+    {
+        // 自分にドロップされてない場合拒否
+        if (dropEvent.DroppedOn != gameObject) return;
+        // 取得したアイテム数が取得可能アイテム数以上だったら拒否
+        if (ItemSelectionPhaseManager.SelectableItemCount <= ItemSelectionPhaseManager.SelectedItemCount) return;
+        // すでにアイテムメニューに含まれていたら拒否
+        if (items.Contains(dropEvent.Dropped)) return;
+
+        // メニュー追加の試み
+        bool result = Add(dropEvent.Dropped);
+        if (!result) return;
+
+        // 選択したアイテム数を加算
+        ItemSelectionPhaseManager.AddSelectedItemCount();
+        // 減った分のアイテムを補充
+        ItemOptions.Instance.RestockItems();
+
+        // 所有権が移動したことをマーク
+        dropEvent.IsOwnerMoved = true;
     }
 
     public bool Contains(GameObject item)

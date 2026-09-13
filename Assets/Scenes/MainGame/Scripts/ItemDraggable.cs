@@ -35,10 +35,11 @@ namespace Sakemottekoi.MainGame
     {
         public static event Action<DroppedEvent> OnDroppedUI;
 
+        // リセット処理用
         private Vector3 defaultPos = Vector3.zero;
         private Transform defaultParent;
+
         private CanvasGroup group;
-        private ItemMenu menu;
         private Transform dragOverlay;
         private bool allowDrag = false; // ドラッグが許可されているかを保存しておく
 
@@ -48,7 +49,6 @@ namespace Sakemottekoi.MainGame
 
         private void Start()
         {
-            menu = ItemMenu.instance;
             group = GetComponent<CanvasGroup>();
             dragOverlay = GameObject.Find("DragOverlay").transform;
         }
