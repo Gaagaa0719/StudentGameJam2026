@@ -31,6 +31,7 @@ namespace Sakemottekoi.MainGame
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
             group.blocksRaycasts = false;
             defaultPos = transform.position;
             defaultParent = transform.parent;
@@ -39,11 +40,13 @@ namespace Sakemottekoi.MainGame
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
             transform.position = eventData.position;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (GameManager.Instance.CurrentPhase != GamePhase.ItemSelection) return;
             DropTo2D(eventData);
             group.blocksRaycasts = true;
         }
