@@ -29,15 +29,18 @@ namespace Sakemottekoi.MainGame
                 if (!Physics.Raycast(ray, out RaycastHit hit)) return;
                 if (hit.collider.gameObject != gameObject) return;
 
-                SESource.PlayOneShot(bellSound);
-                animator.SetTrigger("push");
-
                 switch (manager.CurrentPhase)
                 {
                     case GamePhase.ItemSelection:
                         ItemSelectionPhaseManager.Instance.EndPhase();
                         break;
+
+                    default:
+                        return;
                 }
+
+                SESource.PlayOneShot(bellSound);
+                animator.SetTrigger("push");
             }
         }
     }
