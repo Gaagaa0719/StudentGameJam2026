@@ -24,7 +24,7 @@ public class ItemMenu : MonoBehaviour {
     private void DroppedOnItem(DroppedEvent dropEvent)
     {
         // 自分にドロップされてない場合拒否
-        if (dropEvent.DroppedOn.transform.IsChildOf(this.transform)) return;
+        if (!dropEvent.DroppedOn.transform.IsChildOf(this.transform)) return;
         // 取得したアイテム数が取得可能アイテム数以上だったら拒否
         if (ItemSelectionPhaseManager.SelectableItemCount <= ItemSelectionPhaseManager.SelectedItemCount) return;
         // すでにアイテムメニューに含まれていたら拒否
@@ -76,7 +76,7 @@ public class ItemMenu : MonoBehaviour {
         for (int i = 0; i < items.Count; i++)
         {
             GameObject item = items[i];
-            item.transform.SetParent(displayAnchors[i].transform, false);
+            item.transform.SetParent(displayAnchors[i].transform, true);
             item.transform.localPosition = Vector3.zero;
         }
     }
