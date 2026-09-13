@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using Sakemottekoi.MainGame;
 
 public class ItemOptions : FadeUIBase
 {
     public static ItemOptions Instance { private set; get; }
+
+    protected override GamePhase TargetPhase => GamePhase.ItemSelection;
 
     [SerializeField]
     private List<RectTransform> itemHolders = new ();
@@ -17,9 +18,6 @@ public class ItemOptions : FadeUIBase
     {
         base.Awake();
         Instance = this;
-
-        ItemSelectionPhaseManager.OnStartItemSlection += () => StartCoroutine(nameof(Show));
-        ItemSelectionPhaseManager.OnEndItemSlection += () => StartCoroutine(nameof(Hide));
     }
 
     // アイテムのないホルダーにアイテムを設定する関数。
