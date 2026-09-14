@@ -9,38 +9,12 @@ namespace Sakemottekoi.MainGame
         [SerializeField] protected float fadeTime = 1.0f;
         protected CanvasGroup group;
 
-        protected abstract GamePhase TargetPhase { get; }
-
-        private Coroutine fadeCoroutine;
-
 
         protected virtual void Awake()
         {
             group = GetComponent<CanvasGroup>();
             group.alpha = 0f;
             group.blocksRaycasts = false;
-
-            GameManager.OnPhaseChanged += HandlePhaseChange;
-        }
-
-        private void HandlePhaseChange(GamePhase currentPhase)
-        {
-            if (currentPhase == TargetPhase)
-            {
-                // すでに表示されていれば無視
-                if (group.alpha == 1f) return;
-
-                if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-                fadeCoroutine = StartCoroutine(Show());
-            }
-            else
-            {
-                // すでに消えていれば無視
-                if (group.alpha == 0f) return;
-
-                if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-                fadeCoroutine = StartCoroutine(Hide());
-            }
         }
 
         // フェードイン

@@ -2,7 +2,7 @@
 using UnityEngine;
 using Sakemottekoi.MainGame;
 
-public class ItemOptions : FadeUIBase
+public class ItemOptions : PhaseFadeUI
 {
     public static ItemOptions Instance { private set; get; }
 
