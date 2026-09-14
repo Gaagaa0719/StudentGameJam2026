@@ -7,7 +7,9 @@ namespace Sakemottekoi.MainGame
     {
         public override string DisplayName => "水バケツ";
 
-        public override string Description => "水をかぶって気を保つ";
+        public override string SimpleDescription => "水をかぶって気を保つ";
+
+        public override string Description => throw new System.NotImplementedException();
 
         public override IEnumerator Use()
         {

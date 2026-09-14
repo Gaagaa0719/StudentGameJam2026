@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Sakemottekoi.MainGame
 {
@@ -11,10 +12,19 @@ namespace Sakemottekoi.MainGame
         public static event Action<Item> OnHoverExit;
         public static event Action<Item> OnClicked;
 
+        public Sprite ItemImage { private set;  get; }
+
         public abstract string DisplayName { get; }
+        public abstract string SimpleDescription { get; }
         public abstract string Description { get; }
 
         [SerializeField] private Transform itemVisual;
+
+        private void Awake()
+        {
+            if (!itemVisual) return;
+            ItemImage = itemVisual.GetComponent<Image>().sprite;
+        }
 
         /// <summary>
         /// アイテムが使用された時の処理

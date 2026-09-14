@@ -7,7 +7,9 @@ namespace Sakemottekoi.MainGame
     {
         public override string DisplayName => "裏メニュー「スピリタス」";
 
-        public override string Description => "マスターに頼み、選んだ酒の酔い度を極大にする";
+        public override string SimpleDescription => "マスターに頼み、選んだ酒の酔い度を極大にする";
+
+        public override string Description => throw new System.NotImplementedException();
 
         public override IEnumerator Use()
         {

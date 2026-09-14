@@ -7,7 +7,9 @@ namespace Sakemottekoi.MainGame
     {
         public override string DisplayName => "コールベル";
 
-        public override string Description => "渡されたお酒を提示された中で選ばれていない物と交換する";
+        public override string SimpleDescription => "渡されたお酒を提示された中で選ばれていない物と交換する";
+
+        public override string Description => throw new System.NotImplementedException();
 
         public override IEnumerator Use()
         {
