@@ -16,7 +16,7 @@ namespace Sakemottekoi.MainGame
             Item.OnHoverEnter += (ItemData) =>
             {
                 ItemNameText.text = ItemData.DisplayName;
-                ItemDescriptionText.text = ItemData.Description;
+                ItemDescriptionText.text = ItemData.SimpleDescription;
             };
 
             Item.OnHoverExit += (_) =>
