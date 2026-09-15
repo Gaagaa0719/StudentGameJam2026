@@ -20,13 +20,13 @@ namespace Sakemottekoi.MainGame
                 ItemNameText.text = ItemData.DisplayName;
                 ItemDescriptionText.text = ItemData.SimpleDescription;
 
-                Show();
+                FadeIn();
             };
 
-            Item.OnHoverExit += (_) => Hide();
+            Item.OnHoverExit += (_) => FadeOut();
         }
 
-        protected override void OnAfterHide()
+        protected override void OnAfterFadeOut()
         {
             Debug.Log("clean up");
             ItemNameText.text = "";

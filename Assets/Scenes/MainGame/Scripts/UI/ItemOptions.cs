@@ -32,7 +32,7 @@ public class ItemOptions : PhaseFadeUI
     }
 
     // 表示する前に初期化
-    protected override void OnBeforeShow()
+    protected override void OnBeforeFadeIn()
     {
         foreach (var holder in itemHolders)
         {
@@ -48,7 +48,7 @@ public class ItemOptions : PhaseFadeUI
 
 
     // 非表示にした後にアイテム削除
-    protected override void OnAfterHide()
+    protected override void OnAfterFadeOut()
     {
         RemoveItems();
     }

@@ -18,12 +18,12 @@ namespace Sakemottekoi.MainGame
         protected override void Awake()
         {
             base.Awake();
-            Item.OnClicked += ShowForm;
-            CloseButton.onClick.AddListener(() => Hide());
+            Item.OnClicked += Show;
+            CloseButton.onClick.AddListener(() => FadeOut());
             UseButton.onClick.AddListener(() => { if (showingItem != null) StartCoroutine(showingItem.Use()); });
         }
 
-        private void ShowForm(Item item)
+        private void Show(Item item)
         {
             if (GameManager.Instance.CurrentPhase != GamePhase.ItemUse) return;
             ItemIcon.sprite = item.ItemImage;
@@ -32,7 +32,7 @@ namespace Sakemottekoi.MainGame
 
             showingItem = item;
 
-            Show();
+            FadeIn();
         }
     }
 }

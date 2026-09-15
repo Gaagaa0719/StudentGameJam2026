@@ -6,7 +6,8 @@ namespace Sakemottekoi.MainGame
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class FadeUIBase : MonoBehaviour
     {
-        [SerializeField] protected float fadeTime = 1.0f;
+        [SerializeField] protected float fadeInTime = 1.0f;
+        [SerializeField] protected float fadeOutTime = 1.0f;
         protected CanvasGroup group;
 
         private Coroutine fadeCoroutine;
@@ -22,22 +23,22 @@ namespace Sakemottekoi.MainGame
             targetAlpha = 0f;
         }
 
-        public Coroutine Show()
+        public Coroutine FadeIn()
         {
             // 既に完全に表示されているか、または「表示に向けてフェード中」なら何もしない
             if (Mathf.Approximately(group.alpha, 1f) || Mathf.Approximately(targetAlpha, 1f))
                 return fadeCoroutine;
 
-            return PlayFade(1f, InternalShow());
+            return PlayFade(1f, InternalFadeIn());
         }
 
-        public Coroutine Hide()
+        public Coroutine FadeOut()
         {
             // 既に完全に非表示か、または「非表示に向けてフェード中」なら何もしない
             if (Mathf.Approximately(group.alpha, 0f) || Mathf.Approximately(targetAlpha, 0f))
                 return fadeCoroutine;
 
-            return PlayFade(0f, InternalHide());
+            return PlayFade(0f, InternalFadeOut());
         }
 
         // コルーチンのキャンセルと再生成、目標値の設定
@@ -53,16 +54,16 @@ namespace Sakemottekoi.MainGame
             return fadeCoroutine;
         }
 
-        private IEnumerator InternalShow()
+        private IEnumerator InternalFadeIn()
         {
-            OnBeforeShow();
+            OnBeforeFadeIn();
 
             float timer = 0f;
             float startAlpha = group.alpha;
-            while (timer < fadeTime)
+            while (timer < fadeInTime)
             {
                 timer += Time.deltaTime;
-                group.alpha = Mathf.Lerp(startAlpha, 1f, timer / fadeTime);
+                group.alpha = Mathf.Lerp(startAlpha, 1f, timer / fadeInTime);
                 yield return null;
             }
             group.alpha = 1f;
@@ -71,20 +72,20 @@ namespace Sakemottekoi.MainGame
             targetAlpha = -1f;
             fadeCoroutine = null;
 
-            OnAfterShow();
+            OnAfterFadeIn();
         }
 
-        private IEnumerator InternalHide()
+        private IEnumerator InternalFadeOut()
         {
-            OnBeforeHide();
+            OnBeforeFadeOut();
             group.blocksRaycasts = false;
 
             float timer = 0f;
             float startAlpha = group.alpha;
-            while (timer < fadeTime)
+            while (timer < fadeOutTime)
             {
                 timer += Time.deltaTime;
-                group.alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeTime);
+                group.alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeOutTime);
                 yield return null;
             }
             group.alpha = 0f;
@@ -92,13 +93,13 @@ namespace Sakemottekoi.MainGame
             targetAlpha = -1f;
             fadeCoroutine = null;
 
-            OnAfterHide();
+            OnAfterFadeOut();
         }
 
         // --- 継承先で好きに書き換えられるフック関数 ---
-        protected virtual void OnBeforeShow() { }
-        protected virtual void OnAfterShow() { }
-        protected virtual void OnBeforeHide() { }
-        protected virtual void OnAfterHide() { }
+        protected virtual void OnBeforeFadeIn() { }
+        protected virtual void OnAfterFadeIn() { }
+        protected virtual void OnBeforeFadeOut() { }
+        protected virtual void OnAfterFadeOut() { }
     }
 }

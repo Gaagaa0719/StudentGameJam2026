@@ -17,8 +17,8 @@ namespace Sakemottekoi.MainGame
 
         private void HandlePhaseChange(GamePhase currentPhase)
         {
-            if (currentPhase == TargetPhase) Show();
-            else Hide();
+            if (currentPhase == TargetPhase) FadeIn();
+            else FadeOut();
         }
     }
 }
