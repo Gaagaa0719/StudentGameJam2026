@@ -19,7 +19,7 @@ namespace Sakemottekoi.MainGame
         {
             base.Awake();
             Item.OnClicked += ShowForm;
-            CloseButton.onClick.AddListener(() => StartCoroutine(Hide()));
+            CloseButton.onClick.AddListener(() => Hide());
             UseButton.onClick.AddListener(() => { if (showingItem != null) StartCoroutine(showingItem.Use()); });
         }
 
@@ -32,7 +32,7 @@ namespace Sakemottekoi.MainGame
 
             showingItem = item;
 
-            StartCoroutine(Show());
+            Show();
         }
     }
 }

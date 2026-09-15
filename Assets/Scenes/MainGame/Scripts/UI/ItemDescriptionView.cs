@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
-    public class ItemDescriptionView : MonoBehaviour
+    public class ItemDescriptionView : FadeUIBase
     {
         [Header("アイテム名テキスト")]
         [SerializeField] private TextMeshProUGUI ItemNameText;
@@ -11,19 +11,26 @@ namespace Sakemottekoi.MainGame
         [Header("アイテム詳細テキスト")]
         [SerializeField] private TextMeshProUGUI ItemDescriptionText;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             Item.OnHoverEnter += (ItemData) =>
             {
                 ItemNameText.text = ItemData.DisplayName;
                 ItemDescriptionText.text = ItemData.SimpleDescription;
+
+                Show();
             };
 
-            Item.OnHoverExit += (_) =>
-            {
-                ItemNameText.text = "";
-                ItemDescriptionText.text = "";
-            };
+            Item.OnHoverExit += (_) => Hide();
+        }
+
+        protected override void OnAfterHide()
+        {
+            Debug.Log("clean up");
+            ItemNameText.text = "";
+            ItemDescriptionText.text = "";
         }
     }
 }
