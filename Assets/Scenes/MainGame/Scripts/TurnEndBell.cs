@@ -35,6 +35,10 @@ namespace Sakemottekoi.MainGame
                         ItemSelectionPhaseManager.Instance.EndPhase();
                         break;
 
+                    case GamePhase.ItemUse:
+                        ItemUsePhaseManager.Instance.EndPhase();
+                        break;
+
                     default:
                         return;
                 }
