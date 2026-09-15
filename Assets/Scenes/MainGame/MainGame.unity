@@ -5454,7 +5454,7 @@ MonoBehaviour:
   ItemName: {fileID: 1664562214}
   ItemDescription: {fileID: 376573053}
   CloseButton: {fileID: 2098760317}
-  UseButton: {fileID: 0}
+  UseButton: {fileID: 343542303}
 --- !u!1 &1756332107
 GameObject:
   m_ObjectHideFlags: 0
