@@ -9,9 +9,9 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "渡されたお酒を提示された中で選ばれていない物と交換する";
 
-        public override string Description => throw new System.NotImplementedException();
+        public override string Description => "";
 
-        public override IEnumerator Use()
+        protected override IEnumerator InternalUse()
         {
             throw new System.NotImplementedException();
         }

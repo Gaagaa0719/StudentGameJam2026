@@ -8,9 +8,9 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "渡されたお酒をマスターが代わりに飲んでくれる";
 
-        public override string Description => throw new System.NotImplementedException();
+        public override string Description => "";
 
-        public override IEnumerator Use()
+        protected override IEnumerator InternalUse()
         {
             throw new System.NotImplementedException();
         }

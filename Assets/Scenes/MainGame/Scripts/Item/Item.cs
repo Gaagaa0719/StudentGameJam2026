@@ -8,9 +8,25 @@ namespace Sakemottekoi.MainGame
 {
     public abstract class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
+        /// <summary>
+        /// アイテムがホバーされた際に発火するイベント
+        /// </summary>
         public static event Action<Item> OnHoverEnter;
+
+        /// <summary>
+        /// アイテムのホバーが外れた際に発火するイベント
+        /// </summary>
         public static event Action<Item> OnHoverExit;
+
+        /// <summary>
+        /// アイテムがマウスにクリックされた際に発火するイベント
+        /// </summary>
         public static event Action<Item> OnClicked;
+
+        /// <summary>
+        /// アイテムが使用された際に発火するイベント
+        /// </summary>
+        public static event Action<Item> OnUsed;
 
         public Sprite ItemImage { private set;  get; }
 
@@ -27,9 +43,17 @@ namespace Sakemottekoi.MainGame
         }
 
         /// <summary>
-        /// アイテムが使用された時の処理
+        /// アイテムを使用する時に使う関数
         /// </summary>
-        public abstract IEnumerator Use();
+        public IEnumerator Use() {
+            OnUsed?.Invoke(this);
+            yield return InternalUse();
+        }
+
+        /// <summary>
+        /// アイテムが使用された時に実行される処理を書く関数
+        /// </summary>
+        protected abstract IEnumerator InternalUse();
 
         /// <summary>
         /// アイテムがホバーされた時の処理

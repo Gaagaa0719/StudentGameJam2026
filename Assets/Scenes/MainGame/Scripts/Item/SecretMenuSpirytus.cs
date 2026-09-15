@@ -9,9 +9,9 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "マスターに頼み、選んだ酒の酔い度を極大にする";
 
-        public override string Description => throw new System.NotImplementedException();
+        public override string Description => "";
 
-        public override IEnumerator Use()
+        protected override IEnumerator InternalUse()
         {
             throw new System.NotImplementedException();
         }
