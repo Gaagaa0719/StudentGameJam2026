@@ -1,27 +1,45 @@
-﻿using UnityEngine;
-
-namespace Sakemottekoi.MainGame
+﻿namespace Sakemottekoi.MainGame
 {
-    public class AlcholSelectionManager : MonoBehaviour
+    public class AlcholSelectionManager : PhaseManager<AlcholSelectionManager>
     {
-        public static AlcholSelectionManager Instance { private set; get; }
-        public bool IsAlcholSelected { private set; get; } = false;
+        protected override GamePhase TargetPhase => GamePhase.AlcholSelection;
 
-        private void Awake()
+        public AlcholGlass PlayerSelectedGlass { private set; get; }
+        public AlcholGlass EnemySelectedGlass { private set; get; }
+
+        protected override void Awake()
         {
-            Instance = this;
+            base.Awake();
+            AlcholGlass.OnClicked += OnAlcholSelected;
         }
 
-        // Use this for initialization
-        void Start()
+        private void OnAlcholSelected(AlcholGlass alcholGlass)
         {
-
+            if (GameManager.Instance.CurrentPhase != TargetPhase) return;
+            PlayerSelectedGlass = alcholGlass;
         }
 
-        // Update is called once per frame
-        void Update()
+        public async void TryEndPhase()
         {
+            if(EnemySelectedGlass == null)
+            {
+                EnemySelectedGlass = PlayerSelectedGlass;
+            }
 
+            if (EnemySelectedGlass == PlayerSelectedGlass)
+            {
+                MiniGame miniGame = MiniGameManager.Instance.GetRandomOne();
+                bool result = await miniGame.StartGameAsync(0);
+                if(result)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            else EndPhase();
         }
     }
 }

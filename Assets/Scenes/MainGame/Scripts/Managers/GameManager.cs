@@ -71,7 +71,7 @@ namespace Sakemottekoi.MainGame
 
                     ChangePhase(GamePhase.AlcholSelection);
                     // アルコールが選ばれるのを待つ。
-                    yield return new WaitUntil(() => AlcholSelectionManager.Instance.IsAlcholSelected);
+                    yield return new WaitUntil(() => AlcholSelectionManager.Instance.IsFinished);
 
                     ChangePhase(GamePhase.Battle);
                     yield return BattlePhase.Run();
