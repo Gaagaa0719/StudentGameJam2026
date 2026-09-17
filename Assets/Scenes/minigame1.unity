@@ -803,6 +803,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1284910109}
     m_Modifications:
+    - target: {fileID: 2014224182350127709, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7085138651064240097, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -885,7 +889,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7636126866087212355, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
       propertyPath: m_text
-      value: "\u30FB\u30FB\u30FB"
+      value: "\u9EC4\u8272\u306E\u7BC4\u56F2\u5185\u306B\u30D0\u30FC\u3092\u6B62\u3081\u308D"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7636126866087212355, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
+      propertyPath: m_fontSize
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7636126866087212355, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 8336588488918830932, guid: a50e01ae22dc3334a93c32648e293ac2, type: 3}
       propertyPath: m_Name
