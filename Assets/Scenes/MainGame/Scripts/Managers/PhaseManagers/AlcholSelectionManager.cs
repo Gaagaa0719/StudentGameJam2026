@@ -1,45 +1,52 @@
-﻿namespace Sakemottekoi.MainGame
+﻿using System.Linq;
+using UnityEngine;
+
+namespace Sakemottekoi.MainGame
 {
     public class AlcholSelectionManager : PhaseManager<AlcholSelectionManager>
     {
         protected override GamePhase TargetPhase => GamePhase.AlcholSelection;
 
-        public AlcholGlass PlayerSelectedGlass { private set; get; }
-        public AlcholGlass EnemySelectedGlass { private set; get; }
+        private AlcholGlass playerGlass, enemyGlass;
 
         protected override void Awake()
         {
             base.Awake();
-            AlcholGlass.OnClicked += OnAlcholSelected;
-        }
-
-        private void OnAlcholSelected(AlcholGlass alcholGlass)
-        {
-            if (GameManager.Instance.CurrentPhase != TargetPhase) return;
-            PlayerSelectedGlass = alcholGlass;
+            AlcholGlass.OnClick += (glass) => { playerGlass = glass; };
         }
 
         public async void TryEndPhase()
         {
-            if(EnemySelectedGlass == null)
+            var alcholGlasses = GameObject.FindGameObjectsWithTag("Glass").Select(v => v.GetComponent<AlcholGlass>()).ToArray();
+            enemyGlass = alcholGlasses[Random.Range(0, alcholGlasses.Length)];
+            enemyGlass = playerGlass;
+
+            if (playerGlass == null || enemyGlass == null)
             {
-                EnemySelectedGlass = PlayerSelectedGlass;
+                Debug.LogError("グラスが選択されていません！");
+                RaiseError("グラスを選んでください！");
+                return;
             }
 
-            if (EnemySelectedGlass == PlayerSelectedGlass)
+            if(playerGlass == enemyGlass)
             {
-                MiniGame miniGame = MiniGameManager.Instance.GetRandomOne();
-                bool result = await miniGame.StartGameAsync(0);
+                bool result = await MiniGameManager.Instance.GetRandomOne().StartGameAsync(0f);
                 if(result)
                 {
-
+                    Debug.Log("ミニゲームに勝利しました！");
+                    return;
                 }
                 else
                 {
-
+                    Debug.Log("ミニゲームに敗北しました！");
+                    return;
                 }
             }
-            else EndPhase();
+
+            var manager = AlcholStockManager.Instance;
+            manager.Consume(playerGlass.Type);
+            manager.Consume(enemyGlass.Type);
+            EndPhase();
         }
     }
 }

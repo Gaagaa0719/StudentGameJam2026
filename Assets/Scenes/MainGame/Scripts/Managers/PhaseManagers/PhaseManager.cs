@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -7,6 +8,7 @@ namespace Sakemottekoi.MainGame
     /// </summary>
     public abstract class PhaseManager<T>:  MonoBehaviour where T : PhaseManager<T>
     {
+        public static event Action<string> OnErrorOccurred;
         public static T Instance { private set; get; }
         public bool IsFinished { protected set; get; } = false;
         protected abstract GamePhase TargetPhase { get; }
@@ -39,6 +41,11 @@ namespace Sakemottekoi.MainGame
         // フェーズ終了処理
         public virtual void EndPhase() {
             IsFinished = true;
+        }
+
+        protected void RaiseError(string message)
+        {
+            OnErrorOccurred?.Invoke(message);
         }
     }
 }

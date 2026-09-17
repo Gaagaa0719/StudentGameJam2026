@@ -6,14 +6,18 @@ namespace Sakemottekoi.MainGame
 {
     public class AlcholGlass : MonoBehaviour, IPointerClickHandler
     {
-        public static event Action<AlcholGlass> OnClicked;
+        public static event Action<AlcholGlass> OnClick;
 
-        // 酒の度数
-        public float content = 2;
+        public AlcholType Type { private set; get; }
+
+        public void SetAlcholType(AlcholType alcholType)
+        {
+            Type = alcholType;
+        }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnClicked?.Invoke(this);
+            OnClick?.Invoke(this);
         }
     }
 }

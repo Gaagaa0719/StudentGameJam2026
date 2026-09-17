@@ -125,4 +125,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ac9e8a4d37b69b4ca44e78b7f35fe08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholGlass
-  content: 2

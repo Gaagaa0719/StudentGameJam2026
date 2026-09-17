@@ -18,7 +18,7 @@ namespace Sakemottekoi.MainGame
 
         public override void Execute()
         {
-            GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchol(3);
+            GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchols(3);
             for (int i = 0; i < alchols.Length; i++)
             {
                 alchols[i].transform.position = AlcholPositions[i];

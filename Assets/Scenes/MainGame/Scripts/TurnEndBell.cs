@@ -39,6 +39,10 @@ namespace Sakemottekoi.MainGame
                         ItemUsePhaseManager.Instance.EndPhase();
                         break;
 
+                    case GamePhase.AlcholSelection:
+                        AlcholSelectionManager.Instance.TryEndPhase();
+                        break;
+
                     default:
                         return;
                 }

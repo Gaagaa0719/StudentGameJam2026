@@ -76,41 +76,35 @@ namespace Sakemottekoi.MainGame
         }
 
         /// <summary>
-        /// 在庫からランダムに一つの酒を消費し、その種類を返す。
+        /// 在庫の酒を消費する。
         /// </summary>
-        public AlcholType ConsumeRandomStock()
+        public void Consume(AlcholType type)
+        {
+            if (alcholStock[type] <= 0) throw new System.Exception("在庫がない種類の酒が消費されました。");
+            alcholStock[type]--;
+        }
+
+        /// <summary>
+        /// 在庫からランダムに種類を返す。(重みづけ)
+        /// </summary>
+        public AlcholType GetRandomType()
         {
             int r = Random.Range(0, GetStockCount());
 
-            if (r < alcholStock[AlcholType.SuperHigh])
-            {
-                alcholStock[AlcholType.SuperHigh]--;
-                return AlcholType.SuperHigh;
-            }
+            if (r < alcholStock[AlcholType.SuperHigh]) return AlcholType.SuperHigh;
             r -= alcholStock[AlcholType.SuperHigh];
 
-            if (r < alcholStock[AlcholType.High])
-            {
-                alcholStock[AlcholType.High]--;
-                return AlcholType.High;
-            }
+            if (r < alcholStock[AlcholType.High]) return AlcholType.High;
             r -= alcholStock[AlcholType.High];
 
-            if (r < alcholStock[AlcholType.Midium])
-            {
-                alcholStock[AlcholType.Midium]--;
-                return AlcholType.Midium;
-            }
-            r -= alcholStock[AlcholType.Midium];
-
-            alcholStock[AlcholType.Low]--;
-            return AlcholType.Low;
+            if (r < alcholStock[AlcholType.Midium]) return AlcholType.Midium;
+            else return AlcholType.Low;
         }
 
         public GameObject InstantiateAlchol(AlcholType type)
         {
             AlcholGlass alcholObj = Instantiate(alcholPrefab);
-            alcholObj.content = alcholContent[type];
+            alcholObj.SetAlcholType(type);
             return alcholObj.gameObject;
         }
 
@@ -118,7 +112,7 @@ namespace Sakemottekoi.MainGame
         /// 要求された数の酒をゲームオブジェクトの配列として返す。
         /// </summary>
         /// <exception cref="System.Exception">在庫以上の量が要求された場合</exception>
-        public GameObject[] GetRandomAlchol(int count)
+        public GameObject[] GetRandomAlchols(int count)
         {
             int stockCount = GetStockCount();
             if (stockCount < count) throw new System.Exception("在庫以上の数の酒が要求されました。");
@@ -126,7 +120,7 @@ namespace Sakemottekoi.MainGame
             GameObject[] alchols = new GameObject[count];
             for (int i = 0; i < count; i++)
             {
-                AlcholType type = ConsumeRandomStock();
+                AlcholType type = GetRandomType();
                 alchols[i] = InstantiateAlchol(type);
             }
 
