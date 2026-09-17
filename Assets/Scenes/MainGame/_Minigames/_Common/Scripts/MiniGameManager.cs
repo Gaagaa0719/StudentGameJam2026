@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MiniGameManager : MonoBehaviour
 {
-    public static MiniGameManager instance;
+    public static MiniGameManager Instance { private set; get; }
 
     [Header("登場するミニゲームのリスト")]
     [SerializeField]
@@ -11,7 +11,7 @@ public class MiniGameManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
     public MiniGame GetRandomOne()

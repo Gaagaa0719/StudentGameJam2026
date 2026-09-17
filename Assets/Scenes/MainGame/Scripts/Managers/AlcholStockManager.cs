@@ -104,7 +104,7 @@ namespace Sakemottekoi.MainGame
         public GameObject InstantiateAlchol(AlcholType type)
         {
             AlcholGlass alcholObj = Instantiate(alcholPrefab);
-            alcholObj.content = alcholContent[type];
+            alcholObj.SetAlcholType(type);
             return alcholObj.gameObject;
         }
 

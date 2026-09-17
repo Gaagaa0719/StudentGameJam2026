@@ -1,27 +1,52 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
-    public class AlcholSelectionManager : MonoBehaviour
+    public class AlcholSelectionManager : PhaseManager<AlcholSelectionManager>
     {
-        public static AlcholSelectionManager Instance { private set; get; }
-        public bool IsAlcholSelected { private set; get; } = false;
+        protected override GamePhase TargetPhase => GamePhase.AlcholSelection;
 
-        private void Awake()
+        private AlcholGlass playerGlass, enemyGlass;
+
+        protected override void Awake()
         {
-            Instance = this;
+            base.Awake();
+            AlcholGlass.OnClick += (glass) => { playerGlass = glass; };
         }
 
-        // Use this for initialization
-        void Start()
+        public async void TryEndPhase()
         {
+            var alcholGlasses = GameObject.FindGameObjectsWithTag("Glass").Select(v => v.GetComponent<AlcholGlass>()).ToArray();
+            enemyGlass = alcholGlasses[Random.Range(0, alcholGlasses.Length)];
+            enemyGlass = playerGlass;
 
-        }
+            if (playerGlass == null || enemyGlass == null)
+            {
+                Debug.LogError("グラスが選択されていません！");
+                RaiseError("グラスを選んでください！");
+                return;
+            }
 
-        // Update is called once per frame
-        void Update()
-        {
+            if(playerGlass == enemyGlass)
+            {
+                bool result = await MiniGameManager.Instance.GetRandomOne().StartGameAsync(0f);
+                if(result)
+                {
+                    Debug.Log("ミニゲームに勝利しました！");
+                    return;
+                }
+                else
+                {
+                    Debug.Log("ミニゲームに敗北しました！");
+                    return;
+                }
+            }
 
+            var manager = AlcholStockManager.Instance;
+            manager.Consume(playerGlass.Type);
+            manager.Consume(enemyGlass.Type);
+            EndPhase();
         }
     }
 }
