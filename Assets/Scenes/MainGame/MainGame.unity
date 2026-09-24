@@ -785,8 +785,8 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  - component: {fileID: 330585548}
   - component: {fileID: 330585549}
+  - component: {fileID: 330585550}
   m_Layer: 0
   m_Name: Player
   m_TagString: MainCamera
@@ -912,25 +912,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2c34605ee36b741a242f52aca8cdb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player
-  DegreeBar: {fileID: 1697979787}
-  DegreePointText: {fileID: 1981469816}
-  currentDegreePoint: 0
-  maxDegreePoint: 100
-  HealthyLiver: {fileID: 1145285953}
-  DamagedLiver: {fileID: 1677159605}
-  PoorLiver: {fileID: 1590986953}
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -947,6 +928,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!114 &330585550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45774171bffa4b3428eae25a802aadc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.Player
+  maxDrunkenness: 500
 --- !u!1 &343542301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1214,6 +1208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 361012732}
+  - component: {fileID: 361012733}
   m_Layer: 5
   m_Name: PlayerDPBar
   m_TagString: Untagged
@@ -1246,6 +1241,21 @@ RectTransform:
   m_AnchoredPosition: {x: -808, y: 120}
   m_SizeDelta: {x: 147.578, y: 1441.3667}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &361012733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361012731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8beff66ecdbcd4b41886dfbd2f6e0356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.DrunkennessBar
+  target: {fileID: 330585550}
+  DrunkennessBarUI: {fileID: 1697979787}
+  DrunkennessText: {fileID: 1981469816}
 --- !u!1 &376573051
 GameObject:
   m_ObjectHideFlags: 0
@@ -1392,6 +1402,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 383029478}
+  - component: {fileID: 383029479}
   m_Layer: 5
   m_Name: EnemyDPBar
   m_TagString: Untagged
@@ -1424,6 +1435,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 461}
   m_SizeDelta: {x: 487.39005, y: 36.62964}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &383029479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383029477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8beff66ecdbcd4b41886dfbd2f6e0356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.DrunkennessBar
+  target: {fileID: 1461680873}
+  DrunkennessBarUI: {fileID: 1570033337}
+  DrunkennessText: {fileID: 799402396}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -4318,10 +4344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56a5cf6df13cbc24caf2ad882459c1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  DegreeBar: {fileID: 1570033337}
-  DegreePointText: {fileID: 799402396}
-  currentDegreePoint: 0
-  maxDegreePoint: 1500
+  maxDrunkenness: 100
   animator: {fileID: 1461680870}
 --- !u!1 &1484434412
 GameObject:
