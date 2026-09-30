@@ -4,21 +4,21 @@ using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
-    public enum AlcholType
+    public enum DrunkennessLevel
     {
-        SuperHigh = 0,
+        VeryHigh = 0,
         High = 1,
-        Midium = 2,
+        Medium = 2,
         Low = 3
     }
 
     [System.Serializable]
     public class AlcholStockData
     {
-        [EnumIndex(typeof(AlcholType))]
-        public int[] stocks = new int[4] {0, 0, 0, 0};
+        [EnumIndex(typeof(DrunkennessLevel))]
+        public int[] stocks = new int[4] { 0, 0, 0, 0 };
 
-        public int this[AlcholType type]
+        public int this[DrunkennessLevel type]
         {
             get => stocks[(int)type];
             set => stocks[(int)type] = value;
@@ -50,7 +50,7 @@ namespace Sakemottekoi.MainGame
         [SerializeField] private List<RestockEntry> candidates = new();
 
         [Header("お酒用のプレファブ")]
-        [SerializeField] private AlcholGlass alcholPrefab;
+        [SerializeField] private AlcoholGlass alcholPrefab;
 
         [Header("酔い度の上昇量")]
         [SerializeField] private AlcholStockData alcholContent = new();
@@ -78,7 +78,7 @@ namespace Sakemottekoi.MainGame
         /// <summary>
         /// 在庫の酒を消費する。
         /// </summary>
-        public void Consume(AlcholType type)
+        public void Consume(DrunkennessLevel type)
         {
             if (alcholStock[type] <= 0) throw new System.Exception("在庫がない種類の酒が消費されました。");
             alcholStock[type]--;
@@ -87,23 +87,23 @@ namespace Sakemottekoi.MainGame
         /// <summary>
         /// 在庫からランダムに種類を返す。(重みづけ)
         /// </summary>
-        public AlcholType GetRandomType()
+        public DrunkennessLevel GetRandomType()
         {
             int r = Random.Range(0, GetStockCount());
 
-            if (r < alcholStock[AlcholType.SuperHigh]) return AlcholType.SuperHigh;
-            r -= alcholStock[AlcholType.SuperHigh];
+            if (r < alcholStock[DrunkennessLevel.VeryHigh]) return DrunkennessLevel.VeryHigh;
+            r -= alcholStock[DrunkennessLevel.VeryHigh];
 
-            if (r < alcholStock[AlcholType.High]) return AlcholType.High;
-            r -= alcholStock[AlcholType.High];
+            if (r < alcholStock[DrunkennessLevel.High]) return DrunkennessLevel.High;
+            r -= alcholStock[DrunkennessLevel.High];
 
-            if (r < alcholStock[AlcholType.Midium]) return AlcholType.Midium;
-            else return AlcholType.Low;
+            if (r < alcholStock[DrunkennessLevel.Medium]) return DrunkennessLevel.Medium;
+            else return DrunkennessLevel.Low;
         }
 
-        public GameObject InstantiateAlchol(AlcholType type)
+        public GameObject InstantiateAlchol(DrunkennessLevel type)
         {
-            AlcholGlass alcholObj = Instantiate(alcholPrefab);
+            AlcoholGlass alcholObj = Instantiate(alcholPrefab);
             alcholObj.SetAlcholType(type);
             return alcholObj.gameObject;
         }
@@ -120,7 +120,7 @@ namespace Sakemottekoi.MainGame
             GameObject[] alchols = new GameObject[count];
             for (int i = 0; i < count; i++)
             {
-                AlcholType type = GetRandomType();
+                DrunkennessLevel type = GetRandomType();
                 alchols[i] = InstantiateAlchol(type);
             }
 
