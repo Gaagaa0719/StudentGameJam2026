@@ -8,11 +8,12 @@ namespace Sakemottekoi.MainGame
     {
         private bool isDirty = false;
         private bool isRunning = false;
-        private List<GameSystem> systemList = new();
+        private List<GameSystem> registeredSystemList = new();
+        private List<GameSystem> usingSystemList = new ();
 
         public Phase(params GameSystem[] systems)
         {
-            systemList.AddRange(systems);
+            registeredSystemList.AddRange(systems);
             Sort();
         }
 
@@ -20,7 +21,7 @@ namespace Sakemottekoi.MainGame
         public void Add(IEnumerable<GameSystem> systems)
         {
             if (isRunning) throw new Exception("フェーズの処理が走っている最中に追加を試みました。");
-            systemList.AddRange(systems);
+            registeredSystemList.AddRange(systems);
             isDirty = true;
         }
 
@@ -35,8 +36,24 @@ namespace Sakemottekoi.MainGame
             var edges = new Dictionary<string, List<string>>(); // 自身の後に実行すべきSystemのIDリスト
             var nextConstraints = new Dictionary<string, string>(); // Next（直後）制約の辞書
 
+            usingSystemList.Clear();
+
+            foreach (var sys in registeredSystemList)
+            {
+                var index = usingSystemList.FindIndex(v => v.Id == sys.Id);
+                if (index == -1)
+                {
+                    usingSystemList.Add(sys);
+                    continue;
+                }
+
+                if (usingSystemList[index].OrderRule.Priority < sys.OrderRule.Priority)
+                    usingSystemList[index] = sys;
+            }
+
+
             // 1. 初期化
-            foreach (var sys in systemList)
+            foreach (var sys in usingSystemList)
             {
                 idToSystem[sys.Id] = sys;
                 inDegree[sys.Id] = 0;
@@ -44,7 +61,7 @@ namespace Sakemottekoi.MainGame
             }
 
             // 2. 依存関係（グラフ）の構築
-            foreach (var sys in systemList)
+            foreach (var sys in usingSystemList)
             {
                 var order = sys.OrderRule;
 
@@ -121,13 +138,13 @@ namespace Sakemottekoi.MainGame
             }
 
             // 4. 循環参照の検知 (AがBを待ち、BがAを待っているとソートされないまま残る)
-            if (sortedList.Count != systemList.Count)
+            if (sortedList.Count != usingSystemList.Count)
             {
                 throw new Exception("順序破綻: System間の依存関係に循環参照が存在します。");
             }
 
             // ソート成功
-            systemList = sortedList;
+            registeredSystemList = sortedList;
             isDirty = false;
         }
 
@@ -138,16 +155,14 @@ namespace Sakemottekoi.MainGame
 
             try
             {
-
-                foreach (var system in systemList)
+                foreach (var system in usingSystemList)
                 {
                     system.Execute();
-
                     yield return VisualQueue.PlayAll();
                 }
 
                 // 一度きりの処理をクリア
-                var removeCount = systemList.RemoveAll((v) => v.IsOneShot);
+                var removeCount = registeredSystemList.RemoveAll((v) => v.IsOneShot);
                 if (removeCount != 0) isDirty = true;
             }
             finally

@@ -1,4 +1,5 @@
 ﻿using Sakemottekoi.MainGame;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : Actor
@@ -16,5 +17,14 @@ public class Enemy : Actor
         {
             animator.SetTrigger("animate");
         }
+    }
+
+    /// <summary>
+    /// 敵キャラの選んだ酒を返す
+    /// </summary>
+    public AlcoholGlass SelectGlass()
+    {
+        var alcholGlasses = GameObject.FindGameObjectsWithTag("Glass").Select(v => v.GetComponent<AlcoholGlass>()).ToArray();
+        return alcholGlasses[Random.Range(0, alcholGlasses.Length)];
     }
 }

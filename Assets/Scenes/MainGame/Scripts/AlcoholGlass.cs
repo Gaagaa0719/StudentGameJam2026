@@ -10,7 +10,7 @@ namespace Sakemottekoi.MainGame
 
         public DrunkennessLevel Level { private set; get; }
 
-        public void SetAlcholType(DrunkennessLevel alcholType)
+        public void SetAlcholLevel(DrunkennessLevel alcholType)
         {
             Level = alcholType;
         }

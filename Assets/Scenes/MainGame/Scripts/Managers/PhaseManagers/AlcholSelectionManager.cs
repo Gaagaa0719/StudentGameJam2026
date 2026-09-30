@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -7,19 +6,17 @@ namespace Sakemottekoi.MainGame
     {
         protected override GamePhase TargetPhase => GamePhase.AlcholSelection;
 
-        private AlcholGlass playerGlass, enemyGlass;
+        private AlcoholGlass playerGlass, enemyGlass;
 
         protected override void Awake()
         {
             base.Awake();
-            AlcholGlass.OnClick += (glass) => { playerGlass = glass; };
+            AlcoholGlass.OnClick += (glass) => { playerGlass = glass; };
         }
 
         public async void TryEndPhase()
         {
-            var alcholGlasses = GameObject.FindGameObjectsWithTag("Glass").Select(v => v.GetComponent<AlcholGlass>()).ToArray();
-            enemyGlass = alcholGlasses[Random.Range(0, alcholGlasses.Length)];
-            enemyGlass = playerGlass;
+            enemyGlass = GameManager.Instance.Enemy.SelectGlass();
 
             if (playerGlass == null || enemyGlass == null)
             {
@@ -33,19 +30,13 @@ namespace Sakemottekoi.MainGame
                 bool result = await MiniGameManager.Instance.GetRandomOne().StartGameAsync(0f);
                 if(result)
                 {
-                    Debug.Log("ミニゲームに勝利しました！");
-                    return;
+                    playerGlass = null;
                 }
                 else
                 {
-                    Debug.Log("ミニゲームに敗北しました！");
-                    return;
+                    enemyGlass = null;
                 }
             }
-
-            var manager = AlcholStockManager.Instance;
-            manager.Consume(playerGlass.Type);
-            manager.Consume(enemyGlass.Type);
             EndPhase();
         }
     }

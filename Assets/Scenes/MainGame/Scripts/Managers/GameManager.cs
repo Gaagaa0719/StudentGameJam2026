@@ -31,6 +31,9 @@ namespace Sakemottekoi.MainGame
 
         public GamePhase CurrentPhase { private set; get; }
 
+        [Header("敵キャラクター")]
+        [SerializeField] public readonly Enemy Enemy;
+
         [Header("BGMのオーディオソース")]
         [SerializeField] private AudioSource BGMSource;
 
