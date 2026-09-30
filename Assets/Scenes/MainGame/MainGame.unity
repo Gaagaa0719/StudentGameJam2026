@@ -940,7 +940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45774171bffa4b3428eae25a802aadc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.Player
-  maxDrunkenness: 500
+  maxDrunkenness: 100
 --- !u!1 &343542301
 GameObject:
   m_ObjectHideFlags: 0
