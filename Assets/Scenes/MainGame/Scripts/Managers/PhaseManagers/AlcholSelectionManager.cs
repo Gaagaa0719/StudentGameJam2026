@@ -14,7 +14,10 @@ namespace Sakemottekoi.MainGame
         protected override void Awake()
         {
             base.Awake();
-            AlcoholGlass.OnClick += (glass) => { playerGlass = glass; };
+            AlcoholGlass.OnClick += (glass) => {
+                if (GameManager.Instance.CurrentPhase != GamePhase.AlcholSelection) return;
+                playerGlass = glass;
+            };
         }
 
         public async void TryEndPhase()
