@@ -2008,7 +2008,7 @@ GameObject:
   - component: {fileID: 645558819}
   - component: {fileID: 645558820}
   - component: {fileID: 645558823}
-  - component: {fileID: 645558822}
+  - component: {fileID: 645558824}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2074,20 +2074,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63b193bde956ea644b5d2727b52a5939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.GameManager
+  DrunkennessSettings: {fileID: 11400000, guid: 0af1b34631c1fec4395f922121cbbb2b, type: 2}
+  Player: {fileID: 330585550}
+  Enemy: {fileID: 1461680873}
   BGMSource: {fileID: 1484434413}
   SESource: {fileID: 267229423}
---- !u!114 &645558822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645558816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c983949417bb8f341ac9be1ccfebebf8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholSelectionManager
 --- !u!114 &645558823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2100,6 +2091,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7116411ea08e2b1459b3bb053076d39c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemUsePhaseManager
+--- !u!114 &645558824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c983949417bb8f341ac9be1ccfebebf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholSelectionManager
 --- !u!114 &678706445 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7841424387797809139, guid: 3c6d6bd32de7b0044a0b3f86d955899c, type: 3}
@@ -3161,6 +3164,7 @@ GameObject:
   - component: {fileID: 1013605733}
   - component: {fileID: 1013605732}
   - component: {fileID: 1013605735}
+  - component: {fileID: 1013605736}
   m_Layer: 5
   m_Name: LogView
   m_TagString: Untagged
@@ -3265,6 +3269,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &1013605736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013605730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35896ef20f65eb14193513ab33808f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameLogUI
+  logText: {fileID: 6120372426877402721, guid: 2acded1af6c5b4242980a98001abb24e, type: 3}
 --- !u!1 &1145285953
 GameObject:
   m_ObjectHideFlags: 0
@@ -5369,14 +5386,14 @@ RectTransform:
   m_GameObject: {fileID: 1697979785}
   m_LocalRotation: {x: -0.7071068, y: -0.7071068, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 11.190823, y: 0.93501896, z: 1}
+  m_LocalScale: {x: 7.7934446, y: 1.3214166, z: 0.7370167}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 361012732}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -1.1200409}
+  m_AnchoredPosition: {x: 3.9, y: -1.1200409}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1697979787
