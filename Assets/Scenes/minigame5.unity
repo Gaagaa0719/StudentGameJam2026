@@ -497,6 +497,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LightOn
       objectReference: {fileID: 0}
+    - target: {fileID: 3240802996151184091, guid: c07b1a065610ee047b370929dc915d17, type: 3}
+      propertyPath: requiredClearCount
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6473573003902449466, guid: c07b1a065610ee047b370929dc915d17, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

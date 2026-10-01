@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using JetBrains.Annotations;
 
 // 電球ミニゲーム全体を管理する
 public class LightBulbGame : MiniGame
@@ -25,7 +26,7 @@ public class LightBulbGame : MiniGame
 
 
     // ミニゲーム開始
-    protected override void OnStart(float value)
+    protected override void OnStart(float dp)
     {
         // 現在のクリア回数を0にする
         clearCount = 0;
@@ -35,7 +36,19 @@ public class LightBulbGame : MiniGame
 
         // 最初の電球状態を作る
         ResetBulbs();
-    }
+
+        //酔い度を参照してゲーム難易度の変更
+        if (dp >= 10)
+        {
+            requiredClearCount = (int)(dp / 10) ;
+        }
+        else
+        {
+            requiredClearCount = 1;
+        }
+          
+
+}
 
 
     // 3つ全ての電球がONか確認する
@@ -52,7 +65,7 @@ public class LightBulbGame : MiniGame
             Debug.Log("クリア回数：" + clearCount);
 
 
-            // Inspectorで設定した回数までクリアした場合
+            // 酔い度を参照した数値の回数までクリアした場合
             if (clearCount >= requiredClearCount)
             {
                 // ミニゲーム終了
