@@ -20,6 +20,12 @@ namespace Sakemottekoi.MainGame
             };
         }
 
+        protected override void StartPhase()
+        {
+            playerGlass = null;
+            enemyGlass = null;
+        }
+
         public async void TryEndPhase()
         {
             enemyGlass = GameManager.Instance.Enemy.SelectGlass();

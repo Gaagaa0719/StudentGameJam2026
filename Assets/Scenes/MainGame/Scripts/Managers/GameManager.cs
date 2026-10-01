@@ -27,12 +27,22 @@ namespace Sakemottekoi.MainGame
             new PrepareAlchols()
         });
 
-        public Phase BattlePhase = new();
+        public Phase BattlePhase = new(new GameSystem[]
+        {
+            new PlayerDrink(),
+            new EnemyDrink(),
+        });
 
         public GamePhase CurrentPhase { private set; get; }
 
+        [Header("酒の酔い度上昇量")]
+        [SerializeField] public DrunkennessSettings DrunkennessSettings;
+
+        [Header("プレイヤー")]
+        [SerializeField] public Player Player;
+
         [Header("敵キャラクター")]
-        [SerializeField] public readonly Enemy Enemy;
+        [SerializeField] public Enemy Enemy;
 
         [Header("BGMのオーディオソース")]
         [SerializeField] private AudioSource BGMSource;
