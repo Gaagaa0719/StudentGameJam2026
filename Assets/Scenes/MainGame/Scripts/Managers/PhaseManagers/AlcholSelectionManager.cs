@@ -6,6 +6,9 @@ namespace Sakemottekoi.MainGame
     {
         protected override GamePhase TargetPhase => GamePhase.AlcholSelection;
 
+        public AlcoholGlass PlayerGlass => playerGlass;
+        public AlcoholGlass EnemyGlass => enemyGlass;
+
         private AlcoholGlass playerGlass, enemyGlass;
 
         protected override void Awake()
