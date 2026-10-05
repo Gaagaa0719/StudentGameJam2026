@@ -10,7 +10,7 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "提示された3つのお酒から一つ選び、選んだお酒に一度浸して取り出す。取り出した紙幣に火を点け燃え具合でそのお酒の酔い度がわかる。\n小は燃えず。中は少し、大はとても燃える。";
 
-        protected override IEnumerator InternalUse()
+        protected override IEnumerator InternalUse(Actor source)
         {
             throw new System.NotImplementedException();
         }

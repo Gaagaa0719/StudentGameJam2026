@@ -10,7 +10,7 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "";
 
-        protected override IEnumerator InternalUse()
+        protected override IEnumerator InternalUse(Actor source)
         {
             throw new System.NotImplementedException();
         }

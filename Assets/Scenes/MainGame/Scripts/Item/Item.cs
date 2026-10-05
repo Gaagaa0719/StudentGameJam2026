@@ -45,15 +45,16 @@ namespace Sakemottekoi.MainGame
         /// <summary>
         /// アイテムを使用する時に使う関数
         /// </summary>
-        public IEnumerator Use() {
+        public IEnumerator Use(Actor source) {
             OnUsed?.Invoke(this);
-            yield return InternalUse();
+            yield return InternalUse(source);
+            ItemMenu.Instance.Remove(gameObject);
         }
 
         /// <summary>
         /// アイテムが使用された時に実行される処理を書く関数
         /// </summary>
-        protected abstract IEnumerator InternalUse();
+        protected abstract IEnumerator InternalUse(Actor source);
 
         /// <summary>
         /// アイテムがホバーされた時の処理

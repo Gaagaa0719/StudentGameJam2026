@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 
 namespace Sakemottekoi.MainGame
 {
@@ -7,13 +6,15 @@ namespace Sakemottekoi.MainGame
     {
         public override string DisplayName => "コールベル";
 
-        public override string SimpleDescription => "渡されたお酒を提示された中で選ばれていない物と交換する";
+        public override string SimpleDescription => "渡されたお酒の酔い度上昇率を0か大にする。";
 
-        public override string Description => "";
+        public override string Description => "自分が次に渡されたお酒の酔い度上昇率を0or大にする。確率は互いに50%";
 
-        protected override IEnumerator InternalUse()
+        protected override IEnumerator InternalUse(Actor source)
         {
-            throw new System.NotImplementedException();
+            GameSystem system = new ChangeAlcoholZeroOrLarge(source);
+            GameManager.Instance.BattlePhase.Add(system);
+            yield return null;
         }
     }
 }

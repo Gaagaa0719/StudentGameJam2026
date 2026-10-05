@@ -1,5 +1,4 @@
-﻿using Sakemottekoi.MainGame;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -18,6 +17,7 @@ namespace Sakemottekoi.MainGame
         {
             return level switch
             {
+                DrunkennessLevel.Zero => 0,
                 DrunkennessLevel.Low => low,
                 DrunkennessLevel.Medium => medium,
                 DrunkennessLevel.High => high,
