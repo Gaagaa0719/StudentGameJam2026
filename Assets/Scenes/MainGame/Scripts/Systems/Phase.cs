@@ -18,7 +18,7 @@ namespace Sakemottekoi.MainGame
         }
 
         // 外部から動的に処理を追加する用の関数。
-        public void Add(IEnumerable<GameSystem> systems)
+        public void Add(params GameSystem[] systems)
         {
             if (isRunning) throw new Exception("フェーズの処理が走っている最中に追加を試みました。");
             registeredSystemList.AddRange(systems);
@@ -155,7 +155,7 @@ namespace Sakemottekoi.MainGame
 
             try
             {
-                foreach (var system in usingSystemList)
+                foreach (var system in registeredSystemList)
                 {
                     system.Execute();
                     yield return VisualQueue.PlayAll();
