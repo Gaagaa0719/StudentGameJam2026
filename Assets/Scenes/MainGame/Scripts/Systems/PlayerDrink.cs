@@ -1,4 +1,5 @@
-﻿
+﻿using UnityEngine;
+
 namespace Sakemottekoi.MainGame
 {
     public class PlayerDrink : GameSystem
