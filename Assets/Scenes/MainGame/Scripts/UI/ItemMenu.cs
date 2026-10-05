@@ -72,6 +72,7 @@ public class ItemMenu : MonoBehaviour {
         if (!items.Contains(removeItem)) return;
 
         items.Remove(removeItem);
+        Destroy(removeItem);
 
         for (int i = 0; i < items.Count; i++)
         {

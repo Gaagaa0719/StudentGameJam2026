@@ -20,7 +20,7 @@ namespace Sakemottekoi.MainGame
             base.Awake();
             Item.OnClicked += Show;
             CloseButton.onClick.AddListener(() => FadeOut());
-            UseButton.onClick.AddListener(() => { if (showingItem != null) StartCoroutine(showingItem.Use()); });
+            UseButton.onClick.AddListener(OnClicked);
         }
 
         private void Show(Item item)
@@ -33,6 +33,13 @@ namespace Sakemottekoi.MainGame
             showingItem = item;
 
             FadeIn();
+        }
+
+        private void OnClicked()
+        {
+            if (showingItem == null) return;
+            StartCoroutine(showingItem.Use(GameManager.Instance.Player));
+            FadeOut();
         }
     }
 }
