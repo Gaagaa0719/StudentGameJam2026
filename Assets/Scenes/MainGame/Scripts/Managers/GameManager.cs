@@ -20,7 +20,15 @@ namespace Sakemottekoi.MainGame
     {
         public static GameManager Instance { private set; get; }
 
+        /// <summary>
+        /// フェーズ変更時に呼ばれるイベント
+        /// </summary>
         public static event Action<GamePhase> OnPhaseChanged;
+
+        /// <summary>
+        /// ゲームの一連のフェーズが終わったタイミングで呼ばれるイベント
+        /// </summary>
+        public static event Action OnGamePhaseEnded;
 
         public readonly Phase PreparePhase = new(new GameSystem[]
         {
@@ -88,7 +96,10 @@ namespace Sakemottekoi.MainGame
 
                     ChangePhase(GamePhase.Battle);
                     yield return BattlePhase.Run();
+
+                    OnGamePhaseEnded?.Invoke();
                 }
+                AlcholStockManager.Instance.Clear();
             }
         }
 

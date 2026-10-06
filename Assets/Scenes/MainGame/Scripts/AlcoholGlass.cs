@@ -12,7 +12,12 @@ namespace Sakemottekoi.MainGame
 
         private void Awake()
         {
-            
+            GameManager.OnGamePhaseEnded += ReturnToStock;
+        }
+
+        private void OnDestroy()
+        {
+            GameManager.OnGamePhaseEnded -= ReturnToStock;
         }
 
         public void ReturnToStock()
