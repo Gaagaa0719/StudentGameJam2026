@@ -36,17 +36,18 @@ namespace Sakemottekoi.MainGame
             GameManager.OnPhaseChanged += (phase) => {
                 PhaseObjectiveData objectiveData = phaseObjectives.Find(v => v.Phase == phase);
                 if (objectiveData == null) return;
-                if (coroutine != null) return;
+                if (coroutine != null) StopCoroutine(coroutine);
                 coroutine = StartCoroutine(ShowObjective(objectiveData));
             };
         }
 
         private IEnumerator ShowObjective(PhaseObjectiveData data)
         {
+            yield return FadeOut();
             textComp.text = data.ObjectiveText;
-            FadeIn();
+            yield return FadeIn();
             yield return new WaitForSeconds(stayTime);
-            FadeOut();
+            yield return FadeOut();
             coroutine = null;
         }
     }
