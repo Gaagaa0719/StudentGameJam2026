@@ -33,6 +33,8 @@ namespace Sakemottekoi.MainGame
                 _ => throw new ArgumentException("引数に渡されたActorの型が無効です")
             };
 
+            if (glass == null) return;
+
             // 50%の確立で酔い度をZeroかHighにする
             float random = UnityEngine.Random.Range(0.0f, 1.0f);
             if (random < 0.5f) glass.SetAlcholLevel(DrunkennessLevel.Zero);
