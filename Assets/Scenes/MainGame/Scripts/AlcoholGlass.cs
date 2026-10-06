@@ -10,6 +10,17 @@ namespace Sakemottekoi.MainGame
 
         public DrunkennessLevel Level { private set; get; }
 
+        private void Awake()
+        {
+            
+        }
+
+        public void ReturnToStock()
+        {
+            AlcholStockManager.Instance.RestockSpecific(Level, 1);
+            Destroy(gameObject);
+        }
+
         public void SetAlcholLevel(DrunkennessLevel alcholType)
         {
             Level = alcholType;

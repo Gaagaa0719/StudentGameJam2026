@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 namespace Sakemottekoi.MainGame
 {
     public class EnemyDrink : GameSystem
@@ -15,7 +17,7 @@ namespace Sakemottekoi.MainGame
             if (glass == null) return;
             var amount = GameManager.Instance.DrunkennessSettings.GetAmount(glass.Level);
             GameManager.Instance.Enemy.AddDrunkenness(amount);
-            AlcholStockManager.Instance.Consume(glass.Level);
+            GameObject.Destroy(glass.gameObject);
         }
     }
 }

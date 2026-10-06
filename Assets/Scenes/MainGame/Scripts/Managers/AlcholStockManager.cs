@@ -65,7 +65,15 @@ namespace Sakemottekoi.MainGame
         }
 
         /// <summary>
-        /// 在庫を補充する。
+        /// 特定の酒の在庫を補充する。
+        /// </summary>
+        public void RestockSpecific(DrunkennessLevel level, int amount)
+        {
+            alcholStock[level] += amount;
+        }
+
+        /// <summary>
+        /// テンプレートから在庫を補充する。
         /// </summary>
         public void Restock(int amount)
         {
@@ -122,6 +130,7 @@ namespace Sakemottekoi.MainGame
             for (int i = 0; i < count; i++)
             {
                 DrunkennessLevel type = GetRandomType();
+                Consume(type);
                 alchols[i] = InstantiateAlchol(type);
             }
 
