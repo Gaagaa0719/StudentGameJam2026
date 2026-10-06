@@ -9,7 +9,7 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "マスターに頼み、選んだ酒の酔い度を極大にする";
 
-        public override string Description => "";
+        public override string Description => "マスターに頼み、選んだ酒の酔い度を極大にする";
 
         protected override IEnumerator InternalUse(Actor source)
         {

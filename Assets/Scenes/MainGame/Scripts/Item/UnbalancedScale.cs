@@ -9,7 +9,7 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "提示された酒の中で、一番強い酒もしくは一番弱い酒が分かる";
 
-        public override string Description => "";
+        public override string Description => "提示された酒の中で、一番強い酒もしくは一番弱い酒が分かる";
 
         protected override IEnumerator InternalUse(Actor source)
         {
