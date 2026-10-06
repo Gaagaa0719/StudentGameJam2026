@@ -12,7 +12,9 @@ namespace Sakemottekoi.MainGame
 
         protected override IEnumerator InternalUse(Actor source)
         {
-            throw new System.NotImplementedException();
+            GameSystem system = new ChangeAlcoholZeroOrLarge(source);
+            GameManager.Instance.BattlePhase.Add(system);
+            yield return null;
         }
     }
 } 
