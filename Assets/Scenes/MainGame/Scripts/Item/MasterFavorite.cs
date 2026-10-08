@@ -12,7 +12,7 @@ namespace Sakemottekoi.MainGame
 
         protected override IEnumerator InternalUse(Actor source)
         {
-            GameSystem system = new ChangeAlcoholZeroOrLarge(source);
+            GameSystem system = new DrinkWithMaster(source);
             GameManager.Instance.BattlePhase.Add(system);
             yield return null;
         }
