@@ -1,5 +1,6 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
+using System.Linq;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -13,7 +14,14 @@ namespace Sakemottekoi.MainGame
 
         protected override IEnumerator InternalUse(Actor source)
         {
-            throw new System.NotImplementedException();
+            AlcoholGlass[] glasses = GameObject.FindGameObjectsWithTag("AlcoholGlass").Select(v => v.GetComponent<AlcoholGlass>()).ToArray();
+            if(Random.value < 0.5f)
+
+            foreach (var glass in glasses)
+            {
+                
+            }
+            yield break;
         }
     }
 }
