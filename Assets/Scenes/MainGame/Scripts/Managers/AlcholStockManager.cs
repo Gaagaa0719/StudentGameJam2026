@@ -53,9 +53,6 @@ namespace Sakemottekoi.MainGame
         [Header("お酒用のプレファブ")]
         [SerializeField] private AlcoholGlass alcholPrefab;
 
-        [Header("酔い度の上昇量")]
-        [SerializeField] private AlcholStockData alcholContent = new();
-
         private AlcholStockData alcholStock = new();
 
 
