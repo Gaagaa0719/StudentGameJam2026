@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -9,11 +10,20 @@ namespace Sakemottekoi.MainGame
 
         public override string SimpleDescription => "水をかぶって気を保つ";
 
-        public override string Description => "水をかぶって気を保ち、自身の酔い度を中下げる";
+        public override string Description => $"水をかぶって気を保つ。酔い度を{recoveryAmount}回復する。";
+
+        private float recoveryAmount;
+
+        private void Awake()
+        {
+            DrunkennessSettings settings = GameManager.Instance.DrunkennessSettings;
+            recoveryAmount = settings.GetAmount(DrunkennessLevel.Medium);
+        }
 
         protected override IEnumerator InternalUse(Actor source)
         {
-            throw new System.NotImplementedException();
+            source.RemoveDrunkenness(recoveryAmount);
+            yield break;
         }
     }
 }

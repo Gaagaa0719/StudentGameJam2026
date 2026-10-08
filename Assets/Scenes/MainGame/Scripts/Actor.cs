@@ -27,7 +27,7 @@ namespace Sakemottekoi.MainGame
 
         public void SetDrunkenness(float value)
         {
-            Drunkenness = value;
+            Drunkenness = Mathf.Clamp(value, 0, MaxDrunkenness);
             OnDrunkennessChanged?.Invoke(this);
         }
     }
