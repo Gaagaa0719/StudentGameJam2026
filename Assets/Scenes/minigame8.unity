@@ -130,14 +130,13 @@ GameObject:
   - component: {fileID: 461228451}
   - component: {fileID: 461228453}
   - component: {fileID: 461228452}
-  - component: {fileID: 461228454}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &461228451
 RectTransform:
   m_ObjectHideFlags: 0
@@ -154,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 311.99997}
+  m_AnchoredPosition: {x: 0, y: 312}
   m_SizeDelta: {x: 1000, y: 524}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &461228452
@@ -195,19 +194,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 461228450}
   m_CullTransparentMesh: 1
---- !u!114 &461228454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!1 &647467232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5349466143856901095, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
+  m_PrefabInstance: {fileID: 1618957750}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 461228450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f021448d66679fc49b9429ade6e51792, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ReactionMinigame
-  imageUI: {fileID: 461228450}
 --- !u!1 &705742903
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +447,19 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4452933838249606429, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
   m_PrefabInstance: {fileID: 1618957750}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &772116472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647467232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f021448d66679fc49b9429ade6e51792, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReactionMinigame
+  imageUI: {fileID: 461228450}
 --- !u!224 &833533912 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4194007388343047980, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
@@ -548,6 +552,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 705742904}
     m_Modifications:
+    - target: {fileID: 154770958151764433, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1318141078501953438, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
       propertyPath: m_Color.a
       value: 0
@@ -681,7 +689,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4194007388343047980, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 956561932}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5349466143856901095, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 772116472}
   m_SourcePrefab: {fileID: 100100000, guid: 7ab8cb1902cad96459df94ff201d91d4, type: 3}
 --- !u!1 &1832444819
 GameObject:
