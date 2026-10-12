@@ -93,9 +93,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""id"": ""6ee09f9a-b4c0-4741-9c63-4ce633f93644"",
             ""actions"": [
                 {
-                    ""name"": ""MainAction"",
+                    ""name"": ""PrimaryAction"",
                     ""type"": ""Button"",
                     ""id"": ""71da79ba-6713-4b28-8e2e-be5d403faa36"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SecondaryAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""ba6e7501-68c9-4c96-b928-2d3080a72367"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -110,7 +119,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MainAction"",
+                    ""action"": ""PrimaryAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fffd7c8-ff23-4404-a043-04707dc85c52"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondaryAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -121,7 +141,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
 }");
         // MiniGame
         m_MiniGame = asset.FindActionMap("MiniGame", throwIfNotFound: true);
-        m_MiniGame_MainAction = m_MiniGame.FindAction("MainAction", throwIfNotFound: true);
+        m_MiniGame_PrimaryAction = m_MiniGame.FindAction("PrimaryAction", throwIfNotFound: true);
+        m_MiniGame_SecondaryAction = m_MiniGame.FindAction("SecondaryAction", throwIfNotFound: true);
     }
 
     ~@InputActions()
@@ -202,7 +223,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     // MiniGame
     private readonly InputActionMap m_MiniGame;
     private List<IMiniGameActions> m_MiniGameActionsCallbackInterfaces = new List<IMiniGameActions>();
-    private readonly InputAction m_MiniGame_MainAction;
+    private readonly InputAction m_MiniGame_PrimaryAction;
+    private readonly InputAction m_MiniGame_SecondaryAction;
     /// <summary>
     /// Provides access to input actions defined in input action map "MiniGame".
     /// </summary>
@@ -215,9 +237,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public MiniGameActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "MiniGame/MainAction".
+        /// Provides access to the underlying input action "MiniGame/PrimaryAction".
         /// </summary>
-        public InputAction @MainAction => m_Wrapper.m_MiniGame_MainAction;
+        public InputAction @PrimaryAction => m_Wrapper.m_MiniGame_PrimaryAction;
+        /// <summary>
+        /// Provides access to the underlying input action "MiniGame/SecondaryAction".
+        /// </summary>
+        public InputAction @SecondaryAction => m_Wrapper.m_MiniGame_SecondaryAction;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -244,9 +270,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MiniGameActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MiniGameActionsCallbackInterfaces.Add(instance);
-            @MainAction.started += instance.OnMainAction;
-            @MainAction.performed += instance.OnMainAction;
-            @MainAction.canceled += instance.OnMainAction;
+            @PrimaryAction.started += instance.OnPrimaryAction;
+            @PrimaryAction.performed += instance.OnPrimaryAction;
+            @PrimaryAction.canceled += instance.OnPrimaryAction;
+            @SecondaryAction.started += instance.OnSecondaryAction;
+            @SecondaryAction.performed += instance.OnSecondaryAction;
+            @SecondaryAction.canceled += instance.OnSecondaryAction;
         }
 
         /// <summary>
@@ -258,9 +287,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="MiniGameActions" />
         private void UnregisterCallbacks(IMiniGameActions instance)
         {
-            @MainAction.started -= instance.OnMainAction;
-            @MainAction.performed -= instance.OnMainAction;
-            @MainAction.canceled -= instance.OnMainAction;
+            @PrimaryAction.started -= instance.OnPrimaryAction;
+            @PrimaryAction.performed -= instance.OnPrimaryAction;
+            @PrimaryAction.canceled -= instance.OnPrimaryAction;
+            @SecondaryAction.started -= instance.OnSecondaryAction;
+            @SecondaryAction.performed -= instance.OnSecondaryAction;
+            @SecondaryAction.canceled -= instance.OnSecondaryAction;
         }
 
         /// <summary>
@@ -302,11 +334,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IMiniGameActions
     {
         /// <summary>
-        /// Method invoked when associated input action "MainAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "PrimaryAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnMainAction(InputAction.CallbackContext context);
+        void OnPrimaryAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SecondaryAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondaryAction(InputAction.CallbackContext context);
     }
 }

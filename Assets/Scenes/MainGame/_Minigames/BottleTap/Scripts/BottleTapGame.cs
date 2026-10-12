@@ -23,4 +23,9 @@ public class BottleTapGame : MiniGame
         foreach (var wine in GameObject.FindGameObjectsWithTag("Wine")) Destroy(wine);
         FinishGame(isSuccess);
     }
+
+    public override void OnPrimary()
+    {
+        wineBottle.TryTilt();
+    }
 }

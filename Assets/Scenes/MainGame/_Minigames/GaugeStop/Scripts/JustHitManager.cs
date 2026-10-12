@@ -1,35 +1,35 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class JustHitManager : MiniGame
 {
-    [Header("Ô‚¢ƒo[")]
+    [Header("èµ¤ã„ãƒãƒ¼")]
     [SerializeField]
     private NoteMover noteMover;
 
-    [Header("‰©F‚¢¬Œ÷”»’è")]
+    [Header("é»„è‰²ã„æˆåŠŸåˆ¤å®š")]
     [SerializeField]
     private HitArea hitArea;
 
-    [Header("¬Œ÷‚ÌSE")]
+    [Header("æˆåŠŸæ™‚ã®SE")]
     [SerializeField]
     private AudioSource audioSource;
 
     [SerializeField]
     private AudioClip successSE;
 
-    [Header("¬Œ÷‚ÌƒGƒtƒFƒNƒg")]
+    [Header("æˆåŠŸæ™‚ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ")]
     [SerializeField]
     private GameObject successEffectPrefab;
 
-    [Header("Scene‚ğ’¼ÚÄ¶‚·‚é‚Æ‚«‚ÌƒeƒXƒgİ’è")]
+    [Header("Sceneã‚’ç›´æ¥å†ç”Ÿã™ã‚‹ã¨ãã®ãƒ†ã‚¹ãƒˆè¨­å®š")]
     [SerializeField]
     private bool autoStartForTest = true;
 
     [SerializeField]
     private float testDrunkenness = 50f;
 
-    // 1ƒQ[ƒ€’†‚É”»’èÏ‚İ‚©
+    // 1ã‚²ãƒ¼ãƒ ä¸­ã«åˆ¤å®šæ¸ˆã¿ã‹
     private bool hasJudged = false;
 
     private void Awake()
@@ -56,17 +56,17 @@ public class JustHitManager : MiniGame
         FindObjects();
 
         // ==============================
-        // Scene‚ğ’¼ÚPlay‚µ‚½ê‡‚ÌƒeƒXƒg—p
+        // Sceneã‚’ç›´æ¥Playã—ãŸå ´åˆã®ãƒ†ã‚¹ãƒˆç”¨
         // ==============================
 
         if (autoStartForTest && !isPlaying)
         {
             Debug.Log(
-                "ƒeƒXƒgƒ‚[ƒh‚ÅJustHit‚ğŠJn"
+                "ãƒ†ã‚¹ãƒˆãƒ¢ãƒ¼ãƒ‰ã§JustHitã‚’é–‹å§‹"
             );
 
-            // StartGameAsync‚ğ’Ê‚µ‚Ä‚¢‚È‚¢‚Ì‚ÅA
-            // ‚±‚±‚ÅisPlaying‚ğON‚É‚·‚é
+            // StartGameAsyncã‚’é€šã—ã¦ã„ãªã„ã®ã§ã€
+            // ã“ã“ã§isPlayingã‚’ONã«ã™ã‚‹
             isPlaying = true;
 
             OnStart(
@@ -75,50 +75,23 @@ public class JustHitManager : MiniGame
         }
     }
 
-    private void Update()
-    {
-        if (!isPlaying)
-        {
-            return;
-        }
-
-        if (hasJudged)
-        {
-            return;
-        }
-
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        // ¶ƒNƒŠƒbƒN‚³‚ê‚½uŠÔ
-        if (
-            Mouse.current.leftButton
-                .wasPressedThisFrame
-        )
-        {
-            Judge();
-        }
-    }
-
     // =====================================
-    // MiniGameŠJn
+    // MiniGameé–‹å§‹
     // =====================================
 
     protected override void OnStart(float dp)
     {
         Debug.Log(
-            "JustHitŠJn@Œ‚¢“xF" + dp
+            "JustHité–‹å§‹ã€€é…”ã„åº¦ï¼š" + dp
         );
 
-        // –ˆ‰ñ•K‚¸‰Šú‰»
+        // æ¯å›å¿…ãšåˆæœŸåŒ–
         hasJudged = false;
 
         FindObjects();
 
         // ==============================
-        // Ô‚¢ƒo[‚ğ‰Šú‰»
+        // èµ¤ã„ãƒãƒ¼ã‚’åˆæœŸåŒ–
         // ==============================
 
         if (noteMover != null)
@@ -128,12 +101,12 @@ public class JustHitManager : MiniGame
         else
         {
             Debug.LogWarning(
-                "NoteMover‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ"
+                "NoteMoverãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“"
             );
         }
 
         // ==============================
-        // ‰©F‚¢”»’è‚ğ‰Šú‰»
+        // é»„è‰²ã„åˆ¤å®šã‚’åˆæœŸåŒ–
         // ==============================
 
         if (hitArea != null)
@@ -143,13 +116,13 @@ public class JustHitManager : MiniGame
         else
         {
             Debug.LogWarning(
-                "HitArea‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ"
+                "HitAreaãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“"
             );
         }
     }
 
     // =====================================
-    // •K—v‚ÈƒIƒuƒWƒFƒNƒg‚ğ’T‚·
+    // å¿…è¦ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¢ã™
     // =====================================
 
     private void FindObjects()
@@ -168,7 +141,7 @@ public class JustHitManager : MiniGame
     }
 
     // =====================================
-    // ƒNƒŠƒbƒN‚µ‚½‚Æ‚«‚Ì”»’è
+    // ã‚¯ãƒªãƒƒã‚¯ã—ãŸã¨ãã®åˆ¤å®š
     // =====================================
 
     private void Judge()
@@ -185,7 +158,7 @@ public class JustHitManager : MiniGame
         if (noteMover == null)
         {
             Debug.Log(
-                "¸”sFNoteMover‚ª‚ ‚è‚Ü‚¹‚ñ"
+                "å¤±æ•—ï¼šNoteMoverãŒã‚ã‚Šã¾ã›ã‚“"
             );
 
             EndMiniGame(false);
@@ -196,7 +169,7 @@ public class JustHitManager : MiniGame
         if (hitArea == null)
         {
             Debug.Log(
-                "¸”sFHitArea‚ª‚ ‚è‚Ü‚¹‚ñ"
+                "å¤±æ•—ï¼šHitAreaãŒã‚ã‚Šã¾ã›ã‚“"
             );
 
             EndMiniGame(false);
@@ -210,7 +183,7 @@ public class JustHitManager : MiniGame
         if (noteRect == null)
         {
             Debug.Log(
-                "¸”sFNoteMover‚ÉRectTransform‚ª‚ ‚è‚Ü‚¹‚ñ"
+                "å¤±æ•—ï¼šNoteMoverã«RectTransformãŒã‚ã‚Šã¾ã›ã‚“"
             );
 
             EndMiniGame(false);
@@ -218,20 +191,20 @@ public class JustHitManager : MiniGame
             return;
         }
 
-        // Ô‚¢ƒo[‚Æ‰©F‚¢”ÍˆÍ‚ª
-        // d‚È‚Á‚Ä‚¢‚é‚©Šm”F
+        // èµ¤ã„ãƒãƒ¼ã¨é»„è‰²ã„ç¯„å›²ãŒ
+        // é‡ãªã£ã¦ã„ã‚‹ã‹ç¢ºèª
         bool success =
             hitArea.IsNoteInside(
                 noteRect
             );
 
         // ==============================
-        // ¬Œ÷
+        // æˆåŠŸ
         // ==============================
 
         if (success)
         {
-            Debug.Log("¬Œ÷");
+            Debug.Log("æˆåŠŸ");
 
             PlaySuccessSE();
 
@@ -243,19 +216,19 @@ public class JustHitManager : MiniGame
         }
 
         // ==============================
-        // ¸”s
+        // å¤±æ•—
         // ==============================
 
         else
         {
-            Debug.Log("¸”s");
+            Debug.Log("å¤±æ•—");
 
             EndMiniGame(false);
         }
     }
 
     // =====================================
-    // ¬Œ÷SE
+    // æˆåŠŸSE
     // =====================================
 
     private void PlaySuccessSE()
@@ -274,7 +247,7 @@ public class JustHitManager : MiniGame
     }
 
     // =====================================
-    // ¬Œ÷ƒGƒtƒFƒNƒg
+    // æˆåŠŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
     // =====================================
 
     private void PlaySuccessEffect(
@@ -282,7 +255,7 @@ public class JustHitManager : MiniGame
     )
     {
         Debug.Log(
-            "¬Œ÷ƒGƒtƒFƒNƒgÄ¶"
+            "æˆåŠŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ"
         );
         if (successEffectPrefab == null)
         {
@@ -321,17 +294,17 @@ public class JustHitManager : MiniGame
     }
 
     // =====================================
-    // ƒQ[ƒ€I—¹
+    // ã‚²ãƒ¼ãƒ çµ‚äº†
     // =====================================
 
     private void EndMiniGame(
         bool success
     )
     {
-        // “ñ“x–Ú‚ÌƒNƒŠƒbƒN‚ğ‹Ö~
+        // äºŒåº¦ç›®ã®ã‚¯ãƒªãƒƒã‚¯ã‚’ç¦æ­¢
         isPlaying = false;
 
-        // Ô‚¢ƒo[’â~
+        // èµ¤ã„ãƒãƒ¼åœæ­¢
         if (noteMover != null)
         {
             noteMover.StopNote();
@@ -339,11 +312,18 @@ public class JustHitManager : MiniGame
 
         Debug.Log(
             success
-                ? "ƒ~ƒjƒQ[ƒ€¬Œ÷"
-                : "ƒ~ƒjƒQ[ƒ€¸”s"
+                ? "ãƒŸãƒ‹ã‚²ãƒ¼ãƒ æˆåŠŸ"
+                : "ãƒŸãƒ‹ã‚²ãƒ¼ãƒ å¤±æ•—"
         );
 
-        // MiniGame‘¤‚ÌI—¹ˆ—‚ğ•K‚¸ŒÄ‚Ô
+        // MiniGameå´ã®çµ‚äº†å‡¦ç†ã‚’å¿…ãšå‘¼ã¶
         FinishGame(success);
+    }
+
+    public override void OnPrimary()
+    {
+        if (!isPlaying) return;
+        if (hasJudged) return;
+        Judge();
     }
 }

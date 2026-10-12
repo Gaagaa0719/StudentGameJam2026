@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
+public class WineBottle: MonoBehaviour
 {
     [Header("元の角度に戻ろうとする速度")]
     [SerializeField] private float returnSpeed = 1;
@@ -23,7 +23,6 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
     [SerializeField] private Transform wineSpawnPos;
 
     private bool isTilting = false;
-    private InputActions actions;
 
     private float CurrentTilt
     {
@@ -34,19 +33,6 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
     public void Init()
     {
         CurrentTilt = 0;
-        if(actions != null) actions.Enable();
-    }
-
-    private void Awake()
-    {
-        actions = new InputActions();
-        actions.MiniGame.SetCallbacks(this);
-        actions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        actions.Disable();
     }
 
     private void Update()
@@ -54,9 +40,8 @@ public class WineBottle: MonoBehaviour, InputActions.IMiniGameActions
         SpawnWine();
         ReturnOrigin();
     }
-    public void OnMainAction(InputAction.CallbackContext context)
+    public void TryTilt()
     {
-        if (!context.performed) return;
         if(CurrentTilt >= maxTilt) return;
 
         StopAllCoroutines();

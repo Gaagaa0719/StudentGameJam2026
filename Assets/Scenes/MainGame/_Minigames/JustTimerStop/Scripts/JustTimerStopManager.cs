@@ -5,7 +5,7 @@ using Sakemottekoi.MainGame;
 
 namespace Sakemottekoi.Minigame.JustTimerStop
 {
-    public class JustTimerStopManager : MiniGame, InputActions.IMiniGameActions
+    public class JustTimerStopManager : MiniGame
     {
         [SerializeField] private DegitalTimer timer;
         [Header("成功したときの音")]
@@ -13,28 +13,22 @@ namespace Sakemottekoi.Minigame.JustTimerStop
         [Header("失敗したときの音")]
         [SerializeField] private AudioClip FailureSound;
 
-        private InputActions actions;
         private AudioSource SESource;
-
-        private void Awake()
-        {
-            actions = new InputActions();
-            actions.MiniGame.AddCallbacks(this);
-            SESource = GameManager.GetSESource();
-        }
+        private bool isClicked = false;
 
         protected override void OnStart(float dp)
         {
             timer.Init();
-            actions.Enable();
+            isClicked = false;
+
+            if(SESource == null) SESource = GameManager.GetSESource();
         }
 
-        public async void OnMainAction(InputAction.CallbackContext context)
+        public async override void OnPrimary()
         {
-            if (!context.performed) return;
-            if (!actions.MiniGame.enabled) return;
+            if (isClicked) return;
 
-            actions.Disable();
+            isClicked = true;
             float elapssedTime = timer.Stop();
             bool isSuccess = elapssedTime < 3.5f && elapssedTime > 2.5f;
             SESource.PlayOneShot(isSuccess ? SuccessSound : FailureSound);

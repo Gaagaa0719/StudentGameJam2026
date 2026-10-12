@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Threading.Tasks;
 
 public abstract class MiniGame : MonoBehaviour
@@ -19,6 +18,7 @@ public abstract class MiniGame : MonoBehaviour
         // ミニゲームが複数起動しないように
         if (GameResultTcs != null && !GameResultTcs.Task.IsCompleted) return GameResultTcs.Task;
 
+        MiniGameInputController.Instance.SetActiveMinigame(this);
         GameResultTcs = new TaskCompletionSource<bool>();
 
         // ゲーム開始処理
@@ -51,4 +51,15 @@ public abstract class MiniGame : MonoBehaviour
         gameObject.SetActive(false);
         GameResultTcs.SetResult(isSuccess);
     }
+
+
+    /// <summary>
+    /// ミニゲームの主となる入力に対する処理
+    /// </summary>
+    public abstract void OnPrimary();
+
+    /// <summary>
+    /// ミニゲームの二つ目の入力に対する処理
+    /// </summary>
+    public virtual void OnSecondary() { }
 }

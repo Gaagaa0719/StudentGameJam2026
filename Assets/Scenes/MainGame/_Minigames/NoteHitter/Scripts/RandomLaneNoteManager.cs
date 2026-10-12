@@ -131,8 +131,6 @@ public class RandomLaneNoteManager : MiniGame
         }
 
         MoveNotes();
-
-        CheckMouseClick();
     }
 
     // =========================================
@@ -540,42 +538,6 @@ public class RandomLaneNoteManager : MiniGame
         resolvedNoteCount++;
 
         CheckGameEnd();
-    }
-
-    // =========================================
-    // クリック
-    // =========================================
-
-    private void CheckMouseClick()
-    {
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        if (
-            Mouse.current.leftButton
-                .wasPressedThisFrame
-        )
-        {
-            ProcessClick(
-                "Left",
-                leftHitArea
-            );
-
-            return;
-        }
-
-        if (
-            Mouse.current.rightButton
-                .wasPressedThisFrame
-        )
-        {
-            ProcessClick(
-                "Right",
-                rightHitArea
-            );
-        }
     }
 
     // =========================================
@@ -1014,6 +976,28 @@ public class RandomLaneNoteManager : MiniGame
 
         return noteRect.Overlaps(
             hitAreaRect
+        );
+    }
+
+    public override void OnPrimary()
+    {
+        if (!isPlaying) return;
+        if (gameFinished) return;
+
+        ProcessClick(
+            "Left",
+            leftHitArea
+        );
+    }
+
+    public override void OnSecondary()
+    {
+        if (!isPlaying) return;
+        if (gameFinished) return;
+
+        ProcessClick(
+            "Right",
+            rightHitArea
         );
     }
 }
