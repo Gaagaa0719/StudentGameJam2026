@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -7,7 +6,7 @@ namespace Sakemottekoi.MainGame
     {
         public override string Id { get; }
 
-        public override OrderRule OrderRule { get; } = new OrderRelative(priority: 1);
+        public override OrderRule OrderRule { get; } = new OrderRelative(beforeId: "PlayerDrink");
 
         public override bool IsOneShot => true;
 
@@ -17,14 +16,14 @@ namespace Sakemottekoi.MainGame
         {
             Id = source switch
             {
-                Player => "PlayerDrink",
-                Enemy => "EnemyDrink",
+                Player => "PMasterDrink",
+                Enemy => "EMasterDrink",
                 _ => throw new ArgumentException("引数に渡されたActorの型が無効です")
             };
 
             if (source is Enemy)
             {
-                OrderRule = new OrderRelative(afterId: "PlayerDrink", priority: 1);
+                OrderRule = new OrderRelative(afterId: "PlayerDrink", beforeId: "EnemyDrink");
             }
 
             this.source = source;
@@ -41,8 +40,7 @@ namespace Sakemottekoi.MainGame
             if (glass == null) return;
 
             var amount = GameManager.Instance.DrunkennessSettings.GetAmount(glass.Level);
-            source.AddDrunkenness(amount / 2);
-            GameObject.Destroy(glass.gameObject);
+            glass.SetAmount(amount);
         }
     }
 }

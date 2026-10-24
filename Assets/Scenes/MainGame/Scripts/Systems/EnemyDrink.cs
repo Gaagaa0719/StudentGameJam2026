@@ -15,8 +15,7 @@ namespace Sakemottekoi.MainGame
         {
             AlcoholGlass glass = AlcholSelectionManager.Instance.EnemyGlass;
             if (glass == null) return;
-            var amount = GameManager.Instance.DrunkennessSettings.GetAmount(glass.Level);
-            GameManager.Instance.Enemy.AddDrunkenness(amount);
+            GameManager.Instance.Enemy.AddDrunkenness(glass.Amount);
             GameObject.Destroy(glass.gameObject);
         }
     }
