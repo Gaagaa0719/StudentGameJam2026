@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -45,16 +45,16 @@ namespace Sakemottekoi.MainGame
         /// <summary>
         /// アイテムを使用する時に使う関数
         /// </summary>
-        public IEnumerator Use(Actor source) {
+        public async UniTask Use(Actor source) {
             OnUsed?.Invoke(this);
-            yield return InternalUse(source);
+            await InternalUse(source);
             ItemMenu.Instance.Remove(gameObject);
         }
 
         /// <summary>
         /// アイテムが使用された時に実行される処理を書く関数
         /// </summary>
-        protected abstract IEnumerator InternalUse(Actor source);
+        protected abstract UniTask InternalUse(Actor source);
 
         /// <summary>
         /// アイテムがホバーされた時の処理

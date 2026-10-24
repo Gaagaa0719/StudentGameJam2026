@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -12,16 +13,10 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "提示された酒の中で、一番強い酒もしくは一番弱い酒が分かる";
 
-        protected override IEnumerator InternalUse(Actor source)
+        protected override UniTask InternalUse(Actor source)
         {
             AlcoholGlass[] glasses = GameObject.FindGameObjectsWithTag("AlcoholGlass").Select(v => v.GetComponent<AlcoholGlass>()).ToArray();
-            if(Random.value < 0.5f)
-
-            foreach (var glass in glasses)
-            {
-                
-            }
-            yield break;
+            return UniTask.CompletedTask;
         }
     }
 }

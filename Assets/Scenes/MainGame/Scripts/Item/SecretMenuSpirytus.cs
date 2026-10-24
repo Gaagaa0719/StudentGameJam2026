@@ -1,4 +1,5 @@
 ﻿
+using Cysharp.Threading.Tasks;
 using System.Collections;
 
 namespace Sakemottekoi.MainGame
@@ -11,7 +12,7 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "マスターに頼み、選んだ酒の酔い度を極大にする";
 
-        protected override IEnumerator InternalUse(Actor source)
+        protected override UniTask InternalUse(Actor source)
         {
             throw new System.NotImplementedException();
         }

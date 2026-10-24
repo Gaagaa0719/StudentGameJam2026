@@ -1,4 +1,5 @@
 ﻿
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using UnityEngine;
 
@@ -20,10 +21,10 @@ namespace Sakemottekoi.MainGame
             recoveryAmount = settings.GetAmount(DrunkennessLevel.Medium);
         }
 
-        protected override IEnumerator InternalUse(Actor source)
+        protected override UniTask InternalUse(Actor source)
         {
             source.RemoveDrunkenness(recoveryAmount);
-            yield break;
+            return UniTask.CompletedTask;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
 
 namespace Sakemottekoi.MainGame
 {
@@ -10,11 +10,11 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "渡されたお酒をマスターが半分飲んでくれる。酔い度上昇量半減。";
 
-        protected override IEnumerator InternalUse(Actor source)
+        protected override UniTask InternalUse(Actor source)
         {
             GameSystem system = new DrinkWithMaster(source);
             GameManager.Instance.BattlePhase.Add(system);
-            yield return null;
+            return UniTask.CompletedTask;
         }
     }
 } 
