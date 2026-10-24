@@ -52,8 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemDraggable
   draggablePhases: 01000000
-  dropIntoItemMenuSound: {fileID: 0}
-  dropIntoTrashSound: {fileID: 0}
 --- !u!225 &3156589614291183194
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -79,6 +77,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnbalancedScale
   itemVisual: {fileID: 1049420894934386989}
+  particle: {fileID: 4767327727958942716, guid: e23bbb8e0b30bda47b64fdea9e71badc, type: 3}
+  particleSettings:
+  - level: 0
+    particleScale: 2
+  - level: 1
+    particleScale: 1
+  - level: 2
+    particleScale: 0.7
+  - level: 3
+    particleScale: 0.3
+  - level: 4
+    particleScale: 0.1
 --- !u!1 &3044347551821487521
 GameObject:
   m_ObjectHideFlags: 0
