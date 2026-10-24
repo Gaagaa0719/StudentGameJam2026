@@ -35,10 +35,10 @@ namespace Sakemottekoi.MainGame
             FadeIn();
         }
 
-        private void OnClicked()
+        private async void OnClicked()
         {
             if (showingItem == null) return;
-            StartCoroutine(showingItem.Use(GameManager.Instance.Player));
+            await showingItem.Use(GameManager.Instance.Player);
             FadeOut();
         }
     }
