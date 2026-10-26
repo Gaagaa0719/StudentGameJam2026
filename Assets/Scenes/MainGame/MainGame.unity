@@ -2006,8 +2006,8 @@ GameObject:
   - component: {fileID: 645558818}
   - component: {fileID: 645558821}
   - component: {fileID: 645558819}
-  - component: {fileID: 645558820}
   - component: {fileID: 645558823}
+  - component: {fileID: 645558825}
   - component: {fileID: 645558824}
   m_Layer: 0
   m_Name: GameManager
@@ -2046,21 +2046,9 @@ MonoBehaviour:
   candidates:
   - amount: 5
     alcholStocks:
-    - stocks: 00000000000000000500000000000000
-    - stocks: 00000000000000000500000000000000
+    - stocks: 02000000000000000300000000000000
+    - stocks: 00000000030000000000000002000000
   alcholPrefab: {fileID: -5197072494933557608, guid: 451678482219da548bf855119fc194a0, type: 3}
---- !u!114 &645558820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645558816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2882dafe4bd612042aebac605d054845, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemSelectionPhaseManager
 --- !u!114 &645558821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2090,6 +2078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7116411ea08e2b1459b3bb053076d39c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemUsePhaseManager
+  form: {fileID: 1711223657}
 --- !u!114 &645558824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2099,9 +2088,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 645558816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c983949417bb8f341ac9be1ccfebebf8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fca896d7fcbb59468d097001d794a9a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcholSelectionManager
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.AlcoholSelectionManager
+--- !u!114 &645558825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645558816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab181058fbd91fc4b9e62b4b10a2f954, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemSelectionManager
+  selectableItemAmount: 4
 --- !u!1 &691600780
 GameObject:
   m_ObjectHideFlags: 0
@@ -3722,55 +3724,6 @@ Transform:
   - {fileID: 1225208856}
   - {fileID: 616674070182248087}
   m_Father: {fileID: 1397338826}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1262736605
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1262736607}
-  - component: {fileID: 1262736606}
-  m_Layer: 0
-  m_Name: GlassManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1262736606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262736605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 401c535b37a850049b4d80e25bc5dac7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GlassManager
-  GlassPrefab: {fileID: 7665967115446775748, guid: 451678482219da548bf855119fc194a0, type: 3}
-  EnemyGlassLocation: {x: 1.33, y: -0.22, z: -2.51}
-  PlayerGlassLocation: {x: -1.28, y: -0.22, z: -7.161}
-  PlayerGlass: {fileID: 0}
-  EnemyGlass: {fileID: 0}
---- !u!4 &1262736607
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262736605}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.39971, y: -0.22, z: 0.2564}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1275359641
 GameObject:
@@ -5673,11 +5626,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Sakemottekoi.MainGame.ItemUseForm
   fadeInTime: 0.1
   fadeOutTime: 0.1
-  ItemIcon: {fileID: 1891603117}
-  ItemName: {fileID: 1664562214}
-  ItemDescription: {fileID: 376573053}
-  CloseButton: {fileID: 2098760317}
-  UseButton: {fileID: 343542303}
+  itemIcon: {fileID: 1891603117}
+  itemName: {fileID: 1664562214}
+  itemDescription: {fileID: 376573053}
+  closeButton: {fileID: 2098760317}
+  useButton: {fileID: 343542303}
 --- !u!1 &1756332107
 GameObject:
   m_ObjectHideFlags: 0
@@ -7502,7 +7455,6 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 617581427}
   - {fileID: 56468964}
-  - {fileID: 1262736607}
   - {fileID: 645558818}
   - {fileID: 1657629552}
   - {fileID: 1434624019}
