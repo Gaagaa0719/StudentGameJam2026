@@ -21,6 +21,12 @@ namespace Sakemottekoi.MainGame
             GameManager.OnGamePhaseEnded -= ReturnToStock;
         }
 
+        public void Consume()
+        {
+            GameManager.OnGamePhaseEnded -= ReturnToStock;
+            Destroy(gameObject);
+        }
+
         public void ReturnToStock()
         {
             AlcholStockManager.Instance.RestockSpecific(Level, 1);

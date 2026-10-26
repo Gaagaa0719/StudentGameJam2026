@@ -96,11 +96,9 @@ namespace Sakemottekoi.MainGame
                     ChangePhase(GamePhase.Battle);
                     await BattlePhase.Run(new BattleContext(enemySelected, playerSelected));
 
-                    // いらなくなったグラスの削除
-                    Destroy(enemySelected.gameObject);
-                    Destroy(playerSelected.gameObject);
-
-                    await UniTask.NextFrame();
+                    // 使用済みマーク
+                    enemySelected.Consume();
+                    playerSelected.Consume();
 
                     OnGamePhaseEnded?.Invoke();
                 }
