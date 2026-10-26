@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sakemottekoi.MainGame
 {
-    public abstract class GameSystem
+    public abstract class GameSystemBase
     {
         public abstract string Id { get; }
 
@@ -12,8 +12,6 @@ namespace Sakemottekoi.MainGame
 
         // 演出生成用のファクトリ関数
         protected Func<IEnumerable<VisualEvent>> visualFactory;
-
-        public abstract void Execute();
 
         protected void RegisterVisuals()
         {
@@ -24,5 +22,15 @@ namespace Sakemottekoi.MainGame
                 VisualQueue.Enqueue(visual);
             }
         }
+    }
+
+    public abstract class GameSystem: GameSystemBase
+    {
+        public abstract void Execute();
+    }
+
+    public abstract class GameSystem<T>: GameSystemBase
+    {
+        public abstract void Execute(T arg);
     }
 }

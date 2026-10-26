@@ -6,7 +6,7 @@ namespace Sakemottekoi.MainGame
 {
     public class AlcoholGlass : MonoBehaviour, IPointerClickHandler
     {
-        public static event Action<AlcoholGlass> OnClick;
+        public static event Action<AlcoholGlass> OnClicked;
 
         public DrunkennessLevel Level { private set; get; }
         public float Amount { private set; get; }
@@ -48,7 +48,7 @@ namespace Sakemottekoi.MainGame
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnClick?.Invoke(this);
+            OnClicked?.Invoke(this);
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿
+﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using UnityEngine;
 
 
@@ -35,28 +34,28 @@ namespace Sakemottekoi.MainGame
             new PrepareAlchols()
         });
 
-        public Phase BattlePhase = new(new GameSystem[]
+        public Phase<BattleContext> BattlePhase = new(new GameSystem<BattleContext>[]
         {
-            new PlayerDrink(),
             new EnemyDrink(),
+            new PlayerDrink(),
         });
 
         public GamePhase CurrentPhase { private set; get; }
 
         [Header("酒の酔い度上昇量")]
-        [SerializeField] public DrunkennessSettings DrunkennessSettings;
+        public DrunkennessSettings DrunkennessSettings;
 
         [Header("プレイヤー")]
-        [SerializeField] public Player Player;
+        public Player Player;
 
         [Header("敵キャラクター")]
-        [SerializeField] public Enemy Enemy;
+        public Enemy Enemy;
 
         [Header("BGMのオーディオソース")]
-        [SerializeField] private AudioSource BGMSource;
+        private readonly AudioSource BGMSource;
 
         [Header("SEのオーディオソース")]
-        [SerializeField] private AudioSource SESource;
+        private readonly AudioSource SESource;
 
         private bool isPlaying = false;
 
@@ -67,35 +66,41 @@ namespace Sakemottekoi.MainGame
 
         private void Start()
         {
-            StartCoroutine(StartGameLoop());
+            StartGameLoop().Forget();
         }
 
-        private IEnumerator StartGameLoop()
+        private async UniTask StartGameLoop()
         {
             isPlaying = true;
             while (isPlaying)
             {
                 ChangePhase(GamePhase.ItemSelection);
                 // 新しいアイテムを取得するまで待つ。
-                yield return new WaitUntil(() => ItemSelectionPhaseManager.Instance.IsFinished);
+                await ItemSelectionManager.Instance.StartPhaseAsync();
                 AlcholStockManager.Instance.Restock(5);
 
                 while (2 < AlcholStockManager.Instance.GetStockCount())
                 {
                     ChangePhase(GamePhase.Prepare);
-                    yield return PreparePhase.Run();
-
+                    await PreparePhase.Run();
 
                     ChangePhase(GamePhase.ItemUse);
-                    // アイテム使用フェーズが終わった合図を待つ
-                    yield return new WaitUntil(() => ItemUsePhaseManager.Instance.IsFinished);
+                    // アイテム使用が終わった合図を待つ
+                    await ItemUsePhaseManager.Instance.StartPhaseAsync();
 
                     ChangePhase(GamePhase.AlcholSelection);
                     // アルコールが選ばれるのを待つ。
-                    yield return new WaitUntil(() => AlcholSelectionManager.Instance.IsFinished);
+                    var playerSelected = await AlcoholSelectionManager.Instance.StartPhaseAsync();
+                    var enemySelected = Enemy.SelectGlass();
 
                     ChangePhase(GamePhase.Battle);
-                    yield return BattlePhase.Run();
+                    await BattlePhase.Run(new BattleContext(enemySelected, playerSelected));
+
+                    // いらなくなったグラスの削除
+                    Destroy(enemySelected.gameObject);
+                    Destroy(playerSelected.gameObject);
+
+                    await UniTask.NextFrame();
 
                     OnGamePhaseEnded?.Invoke();
                 }

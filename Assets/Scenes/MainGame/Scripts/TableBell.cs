@@ -6,7 +6,7 @@ namespace Sakemottekoi.MainGame
 {
     public class TableBell : MonoBehaviour, IPointerClickHandler
     {
-        static event Action OnClick;
+        public static event Action OnClicked;
 
         Animator animator;
 
@@ -23,7 +23,7 @@ namespace Sakemottekoi.MainGame
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnClick?.Invoke();
+            OnClicked?.Invoke();
             SESource.PlayOneShot(bellSound);
             animator.SetTrigger("push");
         }

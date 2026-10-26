@@ -8,7 +8,7 @@ namespace Sakemottekoi.MainGame
 
         public override bool IsOneShot => false;
 
-        public override OrderRule OrderRule => new OrderRelative(priority: 1);
+        public override OrderRule OrderRule => new OrderRelative();
 
         private readonly Vector3[] AlcholPositions = new Vector3[] {
             new (-1.5f, -0.15f, -5),
@@ -18,7 +18,11 @@ namespace Sakemottekoi.MainGame
 
         public override void Execute()
         {
+
+            Debug.Log("before:" + AlcholStockManager.Instance.GetStockCount());
             GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchols(3);
+
+            Debug.Log("after:" + AlcholStockManager.Instance.GetStockCount());
             for (int i = 0; i < alchols.Length; i++)
             {
                 alchols[i].transform.position = AlcholPositions[i];

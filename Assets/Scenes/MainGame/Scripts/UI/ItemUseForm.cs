@@ -1,45 +1,54 @@
-﻿using UnityEngine.UI;
-using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 namespace Sakemottekoi.MainGame
 {
     public class ItemUseForm : FadeUIBase
     {
-        [SerializeField] Image ItemIcon;
-        [SerializeField] TextMeshProUGUI ItemName;
-        [SerializeField] TextMeshProUGUI ItemDescription;
+        [SerializeField] Image itemIcon;
+        [SerializeField] TextMeshProUGUI itemName;
+        [SerializeField] TextMeshProUGUI itemDescription;
 
-        [SerializeField] Button CloseButton;
-        [SerializeField] Button UseButton;
+        [SerializeField] Button closeButton;
+        [SerializeField] Button useButton;
 
-        private Item showingItem;
+        private UniTaskCompletionSource<bool> pending;
 
         protected override void Awake()
         {
             base.Awake();
-            Item.OnClicked += Show;
-            CloseButton.onClick.AddListener(() => FadeOut());
-            UseButton.onClick.AddListener(OnClicked);
+            closeButton.onClick.AddListener(() => Submit(false));
+            useButton.onClick.AddListener(() => Submit(true));
         }
 
-        private void Show(Item item)
+        public UniTask<bool> ShowAsync(Item item)
         {
-            if (GameManager.Instance.CurrentPhase != GamePhase.ItemUse) return;
-            ItemIcon.sprite = item.ItemImage;
-            ItemName.text = item.DisplayName;
-            ItemDescription.text = item.Description;
+            if (pending != null)
+                throw new InvalidOperationException("ItemUseForm is already showing.");
+            pending = new UniTaskCompletionSource<bool>();
 
-            showingItem = item;
+            // 必要な項目を設定
+            itemIcon.sprite = item.ItemImage;
+            itemName.text = item.DisplayName;
+            itemDescription.text = item.Description;
 
+            // 表示処理
             FadeIn();
+            return pending.Task;
         }
 
-        private async void OnClicked()
+        private void Submit(bool result)
         {
-            if (showingItem == null) return;
-            await showingItem.Use(GameManager.Instance.Player);
+            if (pending == null) return;
+
+            var completion = pending;
+            pending = null;
+
             FadeOut();
+            completion.TrySetResult(result);
         }
     }
 }

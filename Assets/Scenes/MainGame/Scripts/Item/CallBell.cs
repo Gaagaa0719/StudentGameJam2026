@@ -12,7 +12,7 @@ namespace Sakemottekoi.MainGame
 
         protected override UniTask InternalUse(Actor source)
         {
-            GameSystem system = new ChangeAlcoholZeroOrLarge(source);
+            GameSystem<BattleContext> system = new ChangeAlcoholZeroOrLarge(source);
             GameManager.Instance.BattlePhase.Add(system);
             return UniTask.CompletedTask;
         }

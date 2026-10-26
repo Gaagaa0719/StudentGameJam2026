@@ -4,21 +4,20 @@ using System.Collections.Generic;
 
 namespace Sakemottekoi.MainGame
 {
-    public class Phase
+    public class PhaseBase<TSystem> where TSystem : GameSystemBase
     {
-        private bool isDirty = false;
-        private bool isRunning = false;
-        private List<GameSystem> registeredSystemList = new();
-        private List<GameSystem> usingSystemList = new ();
+        protected bool isDirty = false;
+        protected bool isRunning = false;
+        protected List<TSystem> registeredSystemList = new();
 
-        public Phase(params GameSystem[] systems)
+        public PhaseBase(params TSystem[] systems)
         {
             registeredSystemList.AddRange(systems);
             Sort();
         }
 
         // 外部から動的に処理を追加する用の関数。
-        public void Add(params GameSystem[] systems)
+        public void Add(params TSystem[] systems)
         {
             if (isRunning) throw new Exception("フェーズの処理が走っている最中に追加を試みました。");
             registeredSystemList.AddRange(systems);
@@ -29,58 +28,45 @@ namespace Sakemottekoi.MainGame
         /// 登録されたシステムをメタデータに従ってソートする。
         /// 破綻のある順序関係が見つかった場合エラーを吐く。
         /// </summary>
-        private void Sort()
+        protected void Sort()
         {
-            var idToSystem = new Dictionary<string, GameSystem>();
+            var idToSystem = new Dictionary<string, TSystem>();
             var inDegree = new Dictionary<string, int>(); // 自身が実行される前に待たなければいけない処理の数
             var edges = new Dictionary<string, List<string>>(); // 自身の後に実行すべきSystemのIDリスト
             var nextConstraints = new Dictionary<string, string>(); // Next（直後）制約の辞書
 
-            usingSystemList.Clear();
-
             foreach (var sys in registeredSystemList)
             {
-                var index = usingSystemList.FindIndex(v => v.Id == sys.Id);
-                if (index == -1)
+                if (!idToSystem.TryAdd(sys.Id, sys))
                 {
-                    usingSystemList.Add(sys);
-                    continue;
+                    throw new InvalidOperationException(
+                        $"GameSystem ID '{sys.Id}' is duplicated.");
                 }
 
-                if (usingSystemList[index].OrderRule.Priority < sys.OrderRule.Priority)
-                    usingSystemList[index] = sys;
-            }
-
-
-            // 1. 初期化
-            foreach (var sys in usingSystemList)
-            {
-                idToSystem[sys.Id] = sys;
                 inDegree[sys.Id] = 0;
                 edges[sys.Id] = new List<string>();
             }
 
-            // 2. 依存関係（グラフ）の構築
-            foreach (var sys in usingSystemList)
+            // 2. 依存関係の構築
+            foreach (var sys in registeredSystemList)
             {
                 var order = sys.OrderRule;
 
-                // ① AfterId (指定ID -> 自分)
-                if (!string.IsNullOrEmpty(order.AfterId) && idToSystem.ContainsKey(order.AfterId))
+                // 自分より前に実行すべき処理について
+                if (!string.IsNullOrEmpty(order.BeforeId) && idToSystem.ContainsKey(order.BeforeId))
                 {
-                    edges[order.AfterId].Add(sys.Id);
+                    edges[order.BeforeId].Add(sys.Id);
                     inDegree[sys.Id]++;
                 }
 
-                if (order is OrderRelative rel && !string.IsNullOrEmpty(rel.BeforeId) && idToSystem.ContainsKey(rel.BeforeId))
+                // 自分より後に実行すべき処理について
+                if (order is OrderRelative rel && !string.IsNullOrEmpty(rel.AfterId) && idToSystem.ContainsKey(rel.AfterId))
                 {
-                    // ② BeforeId (自分 -> 指定ID)
-                    edges[sys.Id].Add(rel.BeforeId);
-                    inDegree[rel.BeforeId]++;
+                    edges[sys.Id].Add(rel.AfterId);
+                    inDegree[rel.AfterId]++;
                 }
                 else if (order is OrderNext next && !string.IsNullOrEmpty(next.NextId) && idToSystem.ContainsKey(next.NextId))
                 {
-                    // ③ NextId (自分 -> 指定ID) かつ 「直後」を強制
                     edges[sys.Id].Add(next.NextId);
                     inDegree[next.NextId]++;
                     nextConstraints[sys.Id] = next.NextId;
@@ -88,7 +74,7 @@ namespace Sakemottekoi.MainGame
             }
 
             // 3. 並び替えの実行
-            var sortedList = new List<GameSystem>();
+            var sortedList = new List<TSystem>();
             var readyNodes = new List<string>(); // 依存がなくなり、いつでも配置できるIDリスト
 
             // 最初に「誰にも依存していない」システムをピックアップ
@@ -138,7 +124,7 @@ namespace Sakemottekoi.MainGame
             }
 
             // 4. 循環参照の検知 (AがBを待ち、BがAを待っているとソートされないまま残る)
-            if (sortedList.Count != usingSystemList.Count)
+            if (sortedList.Count != registeredSystemList.Count)
             {
                 throw new Exception("順序破綻: System間の依存関係に循環参照が存在します。");
             }
@@ -146,6 +132,13 @@ namespace Sakemottekoi.MainGame
             // ソート成功
             registeredSystemList = sortedList;
             isDirty = false;
+        }
+    }
+
+    public class Phase: PhaseBase<GameSystem>
+    {
+        public Phase(params GameSystem[] systems) : base(systems)
+        {
         }
 
         public IEnumerator Run()
@@ -158,6 +151,36 @@ namespace Sakemottekoi.MainGame
                 foreach (var system in registeredSystemList)
                 {
                     system.Execute();
+                    yield return VisualQueue.PlayAll();
+                }
+
+                // 一度きりの処理をクリア
+                var removeCount = registeredSystemList.RemoveAll((v) => v.IsOneShot);
+                if (removeCount != 0) isDirty = true;
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
+    }
+
+    public class Phase<T> : PhaseBase<GameSystem<T>>
+    {
+        public Phase(params GameSystem<T>[] systems) : base(systems)
+        {
+        }
+
+        public IEnumerator Run(T arg)
+        {
+            isRunning = true;
+            if (isDirty) Sort();
+
+            try
+            {
+                foreach (var system in registeredSystemList)
+                {
+                    system.Execute(arg);
                     yield return VisualQueue.PlayAll();
                 }
 

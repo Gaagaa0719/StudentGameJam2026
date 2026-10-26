@@ -3,16 +3,11 @@ using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
-    public class GameLogUI : MonoBehaviour
+    public class GameLogUI : SingletonObject<GameLogUI>
     {
         [SerializeField] TextMeshProUGUI logText;
 
-        private void Awake()
-        {
-            AlcholSelectionManager.OnErrorOccurred += AppendErrorLog;
-        }
-
-        private void AppendErrorLog(string message)
+        public void AppendErrorLog(string message)
         {
             TextMeshProUGUI log = Instantiate(logText);
             log.color = Color.red;

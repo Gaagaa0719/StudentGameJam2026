@@ -23,10 +23,13 @@ public class ItemMenu : MonoBehaviour {
 
     private void DroppedOnItem(DroppedEvent dropEvent)
     {
+        var selectableAmount = ItemSelectionManager.Instance.SelectableItemAmount;
+        var selectedAmount = ItemSelectionManager.Instance.SelectedItemAmount;
+
         // 自分にドロップされてない場合拒否
         if (!dropEvent.DroppedOn.transform.IsChildOf(this.transform)) return;
         // 取得したアイテム数が取得可能アイテム数以上だったら拒否
-        if (ItemSelectionPhaseManager.SelectableItemCount <= ItemSelectionPhaseManager.SelectedItemCount) return;
+        if (selectableAmount <= selectedAmount) return;
         // すでにアイテムメニューに含まれていたら拒否
         if (items.Contains(dropEvent.Dropped)) return;
 
@@ -35,7 +38,7 @@ public class ItemMenu : MonoBehaviour {
         if (!result) return;
 
         // 選択したアイテム数を加算
-        ItemSelectionPhaseManager.AddSelectedItemCount();
+        ItemSelectionManager.Instance.AddSelectedItemAmount();
         // 減った分のアイテムを補充
         ItemOptions.Instance.RestockItems();
 
