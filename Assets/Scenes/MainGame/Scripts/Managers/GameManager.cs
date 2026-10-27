@@ -90,15 +90,24 @@ namespace Sakemottekoi.MainGame
 
                     ChangePhase(GamePhase.AlcholSelection);
                     // アルコールが選ばれるのを待つ。
-                    var playerSelected = await AlcoholSelectionManager.Instance.StartPhaseAsync();
-                    var enemySelected = Enemy.SelectGlass();
+                    var enemyDrink = await AlcoholSelectionManager.Instance.StartPhaseAsync(); // 敵に飲ませるグラス
+                    var playerDrink = Enemy.SelectGlass(); // プレイヤーが飲むグラス
+
+                    // 同じアルコールが選ばれた場合の処理
+                    if (playerDrink == enemyDrink)
+                    {
+                        var minigame = MiniGameManager.Instance.GetRandomOne();
+                        var result = await minigame.StartGameAsync(Player.Drunkenness);
+                        if(result) playerDrink = null;
+                        else enemyDrink = null;
+                    }
 
                     ChangePhase(GamePhase.Battle);
-                    await BattlePhase.Run(new BattleContext(enemySelected, playerSelected));
+                    await BattlePhase.Run(new BattleContext(playerDrink, enemyDrink));
 
                     // 使用済みマーク
-                    enemySelected.Consume();
-                    playerSelected.Consume();
+                    if(enemyDrink) enemyDrink.Consume();
+                    if(playerDrink) playerDrink.Consume();
 
                     OnGamePhaseEnded?.Invoke();
                 }
