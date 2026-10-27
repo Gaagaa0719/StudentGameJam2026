@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 public abstract class MiniGame : MonoBehaviour
 {
@@ -7,19 +7,19 @@ public abstract class MiniGame : MonoBehaviour
     [SerializeField] GameObject UI;
 
     protected bool isPlaying = false;
-    private TaskCompletionSource<bool> GameResultTcs;
+    private UniTaskCompletionSource<bool> pending;
 
     /// <summary>
     /// ミニゲームを開始し、終了するまで待機して結果を返す。
     /// </summary>
     /// <param name="dp">酔い度</param>
-    public Task<bool> StartGameAsync(float dp)
+    public UniTask<bool> StartGameAsync(float dp)
     {
         // ミニゲームが複数起動しないように
-        if (GameResultTcs != null && !GameResultTcs.Task.IsCompleted) return GameResultTcs.Task;
+        if (pending != null) return pending.Task;
 
         MiniGameInputController.Instance.SetActiveMinigame(this);
-        GameResultTcs = new TaskCompletionSource<bool>();
+        pending = new UniTaskCompletionSource<bool>();
 
         // ゲーム開始処理
         gameObject.SetActive(true);
@@ -27,7 +27,7 @@ public abstract class MiniGame : MonoBehaviour
         isPlaying = true;
         OnStart(dp);
 
-        return GameResultTcs.Task;
+        return pending.Task;
     }
 
     /// <summary>
@@ -43,13 +43,16 @@ public abstract class MiniGame : MonoBehaviour
     protected void FinishGame (bool isSuccess)
     {
         // まだ完了していない場合にのみ実行。
-        if (GameResultTcs == null || GameResultTcs.Task.IsCompleted) return;
+        if (pending == null) return;
 
         // ゲーム終了処理
         isPlaying = false;
         UI.SetActive(false);
         gameObject.SetActive(false);
-        GameResultTcs.SetResult(isSuccess);
+
+        var completion = pending;
+        pending = null;
+        completion.TrySetResult(isSuccess);
     }
 
 

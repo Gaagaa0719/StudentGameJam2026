@@ -6,8 +6,7 @@ public class MiniGameManager : MonoBehaviour
     public static MiniGameManager Instance { private set; get; }
 
     [Header("登場するミニゲームのリスト")]
-    [SerializeField]
-    private List<MiniGame> miniGames = new();
+    [SerializeField] private List<MiniGame> miniGames = new();
 
     private void Awake()
     {
