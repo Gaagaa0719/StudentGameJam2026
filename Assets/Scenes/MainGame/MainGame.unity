@@ -3922,7 +3922,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1397338825}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ea792077d04ac14286c027658f72f40, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c56dcab599338b48a4cf067eb19a470, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGameInputController
   primary: {fileID: 8914301525045600746, guid: e6254e65e87511d4583da6aaa30f3551, type: 3}

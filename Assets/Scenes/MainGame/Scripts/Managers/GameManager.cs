@@ -52,10 +52,10 @@ namespace Sakemottekoi.MainGame
         public Enemy Enemy;
 
         [Header("BGMのオーディオソース")]
-        private readonly AudioSource BGMSource;
+        [SerializeField] private AudioSource BGMSource;
 
         [Header("SEのオーディオソース")]
-        private readonly AudioSource SESource;
+        [SerializeField] private AudioSource SESource;
 
         private bool isPlaying = false;
 
