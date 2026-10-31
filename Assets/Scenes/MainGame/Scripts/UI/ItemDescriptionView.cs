@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
@@ -20,10 +21,10 @@ namespace Sakemottekoi.MainGame
                 ItemNameText.text = ItemData.DisplayName;
                 ItemDescriptionText.text = ItemData.SimpleDescription;
 
-                FadeIn();
+                FadeInAsync().Forget();
             };
 
-            Item.OnHoverExit += (_) => FadeOut();
+            Item.OnHoverExit += (_) => FadeOutAsync().Forget();
         }
 
         protected override void OnAfterFadeOut()

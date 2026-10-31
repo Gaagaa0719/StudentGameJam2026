@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -17,8 +18,8 @@ namespace Sakemottekoi.MainGame
 
         private void HandlePhaseChange(GamePhase currentPhase)
         {
-            if (currentPhase == TargetPhase) FadeIn();
-            else FadeOut();
+            if (currentPhase == TargetPhase) FadeInAsync().Forget();
+            else FadeOutAsync().Forget();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
@@ -10,7 +11,7 @@ namespace Sakemottekoi.MainGame
         [SerializeField] protected float fadeOutTime = 1.0f;
         protected CanvasGroup group;
 
-        private Coroutine fadeCoroutine;
+        private CancellationTokenSource cts;
 
         // 現在フェードして向かっている先の透明度（-1f はフェード停止中）
         private float targetAlpha = -1f;
@@ -20,78 +21,101 @@ namespace Sakemottekoi.MainGame
             group = GetComponent<CanvasGroup>();
             group.alpha = 0f;
             group.blocksRaycasts = false;
-            targetAlpha = 0f;
         }
 
-        public Coroutine FadeIn()
+        protected virtual void OnDestroy()
         {
-            // 既に完全に表示されているか、または「表示に向けてフェード中」なら何もしない
+            cts?.Cancel();
+        }
+
+        public async UniTask FadeInAsync(float fadeTime = -1)
+        {
+            // 既に完全に表示されているか、またはフェード中なら何もしない
             if (Mathf.Approximately(group.alpha, 1f) || Mathf.Approximately(targetAlpha, 1f))
-                return fadeCoroutine;
+                return;
 
-            return PlayFade(1f, InternalFadeIn());
-        }
+            // キャンセルトークン初期化
+            cts?.Cancel();
+            var fadeCts = new CancellationTokenSource();
+            cts = fadeCts;
 
-        public Coroutine FadeOut()
-        {
-            // 既に完全に非表示か、または「非表示に向けてフェード中」なら何もしない
-            if (Mathf.Approximately(group.alpha, 0f) || Mathf.Approximately(targetAlpha, 0f))
-                return fadeCoroutine;
-
-            return PlayFade(0f, InternalFadeOut());
-        }
-
-        // コルーチンのキャンセルと再生成、目標値の設定
-        private Coroutine PlayFade(float target, IEnumerator routine)
-        {
-            if (fadeCoroutine != null)
-            {
-                StopCoroutine(fadeCoroutine);
-            }
-
-            targetAlpha = target;
-            fadeCoroutine = StartCoroutine(routine);
-            return fadeCoroutine;
-        }
-
-        private IEnumerator InternalFadeIn()
-        {
             OnBeforeFadeIn();
+
+            targetAlpha = 1f;
+            if (fadeTime < 0) fadeTime = fadeInTime;
 
             float timer = 0f;
             float startAlpha = group.alpha;
-            while (timer < fadeInTime)
-            {
-                timer += Time.deltaTime;
-                group.alpha = Mathf.Lerp(startAlpha, 1f, timer / fadeInTime);
-                yield return null;
-            }
-            group.alpha = 1f;
-            group.blocksRaycasts = true;
 
-            targetAlpha = -1f;
-            fadeCoroutine = null;
+            try
+            {
+                while (timer < fadeTime)
+                {
+                    timer += Time.deltaTime;
+                    group.alpha = Mathf.Lerp(startAlpha, 1f, timer / fadeTime);
+                    bool canceled = await UniTask
+                            .NextFrame(cancellationToken: fadeCts.Token)
+                            .SuppressCancellationThrow();
+                    if (canceled) return;
+                }
+                group.alpha = 1f;
+                group.blocksRaycasts = true;
+            }
+            finally
+            {
+                fadeCts.Dispose();
+                if (cts == fadeCts)
+                {
+                    cts = null;
+                    targetAlpha = -1f;
+                }
+            }
 
             OnAfterFadeIn();
         }
 
-        private IEnumerator InternalFadeOut()
+        public async UniTask FadeOutAsync(float fadeTime = -1)
         {
+            // 既に完全に非表示か、またはフェード中なら何もしない
+            if (Mathf.Approximately(group.alpha, 0f) || Mathf.Approximately(targetAlpha, 0f))
+                return;
+
+            // トークン初期化
+            cts?.Cancel();
+            var fadeCts = new CancellationTokenSource();
+            cts = fadeCts;
+
             OnBeforeFadeOut();
+            targetAlpha = 0f;
+
             group.blocksRaycasts = false;
+            if (fadeTime < 0) fadeTime = fadeOutTime;
 
             float timer = 0f;
             float startAlpha = group.alpha;
-            while (timer < fadeOutTime)
-            {
-                timer += Time.deltaTime;
-                group.alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeOutTime);
-                yield return null;
-            }
-            group.alpha = 0f;
 
-            targetAlpha = -1f;
-            fadeCoroutine = null;
+            try
+            {
+                while (timer < fadeTime)
+                {
+                    timer += Time.deltaTime;
+                    group.alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeTime);
+                    bool canceled = await UniTask
+                            .NextFrame(cancellationToken: fadeCts.Token)
+                            .SuppressCancellationThrow();
+                    if (canceled) return;
+                }
+                group.alpha = 0f;
+            }
+            finally
+            {
+                fadeCts.Dispose();
+                if(cts == fadeCts)
+                {
+                    cts = null;
+                    targetAlpha = -1f;
+                }
+            }
 
             OnAfterFadeOut();
         }

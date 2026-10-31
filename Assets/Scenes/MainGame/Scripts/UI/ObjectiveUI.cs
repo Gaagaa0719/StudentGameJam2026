@@ -1,30 +1,28 @@
-﻿
-using NUnit.Framework;
+﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
-    [Serializable]
-    public class PhaseObjectiveData
+    public struct ObjectiveFadeOption
     {
-        public GamePhase Phase;
-        public string ObjectiveText;
+        public float fadeInTime;
+        public float stayTime;
+        public float fadeOutTime;
+
+        public ObjectiveFadeOption(float fadeInTime = 0.5f, float stayTime = 2f, float fadeOutTime = 0.5f)
+        {
+            this.fadeInTime = fadeInTime;
+            this.stayTime = stayTime;
+            this.fadeOutTime = fadeOutTime;
+        }
     }
 
     [RequireComponent(typeof(TextMeshProUGUI))]
     class ObjectiveUI : FadeUIBase
     {
-        [Header("表示時間")]
-        [SerializeField]
-        private float stayTime;
-
-        [Header("各フェーズの目的テキスト")]
-        [SerializeField]
-        private List<PhaseObjectiveData> phaseObjectives = new();
+        public static ObjectiveUI Instance;
 
         private TextMeshProUGUI textComp;
         private Coroutine coroutine;
@@ -32,23 +30,19 @@ namespace Sakemottekoi.MainGame
         protected override void Awake()
         {
             base.Awake();
+
+            if (Instance == null)
+                Instance = this;
+
             textComp = GetComponent<TextMeshProUGUI>();
-            GameManager.OnPhaseChanged += (phase) => {
-                PhaseObjectiveData objectiveData = phaseObjectives.Find(v => v.Phase == phase);
-                if (objectiveData == null) return;
-                if (coroutine != null) StopCoroutine(coroutine);
-                coroutine = StartCoroutine(ShowObjective(objectiveData));
-            };
         }
 
-        private IEnumerator ShowObjective(PhaseObjectiveData data)
+        public async UniTask ShowObjective(string text, ObjectiveFadeOption option = new ObjectiveFadeOption())
         {
-            yield return FadeOut();
-            textComp.text = data.ObjectiveText;
-            yield return FadeIn();
-            yield return new WaitForSeconds(stayTime);
-            yield return FadeOut();
-            coroutine = null;
+            textComp.text = text;
+            await FadeInAsync(option.fadeInTime);
+            await UniTask.Delay(TimeSpan.FromSeconds(option.stayTime), cancellationToken: this.GetCancellationTokenOnDestroy());
+            await FadeOutAsync(option.fadeInTime);
         }
     }
 }

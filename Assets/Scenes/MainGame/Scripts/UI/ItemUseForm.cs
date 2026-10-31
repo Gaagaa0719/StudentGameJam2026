@@ -24,7 +24,7 @@ namespace Sakemottekoi.MainGame
             useButton.onClick.AddListener(() => Submit(true));
         }
 
-        public UniTask<bool> ShowAsync(Item item)
+        public async UniTask<bool> ShowAsync(Item item)
         {
             if (pending != null)
                 throw new InvalidOperationException("ItemUseForm is already showing.");
@@ -36,8 +36,8 @@ namespace Sakemottekoi.MainGame
             itemDescription.text = item.Description;
 
             // 表示処理
-            FadeIn();
-            return pending.Task;
+            await FadeInAsync();
+            return await pending.Task;
         }
 
         private void Submit(bool result)
@@ -47,7 +47,7 @@ namespace Sakemottekoi.MainGame
             var completion = pending;
             pending = null;
 
-            FadeOut();
+            FadeOutAsync().Forget();
             completion.TrySetResult(result);
         }
     }
