@@ -14,7 +14,11 @@ namespace Sakemottekoi.MainGame
 
         private void SelectGlass(AlcoholGlass glass)
         {
+            if(selectedGlass)
+                selectedGlass.gameObject.layer = LayerMask.NameToLayer("Default");
+
             selectedGlass = glass;
+            selectedGlass.gameObject.layer = LayerMask.NameToLayer("Outline");
         }
 
         protected override void OnTryComplete ()
@@ -27,6 +31,7 @@ namespace Sakemottekoi.MainGame
             }
 
             CompletePhase(selectedGlass);
+            selectedGlass.gameObject.layer = LayerMask.NameToLayer("Default");
         }
     }
 }
