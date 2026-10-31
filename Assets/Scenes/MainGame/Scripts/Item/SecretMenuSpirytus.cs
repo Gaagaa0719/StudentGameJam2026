@@ -12,9 +12,10 @@ namespace Sakemottekoi.MainGame
 
         public override string Description => "マスターに頼み、選んだ酒の酔い度を極大にする";
 
-        protected override UniTask InternalUse(Actor source)
+        protected async override UniTask InternalUse(Actor source)
         {
-            throw new System.NotImplementedException();
+            var glass = await AlcoholSelectionManager.Instance.StartPhaseAsync();
+            glass.SetDrunkenness(DrunkennessLevel.VeryHigh);
         }
     }
 }
