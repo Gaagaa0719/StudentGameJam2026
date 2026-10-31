@@ -35,8 +35,8 @@ namespace Sakemottekoi.MainGame
             if (glass == null) return;
 
             // 50%の確立で酔い度をZeroかHighにする
-            if (Random.value < 0.5f) glass.SetAlcholLevel(DrunkennessLevel.Zero);
-            else glass.SetAlcholLevel(DrunkennessLevel.High);
+            if (Random.value < 0.5f) glass.SetDrunkenness(DrunkennessLevel.Zero);
+            else glass.SetDrunkenness(DrunkennessLevel.High);
         }
     }
 }

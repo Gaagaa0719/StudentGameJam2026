@@ -37,7 +37,7 @@ namespace Sakemottekoi.MainGame
         /// このグラスのタイプを設定する。<br/>
         /// 酔い度はタイプに対応した値に設定される。
         /// </summary>
-        public void SetAlcholLevel(DrunkennessLevel alcholType)
+        public void SetDrunkenness(DrunkennessLevel alcholType)
         {
             Level = alcholType;
             Amount = GameManager.Instance.DrunkennessSettings.GetAmount(Level);
