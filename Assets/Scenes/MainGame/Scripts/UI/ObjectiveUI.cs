@@ -25,7 +25,6 @@ namespace Sakemottekoi.MainGame
         public static ObjectiveUI Instance;
 
         private TextMeshProUGUI textComp;
-        private Coroutine coroutine;
 
         protected override void Awake()
         {
@@ -37,12 +36,13 @@ namespace Sakemottekoi.MainGame
             textComp = GetComponent<TextMeshProUGUI>();
         }
 
-        public async UniTask ShowObjective(string text, ObjectiveFadeOption option = new ObjectiveFadeOption())
+        public async UniTask ShowObjective(string text, ObjectiveFadeOption option = new())
         {
+            await FadeOutAsync(option.fadeOutTime);
             textComp.text = text;
             await FadeInAsync(option.fadeInTime);
             await UniTask.Delay(TimeSpan.FromSeconds(option.stayTime), cancellationToken: this.GetCancellationTokenOnDestroy());
-            await FadeOutAsync(option.fadeInTime);
+            await FadeOutAsync(option.fadeOutTime);
         }
     }
 }
