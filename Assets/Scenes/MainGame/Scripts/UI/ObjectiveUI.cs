@@ -11,7 +11,7 @@ namespace Sakemottekoi.MainGame
         public float stayTime;
         public float fadeOutTime;
 
-        public ObjectiveFadeOption(float fadeInTime = 0.5f, float stayTime = 2f, float fadeOutTime = 0.5f)
+        public ObjectiveFadeOption(float fadeInTime, float stayTime, float fadeOutTime)
         {
             this.fadeInTime = fadeInTime;
             this.stayTime = stayTime;
@@ -36,7 +36,12 @@ namespace Sakemottekoi.MainGame
             textComp = GetComponent<TextMeshProUGUI>();
         }
 
-        public async UniTask ShowObjective(string text, ObjectiveFadeOption option = new())
+        public UniTask ShowObjective(string text)
+        {
+            return ShowObjective(text, new ObjectiveFadeOption(0.5f, 2f, 0.5f));
+        }
+
+        public async UniTask ShowObjective(string text, ObjectiveFadeOption option)
         {
             await FadeOutAsync(option.fadeOutTime);
             textComp.text = text;

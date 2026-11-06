@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -8,6 +9,7 @@ namespace Sakemottekoi.MainGame
 
         protected override void OnPhaseStart()
         {
+            ObjectiveUI.Instance.ShowObjective("酒を選べ！！").Forget();
             AlcoholGlass.OnClicked += SelectGlass;
             selectedGlass = null;
         }

@@ -10,6 +10,7 @@ namespace Sakemottekoi.MainGame
 
         protected override void OnPhaseStart()
         {
+            ObjectiveUI.Instance.ShowObjective("アイテムを使え！");
             Item.OnClicked += TryItemUse;
         }
 

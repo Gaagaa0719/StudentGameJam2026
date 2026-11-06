@@ -48,7 +48,6 @@ namespace Sakemottekoi.MainGame
             var completion = new UniTaskCompletionSource<TResult>();
             pending = completion;
             TableBell.OnClicked += OnTryComplete;
-            ObjectiveUI.Instance.ShowObjective("酒を選べ！！").Forget();
 
             OnPhaseStart();
 
