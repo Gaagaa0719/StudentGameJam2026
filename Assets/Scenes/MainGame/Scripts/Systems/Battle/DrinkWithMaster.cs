@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
+using System.Threading;
 
 namespace Sakemottekoi.MainGame
 {
@@ -30,7 +31,7 @@ namespace Sakemottekoi.MainGame
             this.source = source;
         }
 
-        public override UniTask ExecuteAsync(BattleContext context)
+        public override UniTask ExecuteAsync(CancellationToken token, BattleContext context)
         {
             AlcoholGlass glass = context.GetGlass(source);
             if (glass == null) return UniTask.CompletedTask;

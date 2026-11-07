@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System.Threading;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
@@ -12,30 +13,30 @@ namespace Sakemottekoi.MainGame
 
         public override bool IsOneShot => false;
 
-        public override async UniTask ExecuteAsync(BattleContext context)
+        public override async UniTask ExecuteAsync(CancellationToken token, BattleContext context)
         {
             AlcoholGlass glass = context.playerDrink;
             if (glass == null) return;
             Transform transform = glass.transform;
             
             // カメラの目の前まで移動
-            await transform.DOMove(new Vector3(0f, 0.4f, -9f), 1f);
+            await transform.DOMove(new Vector3(0f, 0.4f, -9f), 1f).ToUniTask(cancellationToken: token);
 
             // 少し待機
-            await UniTask.WaitForSeconds(0.2f);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: token);
 
             // 飲むアニメーション
-            await transform.DORotateQuaternion(Quaternion.Euler(-30f, 0f, 0f), 0.5f);
+            await transform.DORotateQuaternion(Quaternion.Euler(-30f, 0f, 0f), 0.5f).ToUniTask(cancellationToken: token);
 
             // 少し待機
-            await UniTask.WaitForSeconds(0.2f);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: token);
 
             // 使用済みマーク
             glass.Consume();
             GameManager.Instance.Player.AddDrunkenness(glass.Amount);
 
             // 少し待機
-            await UniTask.WaitForSeconds(0.2f);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: token);
         }
     }
 }

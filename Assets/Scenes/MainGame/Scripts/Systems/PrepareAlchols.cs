@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System.Threading;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
@@ -18,7 +19,7 @@ namespace Sakemottekoi.MainGame
             new (1.5f, -1.15f, -5),
         };
 
-        public override async UniTask ExecuteAsync()
+        public override async UniTask ExecuteAsync(CancellationToken token)
         {
             GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchols(3);
             for (int i = 0; i < alchols.Length; i++)
@@ -27,9 +28,9 @@ namespace Sakemottekoi.MainGame
             }
 
             await UniTask.WhenAll(
-                alchols[0].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(),
-                alchols[1].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(),
-                alchols[2].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask()
+                alchols[0].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(cancellationToken: token),
+                alchols[1].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(cancellationToken: token),
+                alchols[2].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(cancellationToken: token)
             );
         }
     }
