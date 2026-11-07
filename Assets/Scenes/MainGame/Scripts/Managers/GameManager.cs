@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using Game.Result;
+using System.Threading;
 
 namespace Sakemottekoi.MainGame
 {
@@ -58,11 +59,13 @@ namespace Sakemottekoi.MainGame
         [SerializeField] private AudioSource SESource;
 
         private bool isPlaying = false;
+        private CancellationToken token;
 
         private void Awake()
         {
             if (Instance == null)
                 Instance = this;
+            token = destroyCancellationToken;
         }
 
         private void Start()
@@ -83,21 +86,21 @@ namespace Sakemottekoi.MainGame
             {
                 ChangePhase(GamePhase.ItemSelection);
                 // 新しいアイテムを取得するまで待つ。
-                await ItemSelectionManager.Instance.StartPhaseAsync();
+                await ItemSelectionManager.Instance.StartPhaseAsync(token);
                 AlcholStockManager.Instance.Restock(5);
 
                 while (2 < AlcholStockManager.Instance.GetStockCount())
                 {
                     ChangePhase(GamePhase.Prepare);
-                    await PreparePhase.Run();
+                    await PreparePhase.Run(token);
 
                     ChangePhase(GamePhase.ItemUse);
                     // アイテム使用が終わった合図を待つ
-                    await ItemUsePhaseManager.Instance.StartPhaseAsync();
+                    await ItemUsePhaseManager.Instance.StartPhaseAsync(token);
 
                     ChangePhase(GamePhase.AlcholSelection);
                     // アルコールが選ばれるのを待つ。
-                    var enemyDrink = await AlcoholSelectionManager.Instance.StartPhaseAsync(); // 敵に飲ませるグラス
+                    var enemyDrink = await AlcoholSelectionManager.Instance.StartPhaseAsync(token); // 敵に飲ませるグラス
                     var playerDrink = Enemy.SelectGlass(); // プレイヤーが飲むグラス
 
                     // 同じアルコールが選ばれた場合の処理
@@ -110,7 +113,7 @@ namespace Sakemottekoi.MainGame
                     }
 
                     ChangePhase(GamePhase.Battle);
-                    await BattlePhase.Run(new BattleContext(playerDrink, enemyDrink));
+                    await BattlePhase.Run(token, new BattleContext(playerDrink, enemyDrink));
 
                     OnGamePhaseEnded?.Invoke();
                 }

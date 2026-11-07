@@ -13,7 +13,7 @@ namespace Sakemottekoi.MainGame
 
         protected override async UniTask InternalUse(Actor source)
         {
-            var glass = await AlcoholSelectionManager.Instance.StartPhaseAsync();
+            var glass = await AlcoholSelectionManager.Instance.StartPhaseAsync(destroyCancellationToken);
             Debug.Log($"選択したグラスの酔いレベルは{glass.Level}です。");
         }
     }

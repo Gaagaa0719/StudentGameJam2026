@@ -14,7 +14,7 @@ namespace Sakemottekoi.MainGame
 
         protected async override UniTask InternalUse(Actor source)
         {
-            var glass = await AlcoholSelectionManager.Instance.StartPhaseAsync();
+            var glass = await AlcoholSelectionManager.Instance.StartPhaseAsync(destroyCancellationToken);
             glass.SetDrunkenness(DrunkennessLevel.VeryHigh);
         }
     }

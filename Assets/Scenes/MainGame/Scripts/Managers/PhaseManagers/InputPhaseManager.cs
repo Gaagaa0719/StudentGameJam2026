@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace Sakemottekoi.MainGame
 {
@@ -8,17 +10,40 @@ namespace Sakemottekoi.MainGame
     {
         private UniTaskCompletionSource pending;
 
-        public UniTask StartPhaseAsync()
+        public async UniTask StartPhaseAsync(CancellationToken token)
         {
             if (pending != null)
                 throw new InvalidOperationException($"{typeof(T).Name} is already active.");
 
-            pending = new UniTaskCompletionSource();
+            var completion = new UniTaskCompletionSource();
+            pending = completion;
 
             TableBell.OnClicked += EndPhase;
-            OnPhaseStart();
 
-            return pending.Task;
+            CancellationTokenRegistration registration = default;
+
+            try
+            {
+                registration = token.Register(() =>
+                {
+                    if (pending == completion)
+                        completion.TrySetCanceled();
+                });
+
+                token.ThrowIfCancellationRequested();
+
+                OnPhaseStart();
+
+                await completion.Task;
+            }
+            finally
+            {
+                TableBell.OnClicked -= EndPhase;
+                registration.Dispose();
+
+                if(pending == completion)
+                    pending = null;
+            }
         }
 
         protected override void OnDestroy()
@@ -32,12 +57,9 @@ namespace Sakemottekoi.MainGame
             if (pending == null)
                 throw new InvalidOperationException($"{typeof(T).Name} is inactive.");
 
-            TableBell.OnClicked -= EndPhase;
-            var completion = pending;
-            pending = null;
-
-            completion.TrySetResult();
+            pending.TrySetResult();
         }
+
         protected virtual void OnPhaseStart() { }
     }
 
@@ -51,7 +73,7 @@ namespace Sakemottekoi.MainGame
             TableBell.OnClicked -= OnTryComplete;
         }
 
-        public UniTask<TResult> StartPhaseAsync()
+        public async UniTask<TResult> StartPhaseAsync(CancellationToken token)
         {
             if (pending != null)
                 throw new InvalidOperationException($"{typeof(T).Name} is already active.");
@@ -60,9 +82,29 @@ namespace Sakemottekoi.MainGame
             pending = completion;
             TableBell.OnClicked += OnTryComplete;
 
-            OnPhaseStart();
+            CancellationTokenRegistration registration = default;
 
-            return completion.Task;
+            try
+            {
+                registration = token.Register(() =>{
+                    if(pending == completion)
+                        completion.TrySetCanceled();
+                });
+
+                token.ThrowIfCancellationRequested();
+
+                OnPhaseStart();
+
+                return await completion.Task;
+            }
+            finally
+            {
+                registration.Dispose();
+                TableBell.OnClicked -= OnTryComplete;
+
+                if (pending == completion)
+                    pending = null;
+            }
         }
 
 
@@ -71,11 +113,7 @@ namespace Sakemottekoi.MainGame
             if (pending == null)
                 throw new InvalidOperationException($"{typeof(T).Name} is inactive.");
 
-            TableBell.OnClicked -= OnTryComplete;
-            var completion = pending;
-            pending = null;
-
-            completion.TrySetResult(result);
+            pending.TrySetResult(result);
         }
 
         /// <summary>

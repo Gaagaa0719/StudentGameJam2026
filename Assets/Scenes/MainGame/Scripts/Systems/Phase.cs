@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sakemottekoi.MainGame
 {
@@ -142,7 +143,7 @@ namespace Sakemottekoi.MainGame
         {
         }
 
-        public async UniTask Run()
+        public async UniTask Run(CancellationToken token)
         {
             isRunning = true;
             if (isDirty) Sort();
@@ -151,7 +152,7 @@ namespace Sakemottekoi.MainGame
             {
                 foreach (var system in registeredSystemList)
                 {
-                    await system.ExecuteAsync();
+                    await system.ExecuteAsync(token);
                 }
 
                 // 一度きりの処理をクリア
@@ -171,7 +172,7 @@ namespace Sakemottekoi.MainGame
         {
         }
 
-        public async UniTask Run(T arg)
+        public async UniTask Run(CancellationToken token, T arg)
         {
             isRunning = true;
             if (isDirty) Sort();
@@ -180,7 +181,7 @@ namespace Sakemottekoi.MainGame
             {
                 foreach (var system in registeredSystemList)
                 {
-                    await system.ExecuteAsync(arg);
+                    await system.ExecuteAsync(token, arg);
                 }
 
                 // 一度きりの処理をクリア
