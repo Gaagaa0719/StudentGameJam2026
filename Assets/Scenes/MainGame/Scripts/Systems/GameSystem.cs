@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using Cysharp.Threading.Tasks;
 namespace Sakemottekoi.MainGame
 {
     public abstract class GameSystemBase
@@ -9,28 +7,15 @@ namespace Sakemottekoi.MainGame
 
         public abstract OrderRule OrderRule { get; }
         public abstract bool IsOneShot { get; }
-
-        // 演出生成用のファクトリ関数
-        protected Func<IEnumerable<VisualEvent>> visualFactory;
-
-        protected void RegisterVisuals()
-        {
-            if (visualFactory == null) return;
-
-            foreach (var visual in visualFactory())
-            {
-                VisualQueue.Enqueue(visual);
-            }
-        }
     }
 
     public abstract class GameSystem: GameSystemBase
     {
-        public abstract void Execute();
+        public abstract UniTask ExecuteAsync();
     }
 
     public abstract class GameSystem<T>: GameSystemBase
     {
-        public abstract void Execute(T arg);
+        public abstract UniTask ExecuteAsync(T arg);
     }
 }

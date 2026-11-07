@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -141,7 +142,7 @@ namespace Sakemottekoi.MainGame
         {
         }
 
-        public IEnumerator Run()
+        public async UniTask Run()
         {
             isRunning = true;
             if (isDirty) Sort();
@@ -150,8 +151,7 @@ namespace Sakemottekoi.MainGame
             {
                 foreach (var system in registeredSystemList)
                 {
-                    system.Execute();
-                    yield return VisualQueue.PlayAll();
+                    await system.ExecuteAsync();
                 }
 
                 // 一度きりの処理をクリア
@@ -171,7 +171,7 @@ namespace Sakemottekoi.MainGame
         {
         }
 
-        public IEnumerator Run(T arg)
+        public async UniTask Run(T arg)
         {
             isRunning = true;
             if (isDirty) Sort();
@@ -180,8 +180,7 @@ namespace Sakemottekoi.MainGame
             {
                 foreach (var system in registeredSystemList)
                 {
-                    system.Execute(arg);
-                    yield return VisualQueue.PlayAll();
+                    await system.ExecuteAsync(arg);
                 }
 
                 // 一度きりの処理をクリア

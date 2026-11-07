@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -29,14 +30,15 @@ namespace Sakemottekoi.MainGame
             this.source = source;
         }
 
-        public override void Execute(BattleContext context)
+        public override UniTask ExecuteAsync(BattleContext context)
         {
             AlcoholGlass glass = context.GetGlass(source);
-            if (glass == null) return;
+            if (glass == null) return UniTask.CompletedTask;
 
             // 50%の確立で酔い度をZeroかHighにする
             if (Random.value < 0.5f) glass.SetDrunkenness(DrunkennessLevel.Zero);
             else glass.SetDrunkenness(DrunkennessLevel.High);
+            return UniTask.CompletedTask;
         }
     }
 }

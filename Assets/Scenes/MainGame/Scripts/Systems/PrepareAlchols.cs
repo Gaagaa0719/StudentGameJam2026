@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -16,17 +17,14 @@ namespace Sakemottekoi.MainGame
             new (1.5f, -0.15f, -5),
         };
 
-        public override void Execute()
+        public override UniTask ExecuteAsync()
         {
-
-            Debug.Log("before:" + AlcholStockManager.Instance.GetStockCount());
             GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchols(3);
-
-            Debug.Log("after:" + AlcholStockManager.Instance.GetStockCount());
             for (int i = 0; i < alchols.Length; i++)
             {
                 alchols[i].transform.position = AlcholPositions[i];
             }
+            return UniTask.CompletedTask;
         }
     }
 }

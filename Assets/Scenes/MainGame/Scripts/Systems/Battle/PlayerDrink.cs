@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Sakemottekoi.MainGame
 {
@@ -10,11 +11,12 @@ namespace Sakemottekoi.MainGame
 
         public override bool IsOneShot => false;
 
-        public override void Execute(BattleContext context)
+        public override UniTask ExecuteAsync(BattleContext context)
         {
             AlcoholGlass glass = context.playerDrink;
-            if (glass == null) return;
+            if (glass == null) return UniTask.CompletedTask;
             GameManager.Instance.Player.AddDrunkenness(glass.Amount);
+            return UniTask.CompletedTask;
         }
     }
 }
