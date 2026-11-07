@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
-
+using Game.Result;
 
 namespace Sakemottekoi.MainGame
 {
@@ -61,12 +61,19 @@ namespace Sakemottekoi.MainGame
 
         private void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+                Instance = this;
         }
 
         private void Start()
         {
             StartGameLoop().Forget();
+        }
+
+        private void OnDestroy()
+        {
+            if(Instance == this)
+                Instance = null;
         }
 
         private async UniTask StartGameLoop()
@@ -104,10 +111,6 @@ namespace Sakemottekoi.MainGame
 
                     ChangePhase(GamePhase.Battle);
                     await BattlePhase.Run(new BattleContext(playerDrink, enemyDrink));
-
-                    // 使用済みマーク
-                    if(enemyDrink) enemyDrink.Consume();
-                    if(playerDrink) playerDrink.Consume();
 
                     OnGamePhaseEnded?.Invoke();
                 }

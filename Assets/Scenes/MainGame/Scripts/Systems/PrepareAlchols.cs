@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Sakemottekoi.MainGame
@@ -12,19 +13,24 @@ namespace Sakemottekoi.MainGame
         public override OrderRule OrderRule => new OrderRelative();
 
         private readonly Vector3[] AlcholPositions = new Vector3[] {
-            new (-1.5f, -0.15f, -5),
-            new (0, -0.15f, -5),
-            new (1.5f, -0.15f, -5),
+            new (-1.5f, -1.15f, -5),
+            new (0, -1.15f, -5),
+            new (1.5f, -1.15f, -5),
         };
 
-        public override UniTask ExecuteAsync()
+        public override async UniTask ExecuteAsync()
         {
             GameObject[] alchols = AlcholStockManager.Instance.GetRandomAlchols(3);
             for (int i = 0; i < alchols.Length; i++)
             {
                 alchols[i].transform.position = AlcholPositions[i];
             }
-            return UniTask.CompletedTask;
+
+            await UniTask.WhenAll(
+                alchols[0].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(),
+                alchols[1].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask(),
+                alchols[2].transform.DOLocalMoveY(-0.15f, 0.5f).ToUniTask()
+            );
         }
     }
 }
