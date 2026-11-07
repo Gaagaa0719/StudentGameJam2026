@@ -39,6 +39,7 @@ namespace Sakemottekoi.MainGame
             }
 
             CompletePhase(selectedGlass);
+            AlcoholGlass.OnClicked -= SelectGlass;
             selectedGlass.gameObject.layer = LayerMask.NameToLayer("Default");
         }
     }
