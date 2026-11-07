@@ -30,6 +30,7 @@ namespace Sakemottekoi.MainGame
 
         public async UniTask FadeInAsync(float fadeTime = -1)
         {
+            if(group == null) return;
             // 既に完全に表示されているか、またはフェード中なら何もしない
             if (Mathf.Approximately(group.alpha, 1f) || Mathf.Approximately(targetAlpha, 1f))
                 return;
@@ -76,6 +77,7 @@ namespace Sakemottekoi.MainGame
 
         public async UniTask FadeOutAsync(float fadeTime = -1)
         {
+            if (group == null) return;
             // 既に完全に非表示か、またはフェード中なら何もしない
             if (Mathf.Approximately(group.alpha, 0f) || Mathf.Approximately(targetAlpha, 0f))
                 return;

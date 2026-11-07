@@ -323,7 +323,7 @@ MonoBehaviour:
   _rankNormalScale: {x: 1, y: 1, z: 1}
   _buttonFadeInDuration: 0.3
   _titleSceneName: SampleScene
-  _gameplaySceneName: SampleScene
+  _gameplaySceneName: MainGame
 --- !u!224 &102002717
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3590,7 +3590,7 @@ MonoBehaviour:
   _textFallDuration: 1.5
   _buttonFadeInDuration: 0.3
   _titleSceneName: SampleScene
-  _gameplaySceneName: Game
+  _gameplaySceneName: MainGame
 --- !u!224 &1661952849
 RectTransform:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 
@@ -25,15 +26,24 @@ namespace Sakemottekoi.MainGame
         public static ObjectiveUI Instance;
 
         private TextMeshProUGUI textComp;
+        private CancellationToken token;
 
         protected override void Awake()
         {
             base.Awake();
+            token = destroyCancellationToken;
 
             if (Instance == null)
                 Instance = this;
 
             textComp = GetComponent<TextMeshProUGUI>();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (Instance == this)
+                Instance = null;
         }
 
         public UniTask ShowObjective(string text)
@@ -46,7 +56,7 @@ namespace Sakemottekoi.MainGame
             await FadeOutAsync(option.fadeOutTime);
             textComp.text = text;
             await FadeInAsync(option.fadeInTime);
-            await UniTask.Delay(TimeSpan.FromSeconds(option.stayTime), cancellationToken: this.GetCancellationTokenOnDestroy());
+            await UniTask.Delay(TimeSpan.FromSeconds(option.stayTime), cancellationToken: token);
             await FadeOutAsync(option.fadeOutTime);
         }
     }

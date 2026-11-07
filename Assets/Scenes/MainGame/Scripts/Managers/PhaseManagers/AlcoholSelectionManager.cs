@@ -14,6 +14,12 @@ namespace Sakemottekoi.MainGame
             selectedGlass = null;
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            AlcoholGlass.OnClicked -= SelectGlass;
+        }
+
         private void SelectGlass(AlcoholGlass glass)
         {
             if(selectedGlass)

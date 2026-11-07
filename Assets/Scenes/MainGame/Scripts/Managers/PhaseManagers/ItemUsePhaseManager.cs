@@ -14,6 +14,13 @@ namespace Sakemottekoi.MainGame
             Item.OnClicked += TryItemUse;
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Item.OnClicked -= TryItemUse;
+        }
+
+
         private async void TryItemUse(Item item)
         {
             isBusy = true;

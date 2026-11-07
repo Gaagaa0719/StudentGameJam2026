@@ -1,5 +1,6 @@
-// ResultSceneData.cs
+ï»¿// ResultSceneData.cs
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game.Result
 {
@@ -24,14 +25,14 @@ namespace Game.Result
     {
         public ResultType ResultType;
 
-        // ‘Îí‘Šè‚Ì—‚Ìqî•ñ
+        // å¯¾æˆ¦ç›¸æ‰‹ã®å¥³ã®å­æƒ…å ±
         public string CharacterName;
 
-        // Ÿ—˜‚Ì”wŒi(Œ‚¢‚Â‚Ô‚ê‰æ‘œ)BƒLƒƒƒ‰‚²‚Æ‚ÉˆÙ‚È‚é‚½‚ß‘OƒV[ƒ“‚©‚çó‚¯æ‚éB
-        // ”s–k‚ÍLoseResultPresenter‘¤‚ÅŒÅ’è‰æ‘œ‚ğg—p‚·‚é‚½‚ßA‚±‚±‚Íg—p‚µ‚È‚¢B
+        // å‹åˆ©æ™‚ã®èƒŒæ™¯(é…”ã„ã¤ã¶ã‚Œç”»åƒ)ã€‚ã‚­ãƒ£ãƒ©ã”ã¨ã«ç•°ãªã‚‹ãŸã‚å‰ã‚·ãƒ¼ãƒ³ã‹ã‚‰å—ã‘å–ã‚‹ã€‚
+        // æ•—åŒ—æ™‚ã¯LoseResultPresenterå´ã§å›ºå®šç”»åƒã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚ã€ã“ã“ã¯ä½¿ç”¨ã—ãªã„ã€‚
         public Sprite WinBackgroundImage;
 
-        public AudioClip CharacterVoice;   // Ÿ—˜‚Ì‚İg—p
+        public AudioClip CharacterVoice;   // å‹åˆ©æ™‚ã®ã¿ä½¿ç”¨
 
         public int FinalScore;
         public ResultRank Rank;
@@ -44,6 +45,12 @@ namespace Game.Result
         public static void SetData(ResultSceneData data)
         {
             PendingData = data;
+        }
+
+        public static void Load(ResultSceneData data)
+        {
+            SetData(data);
+            SceneManager.LoadScene("ResultScene");
         }
 
         public static ResultSceneData ConsumeData()

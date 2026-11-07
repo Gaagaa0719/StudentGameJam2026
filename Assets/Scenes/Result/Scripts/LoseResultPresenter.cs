@@ -1,4 +1,4 @@
-// LoseResultPresenter.cs
+ï»¿// LoseResultPresenter.cs
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +8,7 @@ namespace Game.Result
 {
     public class LoseResultPresenter : MonoBehaviour
     {
-        [Header("QÆ")]
+        [Header("å‚ç…§")]
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private AudioSource _bgmAudioSource;
         [SerializeField] private TextMeshProUGUI _resultText;
@@ -19,21 +19,21 @@ namespace Game.Result
         [SerializeField] private Button _retryButton;
         [SerializeField] private Button _toTitleButton;
 
-        [Header("”s–k‚ÌŒÅ’è”wŒi‰æ‘œ")]
-        [SerializeField] private Sprite _fixedBackgroundSprite; // ƒSƒ~” ‚É“f‚­Œã‚ëp‚ÌŒÅ’è‰æ‘œ
+        [Header("æ•—åŒ—æ™‚ã®å›ºå®šèƒŒæ™¯ç”»åƒ")]
+        [SerializeField] private Sprite _fixedBackgroundSprite; // ã‚´ãƒŸç®±ã«åãå¾Œã‚å§¿ã®å›ºå®šç”»åƒ
 
         [Header("BGM")]
         [SerializeField] private AudioClip _loseBgmClip;
 
-        [Header("‰‰oİ’è:”s–k•¶š‚ÌƒtƒF[ƒh&—‰º")]
+        [Header("æ¼”å‡ºè¨­å®š:æ•—åŒ—æ–‡å­—ã®ãƒ•ã‚§ãƒ¼ãƒ‰&è½ä¸‹")]
         [SerializeField] private float _textFallDuration = 0.6f;
 
-        [Header("‰‰oİ’è:ƒ{ƒ^ƒ“•\¦")]
+        [Header("æ¼”å‡ºè¨­å®š:ãƒœã‚¿ãƒ³è¡¨ç¤º")]
         [SerializeField] private float _buttonFadeInDuration = 0.3f;
 
-        [Header("ƒV[ƒ“‘JˆÚİ’è")]
+        [Header("ã‚·ãƒ¼ãƒ³é·ç§»è¨­å®š")]
         [SerializeField] private string _titleSceneName = "TitleScene";
-        [SerializeField] private string _gameplaySceneName = "Game";
+        [SerializeField] private string _gameplaySceneName = "MainGame";
 
         private Coroutine _sequenceCoroutine;
 
@@ -48,18 +48,18 @@ namespace Game.Result
 
         private IEnumerator PlaySequence(ResultSceneData data)
         {
-            // 1. ”wŒi‚ÍŒÅ’è‰æ‘œ‚ğg—p(ƒf[ƒ^‚©‚ç‚Íó‚¯æ‚ç‚È‚¢)
+            // 1. èƒŒæ™¯ã¯å›ºå®šç”»åƒã‚’ä½¿ç”¨(ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰ã¯å—ã‘å–ã‚‰ãªã„)
             _backgroundImage.sprite = _fixedBackgroundSprite;
             _backgroundImage.enabled = true;
 
-            // BGMÄ¶ŠJn
+            // BGMå†ç”Ÿé–‹å§‹
             if (_loseBgmClip != null)
             {
                 _bgmAudioSource.clip = _loseBgmClip;
                 _bgmAudioSource.Play();
             }
 
-            // 2. ‰Šúó‘Ô‚ğ”ñ•\¦‚É‘µ‚¦‚é
+            // 2. åˆæœŸçŠ¶æ…‹ã‚’éè¡¨ç¤ºã«æƒãˆã‚‹
             _resultTextCanvasGroup.alpha = 0f;
             _resultText.rectTransform.anchoredPosition3D = _resultTextStartPos.anchoredPosition3D;
 
@@ -67,10 +67,10 @@ namespace Game.Result
             _buttonGroupCanvasGroup.interactable = false;
             _buttonGroupCanvasGroup.blocksRaycasts = false;
 
-            // 3. u”s–kcv•¶š‚ğƒtƒF[ƒh‚µ‚È‚ª‚çã‚©‚ç—‚¿‚Ä‚­‚é‚æ‚¤‚É•\¦
+            // 3. ã€Œæ•—åŒ—â€¦ã€æ–‡å­—ã‚’ãƒ•ã‚§ãƒ¼ãƒ‰ã—ãªãŒã‚‰ä¸Šã‹ã‚‰è½ã¡ã¦ãã‚‹ã‚ˆã†ã«è¡¨ç¤º
             yield return StartCoroutine(PlayResultTextFall());
 
-            // 4. ƒ{ƒ^ƒ“‚ğƒtƒF[ƒhƒCƒ“‚µ‘€ì‰Â”\‚É‚·‚é
+            // 4. ãƒœã‚¿ãƒ³ã‚’ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã—æ“ä½œå¯èƒ½ã«ã™ã‚‹
             yield return StartCoroutine(PlayButtonsFadeIn());
         }
 
@@ -99,13 +99,13 @@ namespace Game.Result
 
         public void OnClickRetry()
         {
-            Debug.Log($"[LoseResultPresenter] Retryƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ü‚µ‚½B‘JˆÚæ‘z’èƒV[ƒ“: {_gameplaySceneName}");
+            Debug.Log($"[LoseResultPresenter] Retryãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¾ã—ãŸã€‚é·ç§»å…ˆæƒ³å®šã‚·ãƒ¼ãƒ³: {_gameplaySceneName}");
             UnityEngine.SceneManagement.SceneManager.LoadScene(_gameplaySceneName);
         }
 
         public void OnClickToTitle()
         {
-            Debug.Log($"[LoseResultPresenter] ƒ^ƒCƒgƒ‹‚É–ß‚éƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ü‚µ‚½B‘JˆÚæ‘z’èƒV[ƒ“: {_titleSceneName}");
+            Debug.Log($"[LoseResultPresenter] ã‚¿ã‚¤ãƒˆãƒ«ã«æˆ»ã‚‹ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¾ã—ãŸã€‚é·ç§»å…ˆæƒ³å®šã‚·ãƒ¼ãƒ³: {_titleSceneName}");
             UnityEngine.SceneManagement.SceneManager.LoadScene(_titleSceneName);
         }
     }

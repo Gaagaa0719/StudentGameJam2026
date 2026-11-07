@@ -21,6 +21,12 @@ namespace Sakemottekoi.MainGame
             return pending.Task;
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            TableBell.OnClicked -= EndPhase;
+        }
+
         protected virtual void EndPhase()
         {
             if (pending == null)
@@ -39,6 +45,11 @@ namespace Sakemottekoi.MainGame
     public abstract class InputPhaseManager<T, TResult> : SingletonObject<T> where T : InputPhaseManager<T, TResult>
     {
         private UniTaskCompletionSource<TResult> pending;
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            TableBell.OnClicked -= OnTryComplete;
+        }
 
         public UniTask<TResult> StartPhaseAsync()
         {

@@ -16,6 +16,12 @@ namespace Sakemottekoi.MainGame
             GameManager.OnPhaseChanged += HandlePhaseChange;
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GameManager.OnPhaseChanged -= HandlePhaseChange;
+        }
+
         private void HandlePhaseChange(GamePhase currentPhase)
         {
             if (currentPhase == TargetPhase) FadeInAsync().Forget();
